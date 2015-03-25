@@ -1,0 +1,18 @@
+Package: vp.misc
+Type: Package
+Title: Miscelaneuos functions used by Vlad Petyuk for proteomics data analysis
+Version: 0.1
+Date: 2015-03-24
+Author: Vladislav Petyuk
+Maintainer: Vladislav Petyuk <petyuk@gmail.com>
+Description: A collection of customized functions used for 
+        proteomics dataset analysis. The functions are geared towards using
+        MSnSet (or ExpressionSet) object as the key data container. 
+        The package contains customized heatmaps, coloschemes, 
+        convienient nested linear models, machine learning utilities, etc. 
+License: Beerware
+Depends:
+Imports: parallel
+VignetteBuilder: knitr
+Suggests: knitr
+
