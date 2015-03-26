@@ -1,0 +1,42 @@
+
+```{r, env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
+library("vp.misc")
+suppressPackageStartupMessages(library("MSnbase"))
+```
+
+```{r core}
+data(srm_msnset)
+
+linkage = 'ward.D'
+hclustfun=function(x,...)
+   hclust(x, method=linkage,...)
+
+pearson.dist <- function(x){
+   corMat <- (1-cor( t(x), 
+                     method="pearson",
+                     use="pairwise.complete.obs" ))/2
+   corMat[is.na(corMat)] <- mean(corMat, na.rm=T)
+   return(as.dist(corMat))}
+
+eucl.dist <- function(x){
+   distMat <- dist(x)
+   distMat[is.na(distMat)] <- mean(distMat, na.rm=T)
+   return(as.dist(distMat))}
+
+# match.group, subject.type, msex, Visible blood contamination
+columnCol <- pData(msnset)[,c("subject.type", "match.group", "msex", 
+                              "Visible blood contamination")]
+columnCol <- as.data.frame(lapply(columnCol, as.factor))
+
+heatmap.plus.2(exprs(msnset), 
+               hclustfun = hclustfun,
+               dist = pearson.dist,
+               breaks=c(-4,seq(-2,+2,length=100),+4)
+               )
+```
+
+<!--
+```{r si}
+sessionInfo()
+```
+-->
