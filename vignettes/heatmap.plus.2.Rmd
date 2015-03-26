@@ -4,7 +4,7 @@ library("vp.misc")
 suppressPackageStartupMessages(library("MSnbase"))
 ```
 
-```{r core}
+```{r core, fig.align='center', fig.height=8, fig.width=8}
 data(srm_msnset)
 
 linkage = 'ward.D'
@@ -27,11 +27,23 @@ eucl.dist <- function(x){
 columnCol <- pData(msnset)[,c("subject.type", "match.group", "msex", 
                               "Visible blood contamination")]
 columnCol <- as.data.frame(lapply(columnCol, as.factor))
+columnCol$subject.type <- 
+    c('red','orange','blue')[columnCol$subject.type]
+columnCol$match.group <- 
+    jet.colors(nlevels(columnCol$match.group))[columnCol$match.group]
+columnCol$msex <- 
+    c('pink','olivedrab')[columnCol$msex]
+columnCol$Visible.blood.contamination <- 
+    c('black','lightgrey')[columnCol$Visible.blood.contamination]
 
 heatmap.plus.2(exprs(msnset), 
                hclustfun = hclustfun,
                dist = pearson.dist,
-               breaks=c(-4,seq(-2,+2,length=100),+4)
+               propColSide=0.1,
+               scale="none",
+               ColSideColors=as.matrix(columnCol),
+               breaks=c(-4,seq(-2,+2,length=100),+4),
+               col=gplots::bluered(102-1)
                )
 ```
 
