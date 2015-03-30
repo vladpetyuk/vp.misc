@@ -1,5 +1,26 @@
+---
+output:
+  html_document:
+    highlight: tango
+---
 
-```{r, env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{VP Misc}
+%\VignetteKeyword{vp.mics}
+%\VignettePackage{vp.misc}
+-->
+
+<!--
+```{r setup, echo=FALSE, results='hide'}
+# set global chunk options
+library("knitr")
+opts_chunk$set(size='tiny')
+```
+-->
+
+
+```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library("vp.misc")
 suppressPackageStartupMessages(library("MSnbase"))
 ```
@@ -48,7 +69,7 @@ heatmap.plus.2(exprs(msnset),
 ```
 
 <!--
-```{r si}
+```{r si, size='tiny'}
 sessionInfo()
 ```
 -->
