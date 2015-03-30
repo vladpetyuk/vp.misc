@@ -32,11 +32,14 @@ eset_lm <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL)
                          F.stat = numeric(Np), 
                          p.value = numeric(Np))
     # make parallel
-    
+    if(.Platform$OS.type == "unix")
+        mc.cores <- parallel::detectCores()
+    else
+        mc.cores <- 1
     result <- parallel::mclapply(seq_len(nrow(eset)), function(i){
         lm_for_one(data[i,], form.alt, form.nul, 
                    facs, norm.coef)}, 
-        mc.cores=parallel::detectCores())
+        mc.cores=mc.cores)
     result <- Reduce(rbind, result)
     
     #     for (i in seq_len(Np)) 
