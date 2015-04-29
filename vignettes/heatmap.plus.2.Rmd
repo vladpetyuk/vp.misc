@@ -28,22 +28,6 @@ suppressPackageStartupMessages(library("MSnbase"))
 ```{r core, fig.align='center', fig.height=8, fig.width=8}
 data(srm_msnset)
 
-linkage = 'ward.D'
-hclustfun=function(x,...)
-   hclust(x, method=linkage,...)
-
-pearson.dist <- function(x){
-   corMat <- (1-cor( t(x), 
-                     method="pearson",
-                     use="pairwise.complete.obs" ))/2
-   corMat[is.na(corMat)] <- mean(corMat, na.rm=T)
-   return(as.dist(corMat))}
-
-eucl.dist <- function(x){
-   distMat <- dist(x)
-   distMat[is.na(distMat)] <- mean(distMat, na.rm=T)
-   return(as.dist(distMat))}
-
 # match.group, subject.type, msex, Visible blood contamination
 columnCol <- pData(msnset)[,c("subject.type", "match.group", "msex", 
                               "Visible blood contamination")]
@@ -58,8 +42,8 @@ columnCol$Visible.blood.contamination <-
     c('black','lightgrey')[columnCol$Visible.blood.contamination]
 
 heatmap.plus.2(exprs(msnset), 
-               hclustfun = hclustfun,
-               dist = pearson.dist,
+               hclustfun = function(x, ...) hclust(x, method="ward.D", ...),
+               dist = function(x, ...) dist(x, method="pearson", ...),
                propColSide=0.1,
                scale="none",
                ColSideColors=as.matrix(columnCol),

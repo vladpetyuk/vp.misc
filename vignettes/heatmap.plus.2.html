@@ -79,31 +79,10 @@ img {
 %\VignetteKeyword{vp.mics}
 %\VignettePackage{vp.misc}
 -->
+<!--
 
-
-
-
-
-
-
-
+-->
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(srm_msnset)
-
-linkage =<span class="st"> 'ward.D'</span>
-hclustfun=function(x,...)
-   <span class="kw">hclust</span>(x, <span class="dt">method=</span>linkage,...)
-
-pearson.dist &lt;-<span class="st"> </span>function(x){
-   corMat &lt;-<span class="st"> </span>(<span class="dv">1</span>-<span class="kw">cor</span>( <span class="kw">t</span>(x), 
-                     <span class="dt">method=</span><span class="st">&quot;pearson&quot;</span>,
-                     <span class="dt">use=</span><span class="st">&quot;pairwise.complete.obs&quot;</span> ))/<span class="dv">2</span>
-   corMat[<span class="kw">is.na</span>(corMat)] &lt;-<span class="st"> </span><span class="kw">mean</span>(corMat, <span class="dt">na.rm=</span>T)
-   <span class="kw">return</span>(<span class="kw">as.dist</span>(corMat))}
-
-eucl.dist &lt;-<span class="st"> </span>function(x){
-   distMat &lt;-<span class="st"> </span><span class="kw">dist</span>(x)
-   distMat[<span class="kw">is.na</span>(distMat)] &lt;-<span class="st"> </span><span class="kw">mean</span>(distMat, <span class="dt">na.rm=</span>T)
-   <span class="kw">return</span>(<span class="kw">as.dist</span>(distMat))}
 
 <span class="co"># match.group, subject.type, msex, Visible blood contamination</span>
 columnCol &lt;-<span class="st"> </span><span class="kw">pData</span>(msnset)[,<span class="kw">c</span>(<span class="st">&quot;subject.type&quot;</span>, <span class="st">&quot;match.group&quot;</span>, <span class="st">&quot;msex&quot;</span>, 
@@ -119,8 +98,8 @@ columnCol$Visible.blood.contamination &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">c</span>(<span class="st">'black'</span>,<span class="st">'lightgrey'</span>)[columnCol$Visible.blood.contamination]
 
 <span class="kw">heatmap.plus.2</span>(<span class="kw">exprs</span>(msnset), 
-               <span class="dt">hclustfun =</span> hclustfun,
-               <span class="dt">dist =</span> pearson.dist,
+               <span class="dt">hclustfun =</span> function(x, ...) <span class="kw">hclust</span>(x, <span class="dt">method=</span><span class="st">&quot;ward.D&quot;</span>, ...),
+               <span class="dt">dist =</span> function(x, ...) <span class="kw">dist</span>(x, <span class="dt">method=</span><span class="st">&quot;pearson&quot;</span>, ...),
                <span class="dt">propColSide=</span><span class="fl">0.1</span>,
                <span class="dt">scale=</span><span class="st">&quot;none&quot;</span>,
                <span class="dt">ColSideColors=</span><span class="kw">as.matrix</span>(columnCol),
@@ -146,13 +125,13 @@ sessionInfo()
 ## [8] base     
 ## 
 ## other attached packages:
-## [1] MSnbase_1.14.1      BiocParallel_1.0.1  mzR_2.0.0          
-## [4] Rcpp_0.11.4         Biobase_2.26.0      BiocGenerics_0.12.1
-## [7] vp.misc_0.1         knitr_1.9          
+## [1] MSnbase_1.15.17     ProtGenerics_0.99.3 BiocParallel_1.0.1 
+## [4] mzR_2.0.0           Rcpp_0.11.4         Biobase_2.26.0     
+## [7] BiocGenerics_0.12.1 vp.misc_0.1         knitr_1.9          
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] affy_1.44.0           affyio_1.34.0         base64enc_0.1-2      
-##  [4] BatchJobs_1.5         BBmisc_1.8            BiocInstaller_1.16.2 
+##  [4] BatchJobs_1.5         BBmisc_1.8            BiocInstaller_1.16.4 
 ##  [7] bitops_1.0-6          brew_1.0-6            caTools_1.17.1       
 ## [10] checkmate_1.5.1       codetools_0.2-10      colorspace_1.2-4     
 ## [13] DBI_0.3.1             digest_0.6.8          doParallel_1.0.8     
@@ -162,7 +141,7 @@ sessionInfo()
 ## [25] gtools_3.4.1          htmltools_0.2.6       impute_1.40.0        
 ## [28] IRanges_2.0.1         iterators_1.0.7       KernSmooth_2.23-13   
 ## [31] lattice_0.20-29       limma_3.22.4          MALDIquant_1.11      
-## [34] MASS_7.3-37           munsell_0.4.2         mzID_1.5.2           
+## [34] MASS_7.3-37           munsell_0.4.2         mzID_1.5.3           
 ## [37] pcaMethods_1.56.0     plyr_1.8.1            preprocessCore_1.28.0
 ## [40] proto_0.3-10          reshape2_1.4.1        rmarkdown_0.5.3.2    
 ## [43] RSQLite_1.0.0         S4Vectors_0.4.0       scales_0.2.4         
