@@ -12,7 +12,7 @@ Description: A collection of customized functions used for
         convienient nested linear models, machine learning utilities, etc. 
 License: Beerware
 Depends:
-Imports: parallel
+Imports: parallel, Biostrings, MSnbase
 VignetteBuilder: knitr
 Suggests: knitr
 

@@ -18,6 +18,7 @@
 #'          \item{\code{F.stat}}{F statistic}
 #'          \item{\code{p.value}}{p-value}
 #'      }
+#' @importFrom Biobase exprs pData featureNames
 #' @export eset_lm
 #' 
 eset_lm <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL) 
