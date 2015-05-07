@@ -56,7 +56,11 @@ eset_lm <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL)
 
 
 lm_for_one <- function(ints, form.alt, form.nul, facs, off) {
+    #
     data <- data.frame(y = ints, facs, off)
+    selected.rows <- rownames(model.frame(as.formula(form.alt), data=data))
+    data <- data[selected.rows,]
+    #
     mod.alt <- lm(as.formula(form.alt), offset = off, data = data)
     mod.nul <- lm(as.formula(form.nul), offset = off, data = data)
     anstat  <- anova(mod.alt, mod.nul, test = "F")
