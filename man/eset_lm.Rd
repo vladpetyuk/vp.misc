@@ -37,13 +37,14 @@ data.frame
 \description{
 A function for analysis of sigfinicance of factors (akin ANOVA)
 or continuous variable (regression) using nested linear models.
-The function modelled after `msmsTests::msms.glm.qlll`
+Shuffling-based FDR estimation is available as an option.
 }
 \examples{
 data(srm_msnset)
 head(varLabels(msnset))
 out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1")
 head(out)
+# now with shuffling
 out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1", N = 100)
 head(out)
 head(out[order(out$p.value),])
