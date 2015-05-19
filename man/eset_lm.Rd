@@ -4,7 +4,7 @@
 \alias{eset_lm}
 \title{Nested Linear Model Analysis}
 \usage{
-eset_lm(eset, form.alt, form.nul, facs = NULL, norm.coef = NULL)
+eset_lm(eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N = NULL)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -18,6 +18,12 @@ If NULL, then pData(eset) will be used.}
 
 \item{norm.coef}{vector with sample-to-sample normalization
 coefficients in log2 scale.}
+
+\item{N}{number of shuffles for FDR estimation. Default is NULL, that is
+         no shuffling-based FDR estimation. Warning! Will be N-times slower.
+         This is critical for Windows, since paralellization is not impletemted.
+         In case of enabling shuffling-based FDR estimation,
+         the recommended value is at least N=1000.}
 }
 \value{
 data.frame
@@ -32,5 +38,14 @@ data.frame
 A function for analysis of sigfinicance of factors (akin ANOVA)
 or continuous variable (regression) using nested linear models.
 The function modelled after `msmsTests::msms.glm.qlll`
+}
+\examples{
+data(srm_msnset)
+head(varLabels(msnset))
+out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1")
+head(out)
+out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1", N = 100)
+head(out)
+head(out[order(out$p.value),])
 }
 
