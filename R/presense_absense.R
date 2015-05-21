@@ -9,7 +9,7 @@
 #' 
 #' @param eset eset (or most likely eset subclass) object
 #' @param grouping character defining the column in phenoData
-#' @param test character: Fisher exact test, \chi^2, G-test or binomial.
+#' @param test character: Fisher exact test, \eqn{\chi^{2}}{\chi^2}, G-test or binomial.
 #' @param ... other aruments to pass to the test functions 
 #'              (e.g. simulate.p.value = TRUE)
 #' @return data.frame
@@ -34,7 +34,7 @@
 #' fd <- data.frame(otherfdata = letters[1:Npep])
 #' x0 <- MSnSet(M, fd, pd)
 #' eset_presence_absence(x0, 'group', test='fisher')
-#' eset_presence_absence(x0, 'group', test='chisq', simulate.p.value=T)
+#' eset_presence_absence(x0, 'group', test='chisq', simulate.p.value=TRUE)
 #' eset_presence_absence(x0, 'group', test='g')
 #' eset_presence_absence(x0, 'group', test='binom')
 #' 
@@ -71,7 +71,7 @@ eset_presence_absence <- function(eset,
     est <- sweep(pc, 2, N, '/')
     colnames(est) <- levels(grouping)
     if(nlevels(grouping) > 2)
-        effect <- abs(rowMax(est) - rowMin(est))
+        effect <- abs(Biobase::rowMax(est) - Biobase::rowMin(est))
     if(nlevels(grouping) == 2)
         effect <- est[,2] - est[,1]
     out <- data.frame(p.value=out, effect=effect, est)
