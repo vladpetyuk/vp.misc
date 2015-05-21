@@ -110,7 +110,7 @@ eset_lm_shuffled <- function(eset, form.alt, form.nul,
     trufls <- sapply(res$p.value, function(x) sum(res$p.value <= x))  # T + F
     fls <- rowSums(sh.res.mat)/N  # F
     res$fdr.sh <- fls/trufls
-    res$fdr.sh[out$fdr.sh > 1] <- 1
+    res$fdr.sh[res$fdr.sh > 1] <- 1
     rownames(res) <- featureNames(eset)
     return(res)
 }
