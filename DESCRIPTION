@@ -11,8 +11,9 @@ Description: A collection of customized functions used for
         The package contains customized heatmaps, coloschemes, 
         convienient nested linear models, machine learning utilities, etc. 
 License: Beerware
-Depends:
-Imports: parallel, Biostrings, MSnbase
+Depends: R (>= 2.10), MSnbase
+Imports: parallel, Biostrings, Boruta, ROCR, doParallel, plyr, gplots,
+         foreach, glmnet, iterators, randomForest, varSelRF, Biobase, Heatplus
 VignetteBuilder: knitr
 Suggests: knitr
 
