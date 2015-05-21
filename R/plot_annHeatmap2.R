@@ -15,8 +15,8 @@
 
 plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...) 
 {
-    doRClusLab = !is.null(x$cluster$Row$label)
-    doCClusLab = !is.null(x$cluster$Col$label)
+    doRClusLab = !is.null(x$cluster$Row$labels)
+    doCClusLab = !is.null(x$cluster$Col$labels)
     omar = rep(0, 4)
     if (doRClusLab) 
         omar[1] = 2
@@ -89,7 +89,7 @@ plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
         else {
             par(mar = c(mmar[1] + 2, 2, mmar[3] + 2, 2))
         }
-        doLegend(x$data$breaks, col = x$data$col, x$layout$legend.side)
+        Heatplus::doLegend(x$data$breaks, col = x$data$col, x$layout$legend.side)
     }
     invisible(x)
 }
@@ -102,7 +102,7 @@ picketPlot2 <- function (x, grp = NULL, grpcol, grplabel = NULL,
 {
     cc = Heatplus:::picketPlotControl()
     cc[names(control)] = control
-    x = convAnnData(x, asIs = asIs)
+    x = Heatplus::convAnnData(x, asIs = asIs)
     nsamp = nrow(x)
     npanel = ncol(x)
     bpanel = apply(x, 2, function(y) all(y[is.finite(y)] %in% 
@@ -122,7 +122,7 @@ picketPlot2 <- function (x, grp = NULL, grpcol, grplabel = NULL,
         grp0 = cbind(grpcoord[1:gg], rep(0, gg))
         grp1 = cbind(grpcoord[2:(gg + 1)], rep(totalh, gg))
         if (missing(grpcol)) {
-            grpcol = RainbowPastel
+            grpcol = Heatplus::RainbowPastel
         }
         if (is.function(grpcol)) 
             grpcol = grpcol(gg)
@@ -225,17 +225,17 @@ picketPlot2 <- function (x, grp = NULL, grpcol, grplabel = NULL,
             if ((cc$degree > 0) & (cc$span > 0)) {
                 with(panels[[i]], lines(smo[, 1], smo[, 2]))
             }
-            with(panels[[i]], axis(covaxis, at = axcc, label = axlab, las=2))
+            with(panels[[i]], axis(covaxis, at = axcc, labels = axlab, las=2))
         }
         if (!is.null(panels[[i]]$label)) {
-            axis(labaxis, at = panels[[i]]$labcc, label = panels[[i]]$label, 
+            axis(labaxis, at = panels[[i]]$labcc, labels = panels[[i]]$label, 
                  las = las, tick = FALSE, font = 2, col = par("bg"), 
                  col.axis = par("fg"))
         }
     }
     if (!is.null(grp) & !is.null(grplabel)) {
-        axis(grpaxis, grpcoord, label = FALSE, tcl = -1.5)
-        axis(grpaxis, mids, label = grplabel, font = 2, cex.axis = cc$cex.label, 
+        axis(grpaxis, grpcoord, labels = FALSE, tcl = -1.5)
+        axis(grpaxis, mids, labels = grplabel, font = 2, cex.axis = cc$cex.label, 
              tick = FALSE)
     }
     invisible(panels)
