@@ -160,10 +160,11 @@ loocv_onethread <- function(response, dSet, features, select){
 #' # reduce to two classes
 #' msnset <- msnset[,msnset$subject.type != "control.1"]
 #' msnset$subject.type <- as.factor(msnset$subject.type)
+#' # Note, par.backend="none" is for the example only.
 #' out <- lr_modeling(msnset, 
 #'                    features=featureNames(msnset), 
 #'                    response="subject.type", 
-#'                    pred.cls="case")
+#'                    pred.cls="case", par.backend="none")
 #' plotAUC(out)
 #' # top features consistently recurring in the models during LOOCV
 #' print(out$top)
