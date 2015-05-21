@@ -7,6 +7,14 @@
 dist(x, method = "euclidean", na.avg = FALSE, ...)
 }
 \arguments{
+\item{x}{a numeric matrix}
+
+\item{method}{the distance measure to be used.
+This must be one of "euclidean", "maximum", "manhattan",
+                    "canberra", "binary", "minkowski",
+                    "pearson", "kendall", "spearman".
+Any unambiguous substring can be given.}
+
 \item{na.avg}{logical if yes, then NA distance will
 be imputed with average distance
 value. Default is FALSE.}

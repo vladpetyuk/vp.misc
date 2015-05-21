@@ -10,6 +10,12 @@
 #' default settings are such that it performs equivalently
 #' to the aforementioned one.
 #' 
+#' @param x a numeric matrix
+#' @param method the distance measure to be used. 
+#'          This must be one of "euclidean", "maximum", "manhattan", 
+#'                              "canberra", "binary", "minkowski",
+#'                              "pearson", "kendall", "spearman".
+#'          Any unambiguous substring can be given.
 #' @param na.avg logical if yes, then NA distance will 
 #'                      be imputed with average distance
 #'                      value. Default is FALSE.
