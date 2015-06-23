@@ -12,6 +12,8 @@
 #'          
 #' @return MSnSet object with concatenated features
 #' 
+#' @seealso \code{\link[Biobase]{combine}} and \code{\link[MSnbase]{combine}}
+#' 
 #' @importFrom Biobase pData featureNames exprs
 #' @importFrom MSnbase MSnSet
 #'

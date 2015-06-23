@@ -19,6 +19,7 @@
 #' 
 #' @export
 exhaustive_ratios <- function(m, INDEX=NULL){
+    m <- m[rev(order(featureNames(m))),]
     x <- exprs(m)
     if(is.null(INDEX)){
         fctrs <- factor(rep(1, nrow(m)))
@@ -69,6 +70,5 @@ exhaustive_ratios <- function(m, INDEX=NULL){
 # x <- eset_lm(m2, 
 #              "y ~ subject.type + match.group", 
 #              "y ~ match.group")
-
 
 

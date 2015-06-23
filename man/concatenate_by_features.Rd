@@ -34,4 +34,7 @@ m <- concatenate_by_features(msnset, msnset2, msnset3,
 dim(m)
 featureNames(m)
 }
+\seealso{
+\code{\link[Biobase]{combine}} and \code{\link[MSnbase]{combine}}
+}
 
