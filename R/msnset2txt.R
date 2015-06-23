@@ -9,22 +9,43 @@
 #' @param sig.dig number of significant digits in expression data.
 #'          Default is 3.
 #' 
-#' @export
-msnset2text <- function(m, prefix=NULL, sig.dig=3){
+#' @export msnset2txt
+#' 
+#' @examples 
+#' \dontrun{
+#' data(srm_msnset)
+#' msnset2txt(msnset)
+#' }
+msnset2txt <- function(m, prefix=NULL, sig.dig=3, drop=NULL){
     if(is.null(prefix)) 
         prefix <- deparse(substitute(m))
-    # take care of expression
+    #
     out.exprs <- signif(exprs(m), digits = sig.dig)
-    write.table(out.exprs, file = paste(prefix, "expression.txt", sep="_"),
-                quote = FALSE, sep = '\t', row.names = TRUE)
-    # take care of features
     out.features <- fData(m)
-    write.table(out.features, file = paste(prefix, "features.txt", sep="_"),
-                quote = FALSE, sep = '\t', row.names = TRUE)
-    # take care of phenotypes
     out.pheno <- pData(m)
-    write.table(out.pheno, file = paste(prefix, "samples.txt", sep="_"),
-                quote = FALSE, sep = '\t', row.names = TRUE)
+    #
+    if(is.null(drop)){
+        write.table(out.exprs, 
+                    file = paste(prefix, "expression.txt", sep="_"),
+                    quote = FALSE, sep = '\t', row.names = TRUE)
+        write.table(out.features, 
+                    file = paste(prefix, "features.txt", sep="_"),
+                    quote = FALSE, sep = '\t', row.names = TRUE)
+        write.table(out.pheno, 
+                    file = paste(prefix, "samples.txt", sep="_"),
+                    quote = FALSE, sep = '\t', row.names = TRUE)
+    }else if(drop == "samples"){
+        write.table(cbind(out.features, out.exprs), 
+                    file = paste(prefix, ".txt", sep=""), 
+                    quote = FALSE, sep = '\t', row.names = TRUE)
+    }else if(drop == "features"){
+        write.table(cbind(out.pheno, t(out.exprs)), 
+                    file = paste(prefix, ".txt", sep=""), 
+                    quote = FALSE, sep = '\t', row.names = TRUE)
+    }else{
+        message("invalid drop argument")
+    }
+    #
     invisible(NULL)
 }
 
