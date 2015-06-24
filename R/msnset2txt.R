@@ -27,21 +27,22 @@ msnset2txt <- function(m, prefix=NULL, sig.dig=3, drop=NULL){
     if(is.null(drop)){
         write.table(out.exprs, 
                     file = paste(prefix, "expression.txt", sep="_"),
-                    quote = FALSE, sep = '\t', row.names = TRUE)
+                    quote = FALSE, sep = '\t', row.names = TRUE, na='')
         write.table(out.features, 
                     file = paste(prefix, "features.txt", sep="_"),
-                    quote = FALSE, sep = '\t', row.names = TRUE)
+                    quote = FALSE, sep = '\t', row.names = TRUE, na='')
         write.table(out.pheno, 
                     file = paste(prefix, "samples.txt", sep="_"),
-                    quote = FALSE, sep = '\t', row.names = TRUE)
+                    quote = FALSE, sep = '\t', row.names = TRUE, na='')
     }else if(drop == "samples"){
         write.table(cbind(out.features, out.exprs), 
                     file = paste(prefix, ".txt", sep=""), 
-                    quote = FALSE, sep = '\t', row.names = TRUE)
+                    quote = FALSE, sep = '\t', row.names = TRUE, na='')
     }else if(drop == "features"){
         write.table(cbind(out.pheno, t(out.exprs)), 
                     file = paste(prefix, ".txt", sep=""), 
-                    quote = FALSE, sep = '\t', row.names = TRUE)
+                    quote = FALSE, sep = '\t', row.names = TRUE,
+                    col.names = NA, na='')
     }else{
         message("invalid drop argument")
     }
