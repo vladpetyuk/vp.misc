@@ -1,0 +1,104 @@
+Raw file	Experiment	Enzyme	Enzyme mode	Enzyme first search	Enzyme mode first search	Use enzyme first search	Variable modifications	Variable modifications first search	Use variable modifications first search	Multiplicity	Max. missed cleavages	Labels0	LC-MS run type	Time-dependent recalibration	MS	MS/MS	MS/MS Submitted	MS/MS Submitted (SIL)	MS/MS Submitted (ISO)	MS/MS Submitted (PEAK)	MS/MS Identified	MS/MS Identified (SIL)	MS/MS Identified (ISO)	MS/MS Identified (PEAK)	MS/MS Identified [%]	MS/MS Identified (SIL) [%]	MS/MS Identified (ISO) [%]	MS/MS Identified (PEAK) [%]	Peptide Sequences Identified	Peaks	Peaks Sequenced	Peaks Sequenced [%]	Peaks Repeatedly Sequenced	Peaks Repeatedly Sequenced [%]	Isotope Patterns	Isotope Patterns Sequenced	Isotope Patterns Sequenced (z>1)	Isotope Patterns Sequenced [%]	Isotope Patterns Sequenced (z>1) [%]	Isotope Patterns Repeatedly Sequenced	Isotope Patterns Repeatedly Sequenced [%]	Recalibrated	Av. Absolute Mass Deviation [ppm]	Mass Standard Deviation [ppm]	Av. Absolute Mass Deviation [mDa]	Mass Standard Deviation [mDa]	Label free norm param
+Lewy2_1Cs_2Nov13_Samwise_13-07-28	1Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6126	38287	40515	36059	0	4456	22455	22113	0	342	55.42	61.32	NaN	7.68	17528	1184990	37645	3.18	268	0.71	162440	35328	31460	21.75	22.38	669	1.89	+	0.66428	0.92147	0.50004	0.72053	
+Lewy2_1Ct1_2Nov13_Samwise_13-07-28	1Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5934	38697	40729	36665	0	4064	22752	22371	0	381	55.86	61.01	NaN	9.38	17722	1233634	38162	3.09	227	0.59	175787	36026	31876	20.49	20.97	573	1.59	+	0.67868	0.94912	0.50628	0.73624	
+Lewy2_1Ct2_2Nov13_Samwise_13-07-28	1Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5904	37963	39955	35971	0	3984	22663	22257	0	406	56.72	61.87	NaN	10.19	17887	1220870	37488	3.07	214	0.57	172690	35342	31465	20.47	21.05	581	1.64	+	0.66988	0.94018	0.49451	0.72101	
+Lewy2_2Cs_2Nov13_Samwise_13-07-28	2Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6180	37687	39928	35446	0	4482	22297	21914	0	383	55.84	61.82	NaN	8.55	17472	1208014	37067	3.07	247	0.67	165068	34780	30972	21.07	21.66	614	1.77	+	0.67359	0.94212	0.50091	0.72774	
+Lewy2_2Ct1_2Nov13_Samwise_13-07-28	2Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6018	37878	40062	35694	0	4368	22805	22402	0	403	56.92	62.76	NaN	9.23	17748	1186831	37268	3.14	224	0.6	163060	35045	31204	21.49	21.9	598	1.71	+	0.66683	0.9287	0.49508	0.7159	
+Lewy2_2Ct2_2Nov13_Samwise_13-07-28	2Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6114	37946	39952	35940	0	4012	22705	22323	0	382	56.83	62.11	NaN	9.52	17517	1208903	37368	3.09	270	0.72	166920	35237	31267	21.11	21.72	616	1.75	+	0.66507	0.93298	0.49672	0.72584	
+Lewy2_4Cs_2Nov13_Samwise_13-07-28	4Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6092	37984	40114	35854	0	4260	22431	22083	0	348	55.92	61.59	NaN	8.17	17397	1223869	37423	3.06	215	0.57	169254	35250	31391	20.83	21.45	556	1.58	+	0.67179	0.93863	0.49921	0.72395	
+Lewy2_4Ct1_2Nov13_Samwise_13-07-28	4Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6267	36702	38867	34537	0	4330	20779	20418	0	361	53.46	59.12	NaN	8.34	15956	1189749	36096	3.03	265	0.73	161783	33852	30128	20.92	21.74	622	1.84	+	0.68473	0.95759	0.50553	0.73747	
+Lewy2_4Ct2_2Nov13_Samwise_13-07-28	4Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5955	38341	40509	36173	0	4336	23320	22919	0	401	57.57	63.36	NaN	9.25	18143	1234602	37871	3.07	179	0.47	172172	35609	31739	20.68	21.26	537	1.51	+	0.67037	0.93713	0.49989	0.73151	
+Lewy2_5Cs_2Nov13_Samwise_13-07-28	5Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6135	37503	39652	35354	0	4298	21679	21305	0	374	54.67	60.26	NaN	8.7	16732	1197704	36929	3.08	233	0.63	165330	34696	30724	20.99	21.56	612	1.76	+	0.67902	0.95127	0.50447	0.73486	
+Lewy2_5Ct1_2Nov13_Samwise_13-07-28	5Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6052	37900	39935	35865	0	4070	23016	22667	0	349	57.63	63.2	NaN	8.57	18040	1192261	37407	3.14	200	0.53	165914	35240	31576	21.24	21.72	589	1.67	+	0.66463	0.93149	0.49059	0.71381	
+Lewy2_5Ct2_2Nov13_Samwise_13-07-28	5Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5990	38085	40251	35919	0	4332	23127	22752	0	375	57.46	63.34	NaN	8.66	17945	1220719	37537	3.07	200	0.53	167066	35303	31674	21.13	21.61	576	1.63	+	0.66016	0.92383	0.49123	0.71645	
+Lewy2_6Cs_2Nov13_Samwise_13-07-28	6Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6055	38446	40608	36284	0	4324	23194	22810	0	384	57.12	62.87	NaN	8.88	18100	1206067	37917	3.14	198	0.52	165759	35649	31819	21.51	21.93	586	1.64	+	0.65664	0.91904	0.48895	0.70863	
+Lewy2_6Ct1_2Nov13_Samwise_13-07-28	6Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6016	37930	40037	35823	0	4214	22544	22182	0	362	56.31	61.92	NaN	8.59	17390	1227964	37423	3.05	209	0.56	170844	35213	31235	20.61	21.13	576	1.64	+	0.67187	0.93522	0.4989	0.72356	
+Lewy2_6Ct2_2Nov13_Samwise_13-07-28	6Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6140	38060	40244	35876	0	4368	22866	22486	0	380	56.82	62.68	NaN	8.7	17695	1198265	37480	3.13	228	0.61	162948	35196	31425	21.6	22.01	632	1.8	+	0.66019	0.92479	0.49215	0.71613	
+Lewy2_7Cs_2Nov13_Samwise_13-07-28	7Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5968	38182	40222	36142	0	4080	22862	22471	0	391	56.84	62.17	NaN	9.58	17722	1216274	37676	3.1	200	0.53	170335	35532	31736	20.86	21.42	576	1.62	+	0.66317	0.93024	0.49179	0.71868	
+Lewy2_7Ct1_2Nov13_Samwise_13-07-28	7Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6092	37732	39871	35593	0	4278	21265	20919	0	346	53.33	58.77	NaN	8.09	16322	1200124	37184	3.1	222	0.6	167136	34984	30957	20.93	21.48	563	1.61	+	0.67837	0.95032	0.4997	0.72791	
+Lewy2_7Ct2_2Nov13_Samwise_13-07-28	7Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6055	37775	39804	35746	0	4058	22466	22090	0	376	56.44	61.8	NaN	9.27	17610	1240871	37279	3	206	0.55	171972	35099	31172	20.41	20.98	586	1.67	+	0.67264	0.9426	0.49457	0.72093	
+Lewy2_9Cs_2Nov13_Samwise_13-07-28	9Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6063	38630	40711	36549	0	4162	22409	22029	0	380	55.04	60.27	NaN	9.13	17017	1213597	38095	3.14	195	0.51	168726	35934	31851	21.3	21.8	571	1.59	+	0.66148	0.92566	0.49194	0.71583	
+Lewy2_9Ct1_2Nov13_Samwise_13-07-28	9Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6059	37604	39753	35455	0	4298	21531	21163	0	368	54.16	59.69	NaN	8.56	16731	1201650	37033	3.08	229	0.62	166059	34855	30952	20.99	21.61	558	1.6	+	0.66409	0.92413	0.49013	0.71158	
+Lewy2_9Ct2_2Nov13_Samwise_13-07-28	9Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5972	38734	40895	36573	0	4322	22573	22212	0	361	55.2	60.73	NaN	8.35	17348	1230358	38202	3.1	187	0.49	171889	35971	31870	20.93	21.43	545	1.52	+	0.65446	0.91696	0.48732	0.71181	
+Lewy2_10Cs_2Nov13_Samwise_13-07-28	10Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6032	37879	40010	35748	0	4262	22352	21989	0	363	55.87	61.51	NaN	8.52	17614	1216457	37342	3.07	208	0.56	166374	35144	31496	21.12	21.65	565	1.61	+	0.67478	0.94275	0.49984	0.72963	
+Lewy2_10Ct1_2Nov13_Samwise_13-07-28	10Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6033	38333	40538	36128	0	4410	23154	22774	0	380	57.12	63.04	NaN	8.62	18129	1220382	37767	3.09	204	0.54	168077	35535	31833	21.14	21.64	547	1.54	+	0.66234	0.92092	0.49332	0.71447	
+Lewy2_10Ct2_2Nov13_Samwise_13-07-28	10Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6114	38043	40136	35950	0	4186	22300	21959	0	341	55.56	61.08	NaN	8.15	17383	1229840	37507	3.05	198	0.53	168962	35398	31548	20.95	21.48	508	1.44	+	0.66687	0.93079	0.4964	0.72154	
+Lewy2_11Cs_2Nov13_Samwise_13-07-28	11Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6133	38181	40368	35994	0	4374	21956	21579	0	377	54.39	59.95	NaN	8.62	17127	1241625	37582	3.03	234	0.62	171137	35328	31304	20.64	21.25	619	1.75	+	0.66947	0.93419	0.50161	0.73284	
+Lewy2_11Ct1_2Nov13_Samwise_13-07-28	11Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6136	37898	40025	35771	0	4254	22009	21637	0	372	54.99	60.49	NaN	8.74	17180	1225679	37317	3.04	226	0.61	169261	35129	31322	20.75	21.4	573	1.63	+	0.66703	0.93182	0.49563	0.72183	
+Lewy2_11Ct2_2Nov13_Samwise_13-07-28	11Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6035	38369	40505	36233	0	4272	22350	21949	0	401	55.18	60.58	NaN	9.39	17337	1244381	37838	3.04	223	0.59	173097	35583	31577	20.56	21.15	597	1.68	+	0.66608	0.93648	0.49841	0.7311	
+Lewy2_12Cs_2Nov13_Samwise_13-07-28	12Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6263	37498	39685	35311	0	4374	20601	20232	0	369	51.91	57.3	NaN	8.44	16080	1199280	36853	3.07	285	0.77	164160	34583	30538	21.07	21.69	668	1.93	+	0.68218	0.94994	0.50755	0.73629	
+Lewy2_12Ct1_2Nov13_Samwise_13-07-28	12Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6156	37422	39603	35241	0	4362	21188	20796	0	392	53.5	59.01	NaN	8.99	16587	1207461	36803	3.05	256	0.7	165840	34541	30777	20.83	21.35	628	1.82	+	0.674	0.94247	0.4999	0.7281	
+Lewy2_12Ct2_2Nov13_Samwise_13-07-28	12Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6116	38211	40334	36088	0	4246	21974	21598	0	376	54.48	59.85	NaN	8.86	17075	1238776	37614	3.04	243	0.65	171218	35370	31398	20.66	21.21	655	1.85	+	0.67232	0.94258	0.50335	0.73373	
+Lewy2_13Cs_2Nov13_Samwise_13-07-28	13Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6174	38322	40488	36156	0	4332	21133	20765	0	368	52.2	57.43	NaN	8.49	16154	1192404	37620	3.15	326	0.87	163411	35324	30737	21.62	22.11	711	2.01	+	0.66985	0.92962	0.50463	0.73281	
+Lewy2_13Ct1_2Nov13_Samwise_13-07-28	13Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6064	37992	39991	35993	0	3998	22286	21891	0	395	55.73	60.82	NaN	9.88	17358	1238504	37460	3.02	240	0.64	171170	35311	31491	20.63	21.16	612	1.73	+	0.67049	0.93686	0.50025	0.73148	
+Lewy2_13Ct2_2Nov13_Samwise_13-07-28	13Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6103	37507	39666	35348	0	4318	21483	21106	0	377	54.16	59.71	NaN	8.73	16699	1222152	36897	3.02	242	0.66	168148	34705	30927	20.64	21.16	585	1.69	+	0.67683	0.94338	0.49946	0.72391	
+Lewy2_14Cs_2Nov13_Samwise_13-07-28	14Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6360	37822	40281	35363	0	4918	20782	20406	0	376	51.59	57.7	NaN	7.65	15544	1195483	36995	3.09	364	0.98	158987	34482	30056	21.69	22.18	789	2.29	+	0.67452	0.94083	0.5101	0.74538	
+Lewy2_14Ct1_2Nov13_Samwise_13-07-28	14Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6213	38174	40444	35904	0	4540	21968	21663	0	305	54.32	60.34	NaN	6.72	16696	1189980	37466	3.15	302	0.81	160123	35140	30911	21.95	22.47	683	1.94	+	0.66455	0.925	0.50189	0.72895	
+Lewy2_14Ct2_2Nov13_Samwise_13-07-28	14Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6125	38539	40769	36309	0	4460	21415	21100	0	315	52.53	58.11	NaN	7.06	16104	1219418	37904	3.11	280	0.74	167074	35527	31085	21.26	21.69	699	1.97	+	0.6644	0.93086	0.50223	0.73662	
+Lewy2_15Cs_2Nov13_Samwise_13-07-28	15Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6228	37400	39639	35161	0	4478	19187	18847	0	340	48.4	53.6	NaN	7.59	14869	1192170	36744	3.08	302	0.82	162918	34447	30243	21.14	21.59	634	1.84	+	0.6857	0.95466	0.50738	0.73479	
+Lewy2_15Ct1_2Nov13_Samwise_13-07-28	15Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6159	37619	39803	35435	0	4368	20152	19832	0	320	50.63	55.97	NaN	7.33	15500	1223872	37029	3.03	244	0.66	166866	34772	30666	20.84	21.37	594	1.71	+	0.66163	0.92898	0.49209	0.72135	
+Lewy2_15Ct2_2Nov13_Samwise_13-07-28	15Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6063	37904	40123	35685	0	4438	20636	20312	0	324	51.43	56.92	NaN	7.3	15643	1168778	37255	3.19	281	0.75	162550	34938	30705	21.49	21.93	651	1.86	+	0.66875	0.93442	0.50112	0.72874	
+Lewy2_16Cs_2Nov13_Samwise_13-07-28	16Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6058	38807	40944	36670	0	4274	22758	22391	0	367	55.58	61.06	NaN	8.59	17432	1201749	38145	3.17	239	0.63	165515	35926	31840	21.71	21.93	665	1.85	+	0.64688	0.90626	0.49027	0.71988	
+Lewy2_16Ct1_2Nov13_Samwise_13-07-28	16Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6116	38023	40183	35863	0	4320	21201	20809	0	392	52.76	58.02	NaN	9.07	16516	1223909	37444	3.06	250	0.67	168897	35134	31057	20.8	21.24	658	1.87	+	0.67553	0.94003	0.50474	0.73411	
+Lewy2_16Ct2_2Nov13_Samwise_13-07-28	16Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6075	37700	39785	35615	0	4170	20279	19942	0	337	50.97	55.99	NaN	8.08	15750	1199839	37121	3.09	243	0.65	166472	34951	30754	21	21.49	623	1.78	+	0.68115	0.94888	0.50346	0.73106	
+Lewy2_17Cs_2Nov13_Samwise_13-07-28	17Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6217	38032	40188	35876	0	4312	20678	20348	0	330	51.45	56.72	NaN	7.65	16042	1227658	37422	3.05	250	0.67	168139	35141	31026	20.9	21.37	656	1.87	+	0.68423	0.95065	0.5163	0.75235	
+Lewy2_17Ct1_2Nov13_Samwise_13-07-28	17Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6192	38052	40345	35759	0	4586	21128	20769	0	359	52.37	58.08	NaN	7.83	16201	1227889	37425	3.05	240	0.64	168464	35065	30980	20.81	21.29	626	1.79	+	0.67989	0.94695	0.51114	0.74294	
+Lewy2_17Ct2_2Nov13_Samwise_13-07-28	17Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5984	38224	40331	36117	0	4214	20673	20340	0	333	51.26	56.32	NaN	7.9	15722	1250113	37610	3.01	244	0.65	174305	35423	31276	20.32	20.68	613	1.73	+	0.68223	0.95114	0.51553	0.75058	
+Lewy2_18Cs_2Nov13_Samwise_13-07-28	18Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6048	37911	40088	35734	0	4354	20076	19719	0	357	50.08	55.18	NaN	8.2	15356	1246167	37265	2.99	267	0.72	173136	34994	30998	20.21	20.53	657	1.88	+	0.67605	0.94184	0.50773	0.73789	
+Lewy2_18Ct1_2Nov13_Samwise_13-07-28	18Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5844	38965	41048	36882	0	4166	22438	22107	0	331	54.66	59.94	NaN	7.95	17166	1270856	38424	3.02	207	0.54	178709	36234	32136	20.28	20.55	587	1.62	+	0.67653	0.94485	0.51587	0.7509	
+Lewy2_18Ct2_2Nov13_Samwise_13-07-28	18Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5913	37672	39774	35570	0	4204	20082	19750	0	332	50.49	55.52	NaN	7.9	15668	1225930	37128	3.03	255	0.69	173323	34885	31001	20.13	20.52	627	1.8	+	0.69584	0.9701	0.51854	0.75301	
+Lewy2_19Cs_2Nov13_Samwise_13-07-28	19Cs	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		5909	38008	40069	35947	0	4122	22227	21879	0	348	55.47	60.86	NaN	8.44	17215	1221167	37479	3.07	183	0.49	171017	35369	31679	20.68	21.02	534	1.51	+	0.67931	0.94584	0.50811	0.73549	
+Lewy2_19Ct1_2Nov13_Samwise_13-07-28	19Ct1	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6239	37352	39616	35088	0	4528	20751	20395	0	356	52.38	58.13	NaN	7.86	16213	1213361	36685	3.02	271	0.74	165359	34359	30711	20.78	21.26	666	1.94	+	0.6917	0.95787	0.51402	0.74137	
+Lewy2_19Ct2_2Nov13_Samwise_13-07-28	19Ct2	Trypsin/P	Specific			False	Acetyl (Protein N-term);Oxidation (M)		False	1	2		Standard		6087	38058	40212	35904	0	4308	22366	22038	0	328	55.62	61.38	NaN	7.61	17292	1213325	37495	3.09	221	0.59	168359	35259	31338	20.94	21.33	577	1.64	+	0.67282	0.9341	0.50502	0.73293	
+10Cs																													17614																		
+10Ct1																													18129																		
+10Ct2																													17383																		
+11Cs																													17127																		
+11Ct1																													17180																		
+11Ct2																													17337																		
+12Cs																													16080																		
+12Ct1																													16587																		
+12Ct2																													17075																		
+13Cs																													16154																		
+13Ct1																													17358																		
+13Ct2																													16699																		
+14Cs																													15544																		
+14Ct1																													16696																		
+14Ct2																													16104																		
+15Cs																													14869																		
+15Ct1																													15500																		
+15Ct2																													15643																		
+16Cs																													17432																		
+16Ct1																													16516																		
+16Ct2																													15750																		
+17Cs																													16042																		
+17Ct1																													16201																		
+17Ct2																													15722																		
+18Cs																													15356																		
+18Ct1																													17166																		
+18Ct2																													15668																		
+19Cs																													17215																		
+19Ct1																													16213																		
+19Ct2																													17292																		
+1Cs																													17528																		
+1Ct1																													17722																		
+1Ct2																													17887																		
+2Cs																													17472																		
+2Ct1																													17748																		
+2Ct2																													17517																		
+4Cs																													17397																		
+4Ct1																													15956																		
+4Ct2																													18143																		
+5Cs																													16732																		
+5Ct1																													18040																		
+5Ct2																													17945																		
+6Cs																													18100																		
+6Ct1																													17390																		
+6Ct2																													17695																		
+7Cs																													17722																		
+7Ct1																													16322																		
+7Ct2																													17610																		
+9Cs																													17017																		
+9Ct1																													16731																		
+9Ct2																													17348																		
+Total															310376	1937983	2047605	1828361	0	219244	1113322	1094808	0	18514	54.37	59.88	NaN	8.44	42121	62025921					8564220	1794138	1591903	20.95	21.45	31143	1.74		0.67122	0.93736	0.50068	0.72873	
