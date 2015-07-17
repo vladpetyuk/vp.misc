@@ -75,11 +75,27 @@ readMaxQuantProtGroups <- function(path){
     x <- plyr::ddply(.data = x, .variables = ~ feature.name,
                      .fun = function(d){d[which.max(d$iBAQ),]})
     
+    #.. get dataset names
+    fpath <- 
+        list.files(path = path, 
+                   pattern = "summary.txt",
+                   full.names = TRUE)
+    stopifnot(length(fpath) == 1)
+    smmr <- read.delim(fpath, check.names = FALSE, stringsAsFactors = FALSE)
+    warning("Asumming \"summary.txt\" file contains 2n+1 rows. 
+Where n is the number of datasets.
+Please double check.")
+    smmr <- smmr[seq_len((nrow(smmr)-1)/2),]
+    smmr <- data.frame(dataset.name = smmr[,"Raw file"],
+                       row.names = smmr[,"Experiment"],
+                       stringsAsFactors = FALSE)
+
     # to MSnSet
     x.exprs <- as.matrix(x[,quant.cols])
     x.exprs[x.exprs == 0] <- NA
     rownames(x.exprs) <- x$feature.name
     x.pdata <- data.frame(sample.name = colnames(x.exprs), 
+                          dataset.name = smmr[colnames(x.exprs),],
                           stringsAsFactors = FALSE)
     rownames(x.pdata) <- colnames(x.exprs)
     x.fdata <- x[,c(id.cols, ibac.col)]
@@ -90,5 +106,4 @@ readMaxQuantProtGroups <- function(path){
     if (validObject(ans)) 
         return(ans)
 }
-
 
