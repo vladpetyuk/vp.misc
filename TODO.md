@@ -5,3 +5,4 @@
 * add normalization based on PCA eigenvectors
 * .. add covariate removal (related to above)
 * add power analysis to LM
+* resolve conflict between outliers::outlier and randomForest::outlier
