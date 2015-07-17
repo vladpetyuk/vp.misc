@@ -5,7 +5,7 @@
 #' 
 #' @param eset eset (or most likely eset subclass) object
 #' @param phenotype character one of the \code{colnames(pData(eset))}
-#' @param show.ellipse logical determining to plot 95% CI based on 
+#' @param show.ellipse logical determining to plot 95\% CI based on 
 #'          Hotelling's T-test or not.
 #' @return plot
 #' @importFrom Biobase exprs pData

@@ -4,14 +4,14 @@
 \alias{plot_pca_v1}
 \title{PCA Plot}
 \usage{
-plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE)
+plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, names = FALSE)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
 
 \item{phenotype}{character one of the \code{colnames(pData(eset))}}
 
-\item{show.ellipse}{logical determining to plot 95% CI based on
+\item{show.ellipse}{logical determining to plot 95\% CI based on
 Hotelling's T-test or not.}
 }
 \value{
