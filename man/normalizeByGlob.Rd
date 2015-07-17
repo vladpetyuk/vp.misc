@@ -2,16 +2,26 @@
 % Please edit documentation in R/norm_by_global.R
 \name{normalizeByGlob}
 \alias{normalizeByGlob}
-\title{Normalization of SRM Data.}
+\title{Basic Normalization Routines}
 \usage{
-normalizeByGlob(m)
+normalizeByGlob(m, method = c("medpolish", "once"))
 }
 \arguments{
-\item{m}{MSnSet object}
+\item{m}{ExpresionSet or MSnSet object}
+
+\item{method}{character. "medpolish" - uses median polish algorithm.
+         "once" means just correct for median differences in the samples.
+         Note, doing it just "once" may de-center the features (rows).}
 }
 \description{
 Normalizes data based on assumption that on average peptide deviation
 is zero.  The approach is typically used for global shotgun proteomics
-data. Converts one MSnSet to another MSnSet. Uses median polish algorithm.
+data. Converts one MSnSet to another MSnSet.
+}
+\examples{
+data(srm_msnset)
+image_msnset(msnset)
+msnset2 <- normalizeByGlob(msnset)
+image_msnset(msnset2)
 }
 
