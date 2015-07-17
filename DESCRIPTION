@@ -13,7 +13,8 @@ Description: A collection of customized functions used for
 License: Beerware
 Depends: R (>= 2.10), MSnbase
 Imports: parallel, Biostrings, Boruta, ROCR, doParallel, plyr, gplots,
-         foreach, glmnet, iterators, randomForest, varSelRF, Biobase, Heatplus
+         foreach, glmnet, iterators, randomForest, varSelRF, Biobase, Heatplus,
+         ade4, made4, outliers, ggplot2
 VignetteBuilder: knitr
 Suggests: knitr
 

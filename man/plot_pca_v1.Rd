@@ -2,9 +2,15 @@
 % Please edit documentation in R/plot_pca.R
 \name{plot_pca_v1}
 \alias{plot_pca_v1}
+\alias{plot_pca_v2}
+\alias{plot_pca_v3}
 \title{PCA Plot}
 \usage{
-plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, names = FALSE)
+plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE)
+
+plot_pca_v2(eset, phenotype = NULL, names = FALSE)
+
+plot_pca_v3(eset, phenotype = NULL, ...)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -21,10 +27,21 @@ plot
 A convenience function for plotting PCA scatter plot
 for samples in ExpressionSet/MSnSet object.
 }
+\section{Functions}{
+\itemize{
+\item \code{plot_pca_v2}: 
+
+\item \code{plot_pca_v3}: 
+}}
 \examples{
 data(srm_msnset)
 plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = F)
 plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = T)
 plot_pca_v1(msnset)
+data(srm_msnset)
+plot_pca_v2(msnset, phenotype = "subject.type")
+plot_pca_v2(msnset)
+plot_pca_v3(msnset, type='pca', phenotype="subject.type")
+plot_pca_v3(msnset, type='coa', phenotype="subject.type")
 }
 
