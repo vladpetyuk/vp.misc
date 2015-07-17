@@ -6,8 +6,6 @@
 #' for rolling-up or combining any features according to a grouping
 #' factor.
 #' 
-#' 
-#' 
 #' @param msnset msnset (or most likely eset subclass) object
 #' @param rollBy character. A column name in pData(msnset)
 #' @param rollFun function for roll-up. "-" for log-transformed data, 
@@ -16,7 +14,7 @@
 #' 
 #' @return MSnSet object
 #' @importFrom Biobase exprs fData
-#' @importFrom outliers grubbs.test
+#' @importFrom outliers grubbs.test outlier
 #' @export rrollup
 #' 
 #' @examples
@@ -57,7 +55,8 @@ rrollup_a_feature_set <- function(mat, rollFun, verbose){
     # representing the set (protein) are not in line with other.
     maxVals <- apply(mat, 1, max, na.rm=TRUE)
     if(nrow(mat) > 2){
-        while(outliers::grubbs.test(maxVals)$p.value < 0.05){
+        while(grubbs.test(maxVals)$p.value < 0.05 &
+              sum(!is.na(maxVals)) > 2){
             i <- which(maxVals == outlier(maxVals))
             maxVals[i] <- NA
         }
