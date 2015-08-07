@@ -6,11 +6,15 @@
 #' @param model.str character formulation of the model (e.g. "~ a + b")
 #' @param coef.str character coefficient of interest. E.g. "a".
 #'              Either numeric or factor with 2 levels. 
+#' @param ... arguments for \code{\link[limma]{lmFit}}
 #' @return data.frame. Basically output of 
 #'      \code{\link[limma]{topTable}} function.
+#' @note limma_a_b is for either 2-factor ANOVA or linear regression.
+#'       limma_gen is a more generic version and will return results
+#'       for all the coefficients that match \code{coef.str} pattern.
 #' @importFrom Biobase exprs pData
 #' @importFrom limma lmFit topTable eBayes
-#' @export limma_a_b
+#' @export limma_a_b limma_gen
 #' @examples
 #' library("vp.misc")
 #' data("cptac_oca")
@@ -25,7 +29,7 @@
 #'                  coef.str = "PLATINUM.STATUS")
 #' head(res)
 
-limma_a_b <- function(eset, model.str, coef.str){
+limma_a_b <- function(eset, model.str, coef.str, ...){
     
     model.formula <- eval(parse(text=model.str), envir=pData(eset))
     design <- model.matrix( model.formula)
@@ -35,8 +39,25 @@ limma_a_b <- function(eset, model.str, coef.str){
         stop("Multiple matches for coefficient of interest!")
         stop("Most likely it is factor with > 2 levels.")
     }
+    
     eset <- eset[,as.numeric(rownames(design))]
-    fit <- lmFit(exprs(eset), design, method="robust", maxit=10000)
+    fit <- lmFit(exprs(eset), design, ...)
+    fit.smooth <- eBayes(fit)
+    sig <- topTable(fit.smooth, number=nrow(eset), 
+                    sort.by='none', coef=coef.str)
+    return(sig)
+}
+
+
+limma_gen <- function(eset, model.str, coef.str, ...){
+    
+    model.formula <- eval(parse(text=model.str), envir=pData(eset))
+    design <- model.matrix( model.formula)
+
+    coef.str <- grep(coef.str, colnames(design), value = TRUE)
+    
+    eset <- eset[,as.numeric(rownames(design))]
+    fit <- lmFit(exprs(eset), design, ...)
     fit.smooth <- eBayes(fit)
     sig <- topTable(fit.smooth, number=nrow(eset), 
                     sort.by='none', coef=coef.str)
