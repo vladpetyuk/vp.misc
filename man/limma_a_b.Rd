@@ -4,7 +4,7 @@
 \alias{limma_a_b}
 \title{Wrapper for Limma}
 \usage{
-limma_a_b(eset, model.str, coef.str)
+limma_a_b(eset, model.str, coef.str, ...)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -13,6 +13,8 @@ limma_a_b(eset, model.str, coef.str)
 
 \item{coef.str}{character coefficient of interest. E.g. "a".
 Either numeric or factor with 2 levels.}
+
+\item{...}{arguments for \code{\link[limma]{lmFit}}}
 }
 \value{
 data.frame. Basically output of
@@ -20,6 +22,11 @@ data.frame. Basically output of
 }
 \description{
 A convenience wrapper for limma
+}
+\note{
+limma_a_b is for either 2-factor ANOVA or linear regression.
+      limma_gen is a more generic version and will return results
+      for all the coefficients that match \code{coef.str} pattern.
 }
 \examples{
 library("vp.misc")

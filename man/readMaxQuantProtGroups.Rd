@@ -4,17 +4,23 @@
 \alias{readMaxQuantProtGroups}
 \title{Reading MaxQuant Output}
 \usage{
-readMaxQuantProtGroups(path)
+readMaxQuantProtGroups(path, quantType, verbose = 1)
 }
 \arguments{
 \item{path}{character path to the folder containing "proteinGroups.txt file".
 It should be in "{raw files folder}/combined/txt"}
+
+\item{quantType}{character Defines pattern what type of column to
+use for quantificaiton.
+E.g. "LFQ intensity" or "Ratio H/L normalized".}
+
+\item{verbose}{numeric controls the text output}
 }
 \value{
 \code{MSnSet} object
 }
 \description{
-Reads "proteinGroups.txt" output as MSnSet.
+Reads in "proteinGroups.txt" output (or its compressed version) as MSnSet.
 }
 \details{
 So far uses only LFQ data as quantitative data. As feature data, only first
@@ -24,11 +30,29 @@ the highest iBAQ value is returned.
 }
 \note{
 The "proteinGroups.txt" file can be compressed to save space.
+
+It looks like the convention for column naming in MaxQuant is
+      type of quantification followed by sample name separated by space.
+      E.g. "LFQ intensity Sample1" or "Ratio H/L normalized Control33".
+      In \code{quantType} you need to specify the full first component
+      in the name that defines the type of quantification.
+
+iBAQ option must be enabled in MaxQuant analysis because it is used
+      to resolve ambiguity between two proteins matching one gene.
 }
 \examples{
+# label-free data
 m <- readMaxQuantProtGroups(system.file("extdata/MaxQuant",
-                                         package="vp.misc"))
-library("vp.misc")
+                                         package="vp.misc"),
+                            quantType="LFQ intensity")
+exprs(m) <- log2(exprs(m))
+exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
+image_msnset(m)
+
+# O18/O16 data
+m <- readMaxQuantProtGroups(system.file("extdata/MaxQuant_O18",
+                                         package="vp.misc"),
+                            quantType="Ratio H/L normalized")
 exprs(m) <- log2(exprs(m))
 exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
 image_msnset(m)
