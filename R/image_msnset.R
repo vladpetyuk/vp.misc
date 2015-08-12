@@ -8,6 +8,7 @@
 #' @param facetBy character of pheno data column containing factor value.
 #'          Default is NULL.
 #' @param sOrderBy character of pheno data telling how to order samples
+#' @param fOrderBy character of feature data telling how to order features
 #' @param valRange number for the pseudocolor range from -valRange to +valRange.
 #'          Default is NULL. In that case the scale goes from 0.025 to 0.975
 #'          quantile.
@@ -21,7 +22,9 @@
 #' @export image_msnset
 #' 
 image_msnset <- function(m, valueName="value", facetBy=NULL, 
-                         sOrderBy=NULL, valRange=NULL){
+                         sOrderBy=NULL, 
+                         fOrderBy=NULL,
+                         valRange=NULL){
     
     # convertion to long format
     mlong <- melt(exprs(m),
@@ -47,6 +50,9 @@ image_msnset <- function(m, valueName="value", facetBy=NULL,
     
     if(!is.null(sOrderBy))
         x[['sample name']] <- reorder(x[['sample name']], x[[sOrderBy]])
+    
+    if(!is.null(fOrderBy))
+        x[['feature id']] <- reorder(x[['feature id']], x[[fOrderBy]])
     
     if(!is.null(facetBy)) x$facetBy <- x[[facetBy]]
 

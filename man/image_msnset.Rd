@@ -5,7 +5,7 @@
 \title{Visualize MSnSet}
 \usage{
 image_msnset(m, valueName = "value", facetBy = NULL, sOrderBy = NULL,
-  valRange = NULL)
+  fOrderBy = NULL, valRange = NULL)
 }
 \arguments{
 \item{m}{MSnSet object}
@@ -16,6 +16,8 @@ image_msnset(m, valueName = "value", facetBy = NULL, sOrderBy = NULL,
 Default is NULL.}
 
 \item{sOrderBy}{character of pheno data telling how to order samples}
+
+\item{fOrderBy}{character of feature data telling how to order features}
 
 \item{valRange}{number for the pseudocolor range from -valRange to +valRange.
 Default is NULL. In that case the scale goes from 0.025 to 0.975
