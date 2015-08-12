@@ -139,7 +139,6 @@ image_msnset_old <- function(m, valueName="value", facetBy=NULL,
     }
     if(!is.null(facetBy))
         p <- p + facet_grid( . ~ facetBy, scales='free', space='free')
-    plot(p)
     invisible(p)
 }
 
