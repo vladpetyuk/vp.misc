@@ -114,13 +114,16 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
                    full.names = TRUE)
     stopifnot(length(fpath) == 1)
     smmr <- read.delim(fpath, check.names = FALSE, stringsAsFactors = FALSE)
-    warning("Asumming \"summary.txt\" file contains 2n+1 rows.
+    warning("Asumming \"summary.txt\" file contains 2n+1 rows (excluding header).
 Where n is the number of datasets.
 Please double check.")
     smmr <- smmr[seq_len((nrow(smmr)-1)/2),]
     smmr <- data.frame(dataset.name = smmr[,"Raw file"],
                        row.names = smmr[,"Experiment"],
                        stringsAsFactors = FALSE)
+    # safety check to make sure there is nothing odd
+    # about the summary file. Experiment names should mutually match.
+    stopifnot(all.equal(rownames(smmr), quant.cols))
 
     # to MSnSet
     x.exprs <- as.matrix(x[,quant.cols])
