@@ -14,7 +14,8 @@ an object of class \code{"xtable"}
 }
 \description{
 The main customization pertains to alternating
-row shading. See \code{\link[xtable]{xtable}} for details.
+row shading. This one will work only in LaTeX-type documents.
+See \code{\link[xtable]{xtable}} for details.
 }
 \seealso{
 \code{\link[xtable]{xtable}}

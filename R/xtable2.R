@@ -7,9 +7,9 @@
 #'
 #' @param x typically a \code{data.frame}. 
 #' @return an object of class \code{"xtable"}
-#' @importFrom xtable xtable
+#' @importFrom xtable xtable print.xtable
 #' @seealso \code{\link[xtable]{xtable}}
-#' @name xtable2
+#' @export xtable2
 #' 
 xtable2 <- function(x, col.lab.rot=FALSE, ...){
     rws <- seq(1, (nrow(x)-1), by = 2)
@@ -23,9 +23,12 @@ xtable2 <- function(x, col.lab.rot=FALSE, ...){
         add.to.row$command <- c(cols, add.to.row$command)
         include.colnames = FALSE
     }
-    print(xtable(x),
-          booktabs = TRUE,
-          add.to.row = add.to.row,
-          include.colnames = include.colnames,
-          ...)
+    arg1 <- list(...)[intersect(names(formals(xtable)), names(list(...)))]
+    arg2 <- list(...)[intersect(names(formals(print.xtable)), names(list(...)))]
+    x <- do.call(xtable, c(list(x=x), arg1))
+    do.call(print.xtable, c(list(x=x, 
+                               booktabs = TRUE, 
+                               add.to.row = add.to.row,
+                               include.colnames = include.colnames), 
+                               arg2))
 }
