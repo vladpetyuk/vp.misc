@@ -49,12 +49,21 @@ limma_a_b <- function(eset, model.str, coef.str, ...){
 }
 
 
+#' @describeIn limma_a_b
 limma_gen <- function(eset, model.str, coef.str, ...){
     
     model.formula <- eval(parse(text=model.str), envir=pData(eset))
     design <- model.matrix( model.formula)
 
-    coef.str <- grep(coef.str, colnames(design), value = TRUE)
+    # this malfunctions if coefficient of interest coincided with
+    # suffix of some of the covariates. E.g. Plate and PlateCol.
+    # Testing for Plate is problematic
+    # coef.str <- grep(coef.str, colnames(design), value = TRUE)
+    
+    # a new way
+    idx <- which(names(attr(design, "contrast")) == coef.str)
+    idx <- attr(design, "assign") == idx
+    coef.str <- colnames(design)[idx]
     
     eset <- eset[,as.numeric(rownames(design))]
     fit <- lmFit(exprs(eset), design, ...)
