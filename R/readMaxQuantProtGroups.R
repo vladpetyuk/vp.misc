@@ -51,6 +51,27 @@
 readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     # no options in the current version
     # use genes for IDs
+    
+    #.. get dataset names
+    # dataset names are in the summary.txt
+    fpath <-
+        list.files(path = path,
+                   pattern = "summary.txt",
+                   full.names = TRUE)
+    stopifnot(length(fpath) == 1)
+    smmr <- read.delim(fpath, check.names = FALSE, stringsAsFactors = FALSE)
+    warning("Asumming \"summary.txt\" file contains 2n+1 rows (excluding header).
+            Where n is the number of datasets.
+            Please double check.")
+    smmr <- smmr[seq_len((nrow(smmr)-1)/2),]
+    smmr <- data.frame(dataset.name = smmr[,"Raw file"],
+                       row.names = smmr[,"Experiment"],
+                       stringsAsFactors = FALSE)
+    # safety check to make sure there is nothing odd
+    # about the summary file. Experiment names should mutually match.
+    # stopifnot(all.equal(rownames(smmr), quant.cols))
+    
+    
 
     # fpath <- file.path(path, "proteinGroups.txt")
     # I assume the file can be compressed for the sake of space
@@ -85,7 +106,10 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
                        # that ".+" is pretty much a hack to ensure that 
                        # I do not read in columns that have nothing to do 
                        # with samples
-    quant.cols <- grep(paste("^",quantType,".+",sep=''), colnames(x), value = TRUE)
+    quant.cols <- paste(quantType, rownames(smmr), sep=' ')
+    # safety check
+    stopifnot(all(quant.cols %in% colnames(x)))
+    # quant.cols <- grep(paste("^",quantType,".+",sep=''), colnames(x), value = TRUE)
     x <- x[,c(id.cols, ibac.col, quant.cols)]
 
     # trim the quant.cols name and retain only sample names
@@ -106,24 +130,7 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     x <- plyr::ddply(.data = x, .variables = ~ feature.name,
                      .fun = function(d){d[which.max(d$iBAQ),]})
 
-    #.. get dataset names
-    # dataset names are in the summary.txt
-    fpath <-
-        list.files(path = path,
-                   pattern = "summary.txt",
-                   full.names = TRUE)
-    stopifnot(length(fpath) == 1)
-    smmr <- read.delim(fpath, check.names = FALSE, stringsAsFactors = FALSE)
-    warning("Asumming \"summary.txt\" file contains 2n+1 rows (excluding header).
-Where n is the number of datasets.
-Please double check.")
-    smmr <- smmr[seq_len((nrow(smmr)-1)/2),]
-    smmr <- data.frame(dataset.name = smmr[,"Raw file"],
-                       row.names = smmr[,"Experiment"],
-                       stringsAsFactors = FALSE)
-    # safety check to make sure there is nothing odd
-    # about the summary file. Experiment names should mutually match.
-    stopifnot(all.equal(rownames(smmr), quant.cols))
+
 
     # to MSnSet
     x.exprs <- as.matrix(x[,quant.cols])
