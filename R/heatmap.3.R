@@ -7,6 +7,7 @@
 #' 
 #' @param x MSnSet object
 #' @param dist.fun distance function "eucledian" or"pearson"
+#' @param na.avg logical. Should NA distances be assigned just an average value?
 #' @param col.ramp color mapping function. default gplots::bluered
 #' @param z.transf logical perform Z-transform or not.
 #' @param breaks color key breaks
@@ -30,6 +31,7 @@
 
 heatmap.3 <- function( x, 
                        dist.fun=c("eucledian","pearson"),
+                       na.avg=TRUE,
                        col.ramp=bluered,
                        # column.factors=NULL,
                        z.transf=c(FALSE, TRUE),
@@ -67,15 +69,15 @@ heatmap.3 <- function( x,
     
     # selecting distance type
     dist.fun <- match.arg(dist.fun)
-    if(dist.fun == "eucledian"){
-        distfun=function(x, ...) dist(x, 
-                                      method = "euclidean", 
-                                      ...)
-    }else if(dist.fun == "pearson"){
-        distfun=function(x) as.dist((1-cor( t(x), 
-                                            method="pearson",
-                                            use="pairwise.complete.obs" ))/2)
-    }
+#     if(dist.fun == "eucledian"){
+#         distfun=function(x, ...) dist(x, 
+#                                       method = "euclidean", 
+#                                       ...)
+#     }else if(dist.fun == "pearson"){
+#         distfun=function(x) as.dist((1-cor( t(x), 
+#                                             method="pearson",
+#                                             use="pairwise.complete.obs" ))/2)
+#     }
     
     # heatmap itself
     linkage <- match.arg(linkage)
@@ -83,7 +85,9 @@ heatmap.3 <- function( x,
         heatmap.2(  as.matrix(x), 
                     trace="none", 
                     #                   dendrogram="row",
-                    distfun=distfun,
+                    distfun=function(xx, ...) {dist(xx,
+                                                    method=dist.fun,
+                                                    na.avg=na.avg)},
                     hclustfun=function(xx,...)
                     {hclust(xx,method=linkage,...)},
                     col=col.ramp(length(breaks)-1),
