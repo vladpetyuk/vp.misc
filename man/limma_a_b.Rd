@@ -2,9 +2,12 @@
 % Please edit documentation in R/limma_a_b.R
 \name{limma_a_b}
 \alias{limma_a_b}
+\alias{limma_gen}
 \title{Wrapper for Limma}
 \usage{
 limma_a_b(eset, model.str, coef.str, ...)
+
+limma_gen(eset, model.str, coef.str, ...)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -23,6 +26,10 @@ data.frame. Basically output of
 \description{
 A convenience wrapper for limma
 }
+\section{Functions}{
+\itemize{
+\item \code{limma_gen}: 
+}}
 \note{
 limma_a_b is for either 2-factor ANOVA or linear regression.
       limma_gen is a more generic version and will return results
