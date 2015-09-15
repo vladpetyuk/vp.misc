@@ -119,18 +119,24 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
 
     #
     #.. GENE LEVEL
-    # Let's get rid of "CON" "REV" and empty gene names, then check for redundancy.
-    not.con <- !grepl('CON__', x$`Majority protein IDs`)
+    # Let's get rid of ("CON" not anymore) "REV" and empty gene names, 
+    # then check for redundancy.
+    # not.con <- !grepl('CON__', x$`Majority protein IDs`)
     not.rev <- !grepl('REV__', x$`Majority protein IDs`)
     not.empty <- x$`Gene names` != ''
-    x <- x[not.con & not.rev & not.empty,]
+    # x <- x[not.con & not.rev & not.empty,]
+    x <- x[not.rev & not.empty,]
     gns <- sapply(strsplit(x$`Gene names`, split = ';'), '[', 1)
     x$feature.name <- gns
     # retain genes with higher iBAQ
     x <- plyr::ddply(.data = x, .variables = ~ feature.name,
                      .fun = function(d){d[which.max(d$iBAQ),]})
 
-
+    #.. Denote potential contaminants
+    contaminants <- grepl('CON__', x$`Majority protein IDs`)
+    x$`Majority protein IDs` <- sub('CON__','',x$`Majority protein IDs`)
+    x$isContaminant <- contaminants
+    id.cols <- c(id.cols, 'isContaminant')
 
     # to MSnSet
     x.exprs <- as.matrix(x[,quant.cols])
