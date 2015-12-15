@@ -59,9 +59,7 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE){
 }
 
 
-# I don't like this way of combining
-#
-#' @describeIn plot_pca_v1
+#' @describeIn plot_pca_v1 Alternative PCA
 #' @importFrom pcaMethods pca
 #' @importFrom RColorBrewer "brewer.pal"
 #' @export plot_pca_v2
@@ -97,22 +95,22 @@ plot_pca_v2 <- function(eset, phenotype=NULL, names=FALSE){
     grid()
 }
 
-# I don't like this way of combining
-#
-#' @describeIn plot_pca_v1
-#' @importFrom made4 ord plotarrays
-# ' @importFrom ade4 dudi.coa dudi.pca
-# ' @export plot_pca_v3
-#' @examples 
-#'
-#' plot_pca_v3(msnset, type='pca', phenotype="subject.type")
-#' plot_pca_v3(msnset, type='coa', phenotype="subject.type")
-
-plot_pca_v3 <- function(eset, phenotype=NULL, ...){
-    phenotype <- as.factor(pData(eset)[[phenotype]])
-    ord.res <- ord(exprs(eset), classvec=phenotype, ...)
-    plotarrays(ord.res, ...)
-}
-
+# # I don't like this way of combining
+# #
+# #' @describeIn plot_pca_v1
+# #' @importFrom made4 ord plotarrays
+# # ' @importFrom ade4 dudi.coa dudi.pca
+# # ' @export plot_pca_v3
+# #' @examples 
+# #'
+# #' plot_pca_v3(msnset, type='pca', phenotype="subject.type")
+# #' plot_pca_v3(msnset, type='coa', phenotype="subject.type")
+# 
+# plot_pca_v3 <- function(eset, phenotype=NULL, ...){
+#     phenotype <- as.factor(pData(eset)[[phenotype]])
+#     ord.res <- ord(exprs(eset), classvec=phenotype, ...)
+#     plotarrays(ord.res, ...)
+# }
+# 
 
 

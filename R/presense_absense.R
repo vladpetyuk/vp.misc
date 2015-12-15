@@ -22,6 +22,7 @@
 #'          \item{\code{...}}{proportions of present for each group. 
 #'                              Column names are level names.}
 #'      }
+#' @note see also \url{http://www.ncbi.nlm.nih.gov/pubmed/20831241}
 #' @importFrom Biobase exprs pData featureNames
 #' @export eset_presence_absence
 #' 

@@ -6,7 +6,7 @@
 #' Customized Heatmap. TO FILL WHAT EXACTLY IS CUSTOM ABOUT IT.
 #' 
 #' @param x MSnSet object
-#' @param dist.fun distance function "eucledian" or"pearson"
+#' @param dist.fun distance function "euclidean" or"pearson"
 #' @param na.avg logical. Should NA distances be assigned just an average value?
 #' @param col.ramp color mapping function. default gplots::bluered
 #' @param z.transf logical perform Z-transform or not.
@@ -30,7 +30,7 @@
 #'           RowSideColors=clrz[as.factor(pData(msnset)$match.group)])
 
 heatmap.3 <- function( x, 
-                       dist.fun=c("eucledian","pearson"),
+                       dist.fun=c("euclidean","pearson"),
                        na.avg=TRUE,
                        col.ramp=bluered,
                        # column.factors=NULL,
@@ -69,7 +69,7 @@ heatmap.3 <- function( x,
     
     # selecting distance type
     dist.fun <- match.arg(dist.fun)
-#     if(dist.fun == "eucledian"){
+#     if(dist.fun == "euclidean"){
 #         distfun=function(x, ...) dist(x, 
 #                                       method = "euclidean", 
 #                                       ...)

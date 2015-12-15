@@ -11,6 +11,7 @@
 #'          significance threshold or NULL (default)
 #' @param top_n_names number of top significant features 
 #'          to show the names (default 5)
+#' @param scale_xy numeric controls the spread on x vs y axis. Default 1.
 #' @param rep.fact see \code{\link[FField]{FFieldPtRep}} for details. 
 #'          Default here is 500.
 #' @param adj.lmt see \code{\link[FField]{FFieldPtRep}} for details. 
@@ -58,6 +59,7 @@ volcano_plot <- function(logFC,
                          feature_names=NULL, 
                          threshold = NULL, 
                          top_n_names=5, 
+                         scale_xy = 1,
                          rep.fact=500, adj.lmt=3, adj.max=40){
     
     # for y scale transform
@@ -88,9 +90,9 @@ volcano_plot <- function(logFC,
         p <- p + geom_hline(yintercept=threshold, col='red', linetype='dashed')
     
     # showing names of top
-    scale_to <- function(x){
-        x <- x - min(x, na.rm=TRUE)
-        x <- x/max(x, na.rm=TRUE)
+    scale_to <- function(x, x.o){
+        x <- x - min(x.o, na.rm=TRUE)
+        x <- x / (max(x.o, na.rm=T) - min(x.o, na.rm=T))
         return(x)
     }
     scale_from <- function(x.t, x.o){
@@ -106,21 +108,25 @@ volcano_plot <- function(logFC,
                                 y=significance[i], 
                                 lbl=as.character(feature_names[i]))
         # fixing crowding with FField::FFieldPtRep
-        xt <- scale_to(res_names$x)*100
-        yt <- scale_to(-log10(res_names$y))*100
+        xt <- scale_to(res_names$x, logFC)*100*scale_xy
+        yt <- scale_to(-log10(res_names$y), -log10(significance))*100
         coords <- FFieldPtRep(cbind(xt,yt), 
                               rep.fact=rep.fact, 
                               adj.lmt=adj.lmt, 
                               adj.max=adj.max)/100
-        res_names$xff <- scale_from(coords$x, res_names$x)
-        res_names$yff <- 10^(-scale_from(coords$y, -log10(res_names$y)))
+        coords$x <- coords$x/scale_xy
+        res_names$xff <- scale_from(coords$x, logFC)
+        res_names$yff <- 10^(-scale_from(coords$y, -log10(significance)))
         # end of fixing crowding
+        p <- 
         p + geom_point(mapping=aes(x=x, y=y), data=res_names, color='red') +
             geom_text(mapping=aes(x=xff, y=yff, label=lbl), data=res_names) +
             geom_segment(mapping=aes(x=x, y=y, xend=xff, yend=yff), 
-                         data=res_names, color='grey')
+                         data=res_names, color='grey') #+
+            #xlim(min(c(logFC, res_names$xff), max(log
         
     }
+    p
     
 }
 

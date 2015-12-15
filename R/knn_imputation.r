@@ -99,11 +99,21 @@ impute_one <- function(vec, neighborhood, K=10){
 plot_diagnostics <- function( vec, vec.imputed, knn.transformed ){
    #
    matplot( t(knn.transformed), type="b")
-   matlines( t(vec.imputed), type="b", lwd=5, col="black")
-   matpoints( t(vec), type="b", pch=19, cex=2, col="green")          
+   matlines( vec.imputed, type="b", lwd=5, col="black")
+   matpoints( vec, type="b", pch=19, cex=2, col="green")          
    vec.imputed.only = vec.imputed
    vec.imputed.only[!is.na(vec)] = NA
-   matpoints( t(vec.imputed.only), type="b", pch=19, cex=2, col="red")          
+   matpoints( vec.imputed.only, type="b", pch=19, cex=2, col="red")          
 }
 
+
+# plot_diagnostics <- function( vec, vec.imputed, knn.transformed ){
+#     #
+#     matplot( t(knn.transformed), type="b")
+#     matlines( t(vec.imputed), type="b", lwd=5, col="black")
+#     matpoints( t(vec), type="b", pch=19, cex=2, col="green")          
+#     vec.imputed.only = vec.imputed
+#     vec.imputed.only[!is.na(vec)] = NA
+#     matpoints( t(vec.imputed.only), type="b", pch=19, cex=2, col="red")          
+# }
 

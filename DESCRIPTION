@@ -5,16 +5,37 @@ Version: 0.1
 Date: 2015-03-24
 Author: Vladislav Petyuk
 Maintainer: Vladislav Petyuk <petyuk@gmail.com>
-Description: A collection of customized functions used for 
-        proteomics dataset analysis. The functions are geared towards using
-        MSnSet (or ExpressionSet) object as the key data container. 
-        The package contains customized heatmaps, coloschemes, 
-        convienient nested linear models, machine learning utilities, etc. 
+Description: A collection of customized functions used for
+    proteomics dataset analysis. The functions are geared towards using
+    MSnSet (or ExpressionSet) object as the key data container.
+    The package contains customized heatmaps, coloschemes,
+    convienient nested linear models, machine learning utilities, etc.
 License: Beerware
-Depends: R (>= 2.10), MSnbase
-Imports: parallel, Biostrings, Boruta, ROCR, doParallel, plyr, gplots,
-         foreach, glmnet, iterators, randomForest, varSelRF, Biobase, Heatplus,
-         ade4, made4, outliers, ggplot2, xtable, clusterProfiler
+Depends:
+    R (>= 2.10),
+    MSnbase
+Imports:
+    parallel,
+    Biostrings,
+    Boruta,
+    ROCR,
+    doParallel,
+    plyr,
+    gplots,
+    foreach,
+    glmnet,
+    iterators,
+    randomForest,
+    varSelRF,
+    Biobase,
+    Heatplus,
+    ade4,
+    made4,
+    outliers,
+    ggplot2,
+    xtable,
+    clusterProfiler
 VignetteBuilder: knitr
-Suggests: knitr
-
+Suggests:
+    knitr
+RoxygenNote: 5.0.1
