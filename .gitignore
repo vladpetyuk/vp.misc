@@ -3,3 +3,4 @@
 .RData
 vp.misc.Rproj
 .DS_Store
+*purgatory*
