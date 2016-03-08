@@ -84,7 +84,7 @@ volcano_plot <- function(logFC,
         scale_y_continuous(trans=log10_rev_trans, 
                            breaks=breaks, 
                            limits=c(1,min(breaks))) +
-        xlim(-max(range(logFC)),+max(range(logFC))) +
+        xlim(-max(abs(range(logFC))),+max(abs(range(logFC)))) +
         theme_bw()
     if(!is.null(threshold)) 
         p <- p + geom_hline(yintercept=threshold, col='red', linetype='dashed')
