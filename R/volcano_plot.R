@@ -12,12 +12,7 @@
 #' @param top_n_names number of top significant features 
 #'          to show the names (default 5)
 #' @param scale_xy numeric controls the spread on x vs y axis. Default 1.
-#' @param rep.fact see \code{\link[FField]{FFieldPtRep}} for details. 
-#'          Default here is 500.
-#' @param adj.lmt see \code{\link[FField]{FFieldPtRep}} for details. 
-#'          Default here is 3.
-#' @param adj.max see \code{\link[FField]{FFieldPtRep}} for details. 
-#'          Default here is 40.
+#' @param ... additional arguments passed to \code{\link[FField]{FFieldPtRep}} 
 #' @return plot
 #' @importFrom FField FFieldPtRep
 #' @importFrom scales trans_new log_breaks pretty_breaks
@@ -60,7 +55,8 @@ volcano_plot <- function(logFC,
                          threshold = NULL, 
                          top_n_names=5, 
                          scale_xy = 1,
-                         rep.fact=500, adj.lmt=3, adj.max=40){
+                         ...
+                         ){
     
     # for y scale transform
     log10_rev_trans <- trans_new(
@@ -73,19 +69,11 @@ volcano_plot <- function(logFC,
         domain = c(1e-100, Inf)
     )
     
-    # range on confidence
-    # will step like 1, 0.3, 0.1, 0.03, 0.01, ...
-    min_ = min(significance, na.rm = T)
-    breaks <-signif(10^(pretty_breaks()(0:floor(log10(min_)*2))/2),1)
-    
     res <- data.frame(logFC, significance)
     p <- ggplot(res, aes(x=logFC, y=significance)) +
         geom_point() + 
-        scale_y_continuous(trans=log10_rev_trans, 
-                           breaks=breaks, 
-                           limits=c(1,min(breaks))) +
-        xlim(-max(abs(range(logFC))),+max(abs(range(logFC)))) +
         theme_bw()
+    
     if(!is.null(threshold)) 
         p <- p + geom_hline(yintercept=threshold, col='red', linetype='dashed')
     
@@ -101,7 +89,7 @@ volcano_plot <- function(logFC,
         return(x.t)
     }
     if(!is.null(feature_names) & 
-       length(top_n_names) == 1 &
+       # length(top_n_names) == 1 &
        top_n_names > 0){
         i <- order(significance)[seq_len(top_n_names)]
         res_names <- data.frame(x=logFC[i], 
@@ -110,21 +98,44 @@ volcano_plot <- function(logFC,
         # fixing crowding with FField::FFieldPtRep
         xt <- scale_to(res_names$x, logFC)*100*scale_xy
         yt <- scale_to(-log10(res_names$y), -log10(significance))*100
-        coords <- FFieldPtRep(cbind(xt,yt), 
-                              rep.fact=rep.fact, 
-                              adj.lmt=adj.lmt, 
-                              adj.max=adj.max)/100
+        # jitter is necessary if the effect size of significances are equal
+        xt <- jitter(xt)
+        yt <- jitter(yt)
+        coords <- FFieldPtRep(cbind(xt,yt), ...)/100
         coords$x <- coords$x/scale_xy
         res_names$xff <- scale_from(coords$x, logFC)
         res_names$yff <- 10^(-scale_from(coords$y, -log10(significance)))
         # end of fixing crowding
-        p <- 
-        p + geom_point(mapping=aes(x=x, y=y), data=res_names, color='red') +
+        
+        # re-adjusting the limits and keep them symmetrical
+        # x axis
+        x_min <- min(c(min(logFC),res_names$xff))
+        x_max <- max(c(max(logFC),res_names$xff))
+        x_extreme <- max(abs(c(x_min, x_max)))
+        # y axis
+        y_min = min(c(significance, res_names$yff), na.rm = T)
+        breaks <-signif(10^(pretty_breaks()(0:floor(log10(y_min)*2))/2),1)
+        #
+        p <- p + 
+            geom_point(mapping=aes(x=x, y=y), data=res_names, color='red') +
             geom_text(mapping=aes(x=xff, y=yff, label=lbl), data=res_names) +
             geom_segment(mapping=aes(x=x, y=y, xend=xff, yend=yff), 
-                         data=res_names, color='grey') #+
-            #xlim(min(c(logFC, res_names$xff), max(log
+                         data=res_names, color='grey') +
+            scale_y_continuous(trans=log10_rev_trans,
+                               breaks=breaks,
+                               limits=c(1,min(breaks))) +
+            xlim(-x_extreme,+x_extreme)
         
+    }else{
+        # range on confidence 
+        # will step like 1, 0.3, 0.1, 0.03, 0.01, ...
+        y_min = min(significance, na.rm = T)
+        breaks <-signif(10^(pretty_breaks()(0:floor(log10(y_min)*2))/2),1)
+        p <- p +
+            scale_y_continuous(trans=log10_rev_trans, 
+                               breaks=breaks,
+                               limits=c(1,min(breaks))) +
+            xlim(-max(abs(range(logFC))),+max(abs(range(logFC))))
     }
     p
     

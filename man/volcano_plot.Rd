@@ -5,8 +5,7 @@
 \title{Volcano Plot}
 \usage{
 volcano_plot(logFC, significance, feature_names = NULL, threshold = NULL,
-  top_n_names = 5, scale_xy = 1, rep.fact = 500, adj.lmt = 3,
-  adj.max = 40)
+  top_n_names = 5, scale_xy = 1, ...)
 }
 \arguments{
 \item{logFC}{a numeric vector of log2 of fold change for each feature}
@@ -25,14 +24,7 @@ to show the names (default 5)}
 
 \item{scale_xy}{numeric controls the spread on x vs y axis. Default 1.}
 
-\item{rep.fact}{see \code{\link[FField]{FFieldPtRep}} for details. 
-Default here is 500.}
-
-\item{adj.lmt}{see \code{\link[FField]{FFieldPtRep}} for details. 
-Default here is 3.}
-
-\item{adj.max}{see \code{\link[FField]{FFieldPtRep}} for details. 
-Default here is 40.}
+\item{...}{additional arguments passed to \code{\link[FField]{FFieldPtRep}}}
 }
 \value{
 plot
