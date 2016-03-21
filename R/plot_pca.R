@@ -44,7 +44,7 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE){
     p <- 
     ggplot(ggdata) +
         geom_point(aes(x=PC1, y=PC2, color=factor(colorBy)), 
-                   size=5, shape=20, show_guide = TRUE) +
+                   size=5, shape=20, show.legend = TRUE) +
         coord_fixed() +
         guides(color=guide_legend(phenotype),
                fill=guide_legend(phenotype)) +
@@ -53,9 +53,9 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE){
         p <- p +
         stat_ellipse(aes(x=PC1, y=PC2, fill=factor(colorBy)),
                      geom="polygon", type="norm", 
-                     level=0.5, alpha=0.1, show_guide = TRUE)
+                     level=0.5, alpha=0.1, show.legend = TRUE)
     }
-    plot(p)
+    return(p)
 }
 
 
