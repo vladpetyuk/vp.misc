@@ -12,12 +12,7 @@
 #' @param top_n_names number of top significant features 
 #'          to show the names (default 5)
 #' @param scale_xy numeric controls the spread on x vs y axis. Default 1.
-#' @param rep.fact see \code{\link[FField]{FFieldPtRep}} for details. 
-#'          Default here is 500.
-#' @param adj.lmt see \code{\link[FField]{FFieldPtRep}} for details. 
-#'          Default here is 3.
-#' @param adj.max see \code{\link[FField]{FFieldPtRep}} for details. 
-#'          Default here is 40.
+#' @param ... additional arguments passed to \code{\link[FField]{FFieldPtRep}} 
 #' @return plot
 #' @importFrom FField FFieldPtRep
 #' @importFrom scales trans_new log_breaks pretty_breaks
@@ -60,7 +55,8 @@ volcano_plot <- function(logFC,
                          threshold = NULL, 
                          top_n_names=5, 
                          scale_xy = 1,
-                         rep.fact=500, adj.lmt=3, adj.max=40){
+                         ...
+                         ){
     
     # for y scale transform
     log10_rev_trans <- trans_new(
@@ -102,10 +98,10 @@ volcano_plot <- function(logFC,
         # fixing crowding with FField::FFieldPtRep
         xt <- scale_to(res_names$x, logFC)*100*scale_xy
         yt <- scale_to(-log10(res_names$y), -log10(significance))*100
-        coords <- FFieldPtRep(cbind(xt,yt), 
-                              rep.fact=rep.fact, 
-                              adj.lmt=adj.lmt, 
-                              adj.max=adj.max)/100
+        # jitter is necessary if the effect size of significances are equal
+        xt <- jitter(xt)
+        yt <- jitter(yt)
+        coords <- FFieldPtRep(cbind(xt,yt), ...)/100
         coords$x <- coords$x/scale_xy
         res_names$xff <- scale_from(coords$x, logFC)
         res_names$yff <- 10^(-scale_from(coords$y, -log10(significance)))
