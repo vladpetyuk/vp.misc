@@ -12,6 +12,7 @@
 #' @param valRange number for the pseudocolor range from -valRange to +valRange.
 #'          Default is NULL. In that case the scale goes from 0.025 to 0.975
 #'          quantile.
+#' @param maxNRows maximum number of rows to display. Default is 50.
 #' @importFrom reshape2 melt
 #' @importFrom ggplot2 ggplot geom_raster scale_fill_gradientn aes facet_grid
 #' @importFrom ggplot2 theme element_blank element_rect xlab ylab labs
@@ -21,10 +22,12 @@
 #' @importFrom grid unit
 #' @export image_msnset
 #' 
-image_msnset <- function(m, valueName="value", facetBy=NULL, 
+image_msnset <- function(m, valueName="value", 
+                         facetBy=NULL, 
                          sOrderBy=NULL, 
                          fOrderBy=NULL,
-                         valRange=NULL){
+                         valRange=NULL,
+                         maxNRows=50){
     
     # convertion to long format
     mlong <- melt(exprs(m),
@@ -72,7 +75,7 @@ image_msnset <- function(m, valueName="value", facetBy=NULL,
                                         size=1, colour = "black", fill=NA),
             legend.key.height = unit(2, "lines")
         )
-    if(nlevels(x$`feature id`) > 50) # todo: to be an argument
+    if(nlevels(x$`feature id`) > maxNRows)
     {
         p <- p + theme(axis.text.y = element_blank())
         p <- p + theme(axis.ticks.y = element_blank())
