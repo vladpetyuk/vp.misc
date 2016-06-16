@@ -5,7 +5,7 @@
 \title{Visualize MSnSet}
 \usage{
 image_msnset(m, valueName = "value", facetBy = NULL, sOrderBy = NULL,
-  fOrderBy = NULL, valRange = NULL)
+  fOrderBy = NULL, valRange = NULL, maxNRows = 50)
 }
 \arguments{
 \item{m}{MSnSet object}
@@ -22,6 +22,8 @@ Default is NULL.}
 \item{valRange}{number for the pseudocolor range from -valRange to +valRange.
 Default is NULL. In that case the scale goes from 0.025 to 0.975
 quantile.}
+
+\item{maxNRows}{maximum number of rows to display. Default is 50.}
 }
 \description{
 Visualize MSnSet

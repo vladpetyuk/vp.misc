@@ -63,7 +63,8 @@ image_msnset <- function(m, valueName="value",
         geom_raster() +
         scale_fill_gradientn(
             colours=bluered(100),
-            values = c(0, seq(qn01[1], qn01[2], length.out = 98), 1)) +
+            values = c(0, seq(qn01[1], qn01[2], length.out = 98), 1),
+            limits = c(-valRange,+valRange)) +
         # scale_fill_gradientn(colours=bluered(100)) +
         # scale_fill_gradient2(low="blue", high="red", na.value="black", name="") 
         theme(
