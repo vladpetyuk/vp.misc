@@ -8,6 +8,7 @@
 #'          start with this prefix. By default, the R object name.
 #' @param sig.dig number of significant digits in expression data.
 #'          Default is 3.
+#' @param drop currently either "features" or "samples"
 #' 
 #' @export msnset2txt
 #' 
@@ -37,7 +38,7 @@ msnset2txt <- function(m, prefix=NULL, sig.dig=3, drop=NULL){
     }else if(drop == "samples"){
         write.table(cbind(out.features, out.exprs), 
                     file = paste(prefix, ".txt", sep=""), 
-                    quote = FALSE, sep = '\t', row.names = TRUE, na='')
+                    quote = FALSE, sep = '\t', row.names = FALSE, na='')
     }else if(drop == "features"){
         write.table(cbind(out.pheno, t(out.exprs)), 
                     file = paste(prefix, ".txt", sep=""), 

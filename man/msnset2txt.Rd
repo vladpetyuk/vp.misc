@@ -14,6 +14,8 @@ start with this prefix. By default, the R object name.}
 
 \item{sig.dig}{number of significant digits in expression data.
 Default is 3.}
+
+\item{drop}{currently either "features" or "samples"}
 }
 \description{
 Writes MSnSet as three tables: expression, features and phenotypes.
