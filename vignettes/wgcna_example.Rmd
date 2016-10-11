@@ -1,0 +1,279 @@
+---
+title: "Example of WGCNA Analysis"
+subtitle: "Using Ovarian Cancer CPTAC Dataset as Example"
+output: 
+  BiocStyle::html_document: 
+    toc: true
+    number_sections: true
+---
+
+
+```{r setup, echo=FALSE}
+# set global chunk options
+library(knitr)
+opts_chunk$set(size='tiny')
+```
+
+# Purpose
+Example of WGCNA analysis. The package is available on [CRAN](https://cran.r-project.org/web/packages/WGCNA/index.html). The tutorial 
+available at [UCLA web-site](https://labs.genetics.ucla.edu/horvath/CoexpressionNetwork/Rpackages/WGCNA/). Here we use our own ovarian cancer CPTAC data set.
+
+# Loading
+## Libraries
+```{r init, message=FALSE, warning=FALSE, results='hide'}
+library(WGCNA)
+options(stringsAsFactors = FALSE)
+enableWGCNAThreads()
+disableWGCNAThreads() # on RStudio for some reason multithreading does not work
+library(vp.misc)
+```
+
+## Data as MSnSet object
+
+```{r data}
+data("cptac_oca")
+```
+
+WGCNA seems to be tolerant to missing values, but we subset the 
+data for the sake of faster computation.
+```{r data2}
+oca.set <- oca.set[complete.cases(exprs(oca.set)),]
+```
+
+
+
+# Selecting Transform Power
+Scanning powers to find the ones that produce scale-free topology. 
+```{r power_scan}
+powers = 1:20
+sft <- pickSoftThreshold(t(exprs(oca.set)),
+                         powerVector = powers,
+                         networkType = "signed",
+                         verbose = 0)
+```
+
+```{r plotting_power_scan, fig.width=8, fig.height=4, fig.align='center', out.width='800px'}
+par(mfrow = c(1,2))
+cex1 = 0.9
+plot(sft$fitIndices[,1],
+     -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+     xlab="Soft Threshold (power)",
+     ylab="Scale Free Topology Model Fit,signed R^2",type="n",
+     main = paste("Scale independence"))
+text(sft$fitIndices[,1],
+     -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+     labels=powers,cex=cex1,col="red")
+# this line corresponds to using an R^2 cut-off of h
+abline(h=0.90,col="red")
+# Mean connectivity as a function of the soft-thresholding power
+plot(sft$fitIndices[,1],
+     sft$fitIndices[,5],
+     xlab="Soft Threshold (power)",
+     ylab="Mean Connectivity",
+     type="n",
+     main = paste("Mean connectivity"))
+text(sft$fitIndices[,1],
+     sft$fitIndices[,5],
+     labels=powers,
+     cex=cex1,
+     col="red")
+```
+
+The lowest power that results in crossing in 0.9 threshold is 10. Therefore we'll
+set it as a final value.
+```{r soft_threshold}
+softPower = 10
+```
+
+
+# Clustering. First Round.
+The recommended type of correlation is signed. That way correlations +1
+and -1 will have different meaning. In case of unsigned correlation the 
+sign obviosly does not matter and genes with +1 correlation as close to 
+each other as -1 correlation. In case of (recommended) signed correlation
+the adjacency (or 1 - distance) is calculated as
+`adjacency = (0.5*(1+cor))^power`.
+```{r adjacency, cache=TRUE}
+adjacency.mat <- adjacency(t(exprs(oca.set)), power = softPower, type="signed")
+```
+The gene-gene adjacencies converted to topological overlap. This helps to 
+"smooth" correlation structure as it relies not only direct gene-gene 
+correlations, but also the correlations with genes that are connected in common.
+```{r topological_overlap}
+TOM <- TOMsimilarity(adjacency.mat, TOMType = "unsigned")
+```
+Finally adjacency or its analog, topological overlap, converted to distance.
+```{r to_distance}
+dissTOM = 1-TOM
+```
+Calling base R `hclust` function to perform hierarchical clustering.
+```{r clustering, cache=TRUE}
+geneTree <- hclust(as.dist(dissTOM), method = "average")
+```
+Plot the resulting clustering tree
+```{r plot_tree_1}
+plot(geneTree, xlab="", sub="", 
+     main = "Gene clustering on TOM-based dissimilarity",
+     labels = FALSE, hang = 0.04)
+```
+
+
+# Dynamic Tree Cut
+Cutting the tree to identify the modules.
+```{r dynamic_tree_cut}
+minModuleSize <- 20 # 20 is default
+dynamicMods <- cutreeDynamic(dendro = geneTree,
+                             distM = dissTOM,
+                             # deepSplit = 2, 
+                             # pamRespectsDendro = FALSE,
+                             # method= "tree",
+                             minClusterSize = minModuleSize)
+```
+
+
+# Coloring The Modules
+As it is evident from the commented code, it is possible to define coloring in
+multiple ways. It is practical to take advantage of WGCNA's `labels2colors`
+because they provide human-readable names to the modules. Although 
+leveraging `RColorBrewer` may provide better colors, however the names
+will be hex color codes, which makes invonvenient naming.
+```{r coloring_modules}
+# Convert numeric lables into colors
+library(RColorBrewer)
+# dynamicColors <- labels2colors(dynamicMods, colorSeq = brewer.pal(11,'Spectral'))
+# this `standardColors()` is a bit nicer as the colors come with names
+dynamicColors <- labels2colors(dynamicMods, colorSeq = standardColors())
+# Plot the dendrogram and colors underneath
+plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    main = "Gene dendrogram and module colors")
+```
+
+
+
+# Decision on Module Merger
+Modules can be merged if they are too similar. The similarity is quantified as 
+correlation between the eigengenes. Threshold for module merged visualized
+on the dendrogram.
+
+Calculating eigengenes.
+```{r calculating_eigengenes}
+MEList <- moduleEigengenes(t(exprs(oca.set)), colors = dynamicColors)
+MEs <- MEList$eigengenes
+```
+
+Calculate distances between module eigengenes. This is equivalent to 
+signed correlation distance. That is +1 correlation is zero distance or
+very similar modules, while -1 are the furthest modules possible.
+```{r module_distances}
+MEDiss <- 1 - cor(MEs)
+```
+
+Cluster module eigengenes to find out which are to be merged (assuming
+the distance is no larger then a predefined threshold).
+```{r eigengene_clustering}
+METree <- hclust(as.dist(MEDiss), method = "average")
+```
+
+Plot the cut line into the dendrogram.
+```{r plot_eigengene_clustering}
+plot(METree, main = "Clustering of module eigengenes",
+     xlab = "", sub = "")
+MEDissThres <- 0.5 # default value is 0.2. 0.5 here is for demo purpose
+abline(h=MEDissThres, col = "red")
+```
+
+
+# Module Merger
+Call an automatic merging function. The threshold is defined above 
+`MEDissThres = ` ``r MEDissThres``. These are going to be the final modules.
+```{r module_merge}
+merge <- mergeCloseModules(t(exprs(oca.set)),
+                           dynamicColors, 
+                           cutHeight = MEDissThres, 
+                           verbose = 3)
+moduleColors <- merge$colors
+```
+
+Show both original and merged modules.
+```{r showing_modules_after_merger}
+plotDendroAndColors(geneTree, cbind(dynamicColors, moduleColors),
+                    c("Dynamic Tree Cut", "Merged dynamic"),
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    marAll = c(1, 7, 3, 1))
+```
+
+Recalculating eigengenes.
+```{r recalc_eigengenes}
+MEs0 <- moduleEigengenes(t(exprs(oca.set)), moduleColors)$eigengenes
+MEs <- orderMEs(MEs0)
+```
+
+
+
+# Module-Trait Association
+
+Preparing traits data.
+```{r prepare_traits}
+datTraits <- pData(oca.set)[,grep('binary', varLabels(oca.set))]
+colnames(datTraits) <- sub('.binary','',colnames(datTraits))
+head(datTraits)
+```
+
+Calculating correlations and associated p-values.
+```{r calculating_correlations_pvalues}
+moduleTraitCor = cor(MEs, datTraits, use = "p");
+moduleTraitPvalue = corPvalueStudent(moduleTraitCor, ncol(oca.set));
+```
+
+Displaying correlations and their p-values as a heatmap.
+```{r trait_association_heatmap}
+textMatrix <-  paste(signif(moduleTraitCor, 2),
+                     "\n(",
+                     signif(moduleTraitPvalue, 1),
+                     ")", sep = "");
+textMatrix <- matrix(textMatrix, ncol = ncol(moduleTraitCor))
+par(mar = c(6, 8, 3, 2))
+labeledHeatmap(Matrix = moduleTraitCor,
+               xLabels = colnames(datTraits),
+               yLabels = names(MEs),
+               ySymbols = names(MEs),
+               colorLabels = FALSE,
+               # colors = greenWhiteRed(50),
+               colors = blueWhiteRed(50),
+               textMatrix = textMatrix,
+               setStdMargins = FALSE,
+               cex.text = 0.75,
+               zlim = c(-1,1),
+               main = paste("Module-Trait Association (p-value)"))
+```
+
+
+# Ontology Enrichment. Reactome.
+```{r ontology_enrichment, fig.height=8, fig.width=16, message=FALSE, warning=FALSE}
+# split by module color
+features <- sub('\\.\\d+','',featureNames(oca.set))
+clustList <- tapply(features, moduleColors, c)
+library(org.Hs.eg.db)
+clustList <- lapply(clustList, intersect, mappedRkeys(org.Hs.egREFSEQ2EG))
+clustEG <- lapply(clustList, function(x) sapply(as.list(org.Hs.egREFSEQ2EG[x]), `[`, 1))
+
+library(clusterProfiler)
+library(ReactomePA)
+xx <- compareCluster(clustEG, fun="enrichPathway",
+                     organism="human", pvalueCutoff=0.05,
+                     qvalueCutoff=0.05,
+                     pAdjustMethod="none",
+                     universe=unlist(clustEG))
+plot(xx, colorBy="qvalue")
+```
+
+```{r reactome_summary, message=FALSE, warning=FALSE}
+library(dplyr)
+head(summary(xx) %>% dplyr::select(-geneID)) %>% kable()
+```
+
+
+
