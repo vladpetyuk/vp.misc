@@ -110,37 +110,46 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     # safety check
     stopifnot(all(quant.cols %in% colnames(x)))
     # quant.cols <- grep(paste("^",quantType,".+",sep=''), colnames(x), value = TRUE)
-    cols_to_select <- c(id.cols, ibac.col, quant.cols)
     # now make sure all selected columns available
-    cols_missing <- setdiff(cols_to_select, colnames(x))
+    cols_missing <- setdiff(id.cols, colnames(x))
     if(length(cols_missing) > 0){
         # set off warning
         warn_msg <- paste(cols_missing, collapse = ', ')
         warn_msg <- sprintf('Missing columns: %s.', warn_msg)
         warning(warn_msg)
-        cols_to_select <- intersect(colnames(x), cols_to_select)
+        id.cols <- intersect(colnames(x), id.cols)
     }
-    x <- x[,cols_to_select]
+    x <- x[,c(id.cols, ibac.col, quant.cols)]
 
     # trim the quant.cols name and retain only sample names
     pref <- paste(quantType,"\\s+",sep="")
     colnames(x) <- sub(pref, '', colnames(x))
     quant.cols <- sub(pref, '', quant.cols)
 
+    
+    
     #
-    #.. GENE LEVEL
+    #.. SELECTING LEVEL: GENE OR PROTEIN
     # Let's get rid of ("CON" not anymore) "REV" and empty gene names, 
     # then check for redundancy.
     # not.con <- !grepl('CON__', x$`Majority protein IDs`)
     not.rev <- !grepl('REV__', x$`Majority protein IDs`)
-    not.empty <- x$`Gene names` != ''
-    # x <- x[not.con & not.rev & not.empty,]
-    x <- x[not.rev & not.empty,]
-    gns <- sapply(strsplit(x$`Gene names`, split = ';'), '[', 1)
-    x$feature.name <- gns
-    # retain genes with higher iBAQ
-    x <- plyr::ddply(.data = x, .variables = ~ feature.name,
-                     .fun = function(d){d[which.max(d$iBAQ),]})
+    x <- x[not.rev,]
+    if('Gene names' %in% id.cols){
+        not.empty <- x$`Gene names` != ''
+        x <- x[not.empty,]
+        gns <- sapply(strsplit(x$`Gene names`, split = ';'), '[', 1)
+        x$feature.name <- gns
+        # retain genes with higher iBAQ
+        x <- plyr::ddply(.data = x, .variables = ~ feature.name,
+                         .fun = function(d){d[which.max(d$iBAQ),]})
+    }else{
+        # stick with Majority protein IDs (universal)
+        mpids <- sapply(strsplit(x$`Majority protein IDs`, split = ';'), '[', 1)
+        x$feature.name <- mpids
+    }
+    
+    
 
     #.. Denote potential contaminants
     contaminants <- grepl('CON__', x$`Majority protein IDs`)
