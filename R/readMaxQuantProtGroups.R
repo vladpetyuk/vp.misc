@@ -110,7 +110,17 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     # safety check
     stopifnot(all(quant.cols %in% colnames(x)))
     # quant.cols <- grep(paste("^",quantType,".+",sep=''), colnames(x), value = TRUE)
-    x <- x[,c(id.cols, ibac.col, quant.cols)]
+    cols_to_select <- c(id.cols, ibac.col, quant.cols)
+    # now make sure all selected columns available
+    cols_missing <- setdiff(cols_to_select, colnames(x))
+    if(length(cols_missing) > 0){
+        # set off warning
+        warn_msg <- paste(cols_missing, collapse = ', ')
+        warn_msg <- sprintf('Missing columns: %s.', warn_msg)
+        warning(warn_msg)
+        cols_to_select <- intersect(colnames(x), cols_to_select)
+    }
+    x <- x[,cols_to_select]
 
     # trim the quant.cols name and retain only sample names
     pref <- paste(quantType,"\\s+",sep="")
