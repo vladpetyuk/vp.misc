@@ -40,16 +40,16 @@
 subset_by_size <- function(x, minObsSize=0, maxObsSize=Inf,
                            minSetSize=0, maxSetSize=Inf){
     # 
-    szo <- sapply(x@geneInCategory, length)
+    szo <- sapply(geneInCategory(x), length)
     idxo <- szo >= minObsSize & szo <= maxObsSize
     szs <- sapply(x@geneSets, length)
     idxs <- szs >= minSetSize & szs <= maxSetSize
-    selnames <- intersect(names(x@geneInCategory[idxo]),
+    selnames <- intersect(names(geneInCategory(x)[idxo]),
                           names(x@geneSets[idxs]))
     
     # the reason subsetting is done in this cumbersome way
     # is that I don't now if the order matters
-    x@geneInCategory <- x@geneInCategory[names(x@geneInCategory) %in% selnames]
+    # x@geneInCategory <- x@geneInCategory[names(x@geneInCategory) %in% selnames]
     x@geneSets <- x@geneSets[names(x@geneSets) %in% selnames]
     x@result <- x@result[rownames(x@result) %in% selnames,]
     
