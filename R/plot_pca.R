@@ -55,14 +55,15 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE){
         geom_point(aes(x=PC1, y=PC2, color=colorBy), 
                    size=5, shape=20, show.legend = TRUE) +
         coord_fixed() +
-        guides(color=guide_legend(phenotype),
-               fill=guide_legend(phenotype)) +
         theme_bw()
     if(show.ellispe){
         p <- p +
-        stat_ellipse(aes(x=PC1, y=PC2, fill=colorBy),
-                     geom="polygon", type="norm", 
-                     level=0.5, alpha=0.1, show.legend = TRUE)
+            stat_ellipse(aes(x=PC1, y=PC2, fill=colorBy),
+                         geom="polygon", type="norm", 
+                         level=0.5, alpha=0.1, show.legend = TRUE) +
+            guides(color=guide_legend(phenotype),
+                   fill=guide_legend(phenotype))
+            
     }
     return(p)
 }
