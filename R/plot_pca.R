@@ -9,6 +9,8 @@
 #'          unknown be shown? Default is TRUE
 #' @param show.ellipse logical determining to plot 95\% CI based on 
 #'          Hotelling's T-test or not.
+#' @param legend.width integer Wrapping up too long legend titles.
+#'          Passed to stringr::str_wrap as width argument. Default is 20.
 #' @return plot
 #' @importFrom Biobase exprs pData
 #' @importFrom ade4 "dudi.pca"
@@ -22,7 +24,7 @@
 #' plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = T)
 #' plot_pca_v1(msnset)
 
-plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE){
+plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE, legend.width=20){
     
     # handling coloring by phenotype
     if (!is.null(phenotype)) {
@@ -58,18 +60,19 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE){
         theme_bw()
     
     # Ugly engtanglement of if/else statements. Needs to be improved.
+    phenotype_str <- strwrap(phenotype, legend.width)
     if(show.ellispe){
         p <- p +
             stat_ellipse(aes(x=PC1, y=PC2, fill=colorBy),
                          geom="polygon", type="norm", 
                          level=0.5, alpha=0.1, show.legend = TRUE) +
-            guides(color=guide_legend(phenotype),
-                   fill=guide_legend(phenotype))
+            guides(color=guide_legend(phenotype_str),
+                   fill=guide_legend(phenotype_str))
     }else{
         if(is.numeric(colorBy)){
-            p <- p + guides(color=guide_colorbar(phenotype))
+            p <- p + guides(color=guide_colorbar(phenotype_str))
         } else if (colorBy != ""){
-            p <- p + guides(color=guide_legend(phenotype))
+            p <- p + guides(color=guide_legend(phenotype_str))
         }
     }
     return(p)

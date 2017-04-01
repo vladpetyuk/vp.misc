@@ -8,7 +8,7 @@ Maintainer: Vladislav Petyuk <petyuk@gmail.com>
 Description: A collection of customized functions used for
     proteomics dataset analysis. The functions are geared towards using
     MSnSet (or ExpressionSet) object as the key data container.
-    The package contains customized heatmaps, coloschemes,
+    The package contains customized heatmaps, colorschemes,
     convienient nested linear models, machine learning utilities, etc.
 License: Beerware
 Depends:
@@ -34,7 +34,8 @@ Imports:
     outliers,
     ggplot2,
     xtable,
-    clusterProfiler
+    clusterProfiler,
+    stringr
 VignetteBuilder: knitr
 Suggests:
     knitr
