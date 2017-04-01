@@ -34,7 +34,7 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE){
         }
     }
     else {
-        colorBy <- "1"
+        colorBy <- ""
         phenotype <- ""
         show.ellispe <- FALSE
     }
@@ -56,6 +56,8 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE){
                    size=5, shape=20, show.legend = TRUE) +
         coord_fixed() +
         theme_bw()
+    
+    # Ugly engtanglement of if/else statements. Needs to be improved.
     if(show.ellispe){
         p <- p +
             stat_ellipse(aes(x=PC1, y=PC2, fill=colorBy),
@@ -63,7 +65,12 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE){
                          level=0.5, alpha=0.1, show.legend = TRUE) +
             guides(color=guide_legend(phenotype),
                    fill=guide_legend(phenotype))
-            
+    }else{
+        if(is.numeric(colorBy)){
+            p <- p + guides(color=guide_colorbar(phenotype))
+        } else if (colorBy != ""){
+            p <- p + guides(color=guide_legend(phenotype))
+        }
     }
     return(p)
 }
