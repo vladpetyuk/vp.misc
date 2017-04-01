@@ -5,6 +5,8 @@
 #' 
 #' @param eset eset (or most likely eset subclass) object
 #' @param phenotype character one of the \code{colnames(pData(eset))}
+#' @param show.NA logical Should the datapoints for which phenotype is 
+#'          unknown be shown? Default is TRUE
 #' @param show.ellipse logical determining to plot 95\% CI based on 
 #'          Hotelling's T-test or not.
 #' @return plot
@@ -20,7 +22,22 @@
 #' plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = T)
 #' plot_pca_v1(msnset)
 
-plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE){
+plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE){
+    
+    # handling coloring by phenotype
+    if (!is.null(phenotype)) {
+        colorBy <- pData(eset)[[phenotype]]
+        if(!show.NA){
+            idx <- !is.na(colorBy)
+            eset <- eset[,idx]
+            colorBy <- colorBy[idx]
+        }
+    }
+    else {
+        colorBy <- "1"
+        phenotype <- ""
+        show.ellispe <- FALSE
+    }
     
     # get rid of NA values
     stopifnot(sum(complete.cases(exprs(eset))) > 1)
@@ -31,19 +48,11 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE){
     px <- px$co
     colnames(px) <- c("PC1", "PC2")
     
-    if(!is.null(phenotype)){
-        colorBy <- pData(eset)[[phenotype]]
-    }else{
-        colorBy <- 1
-        phenotype <- ""
-        show.ellispe <- FALSE
-    }
-    ggdata <- data.frame(px, colorBy)
-    
     # visualize
+    ggdata <- data.frame(px, colorBy)
     p <- 
     ggplot(ggdata) +
-        geom_point(aes(x=PC1, y=PC2, color=factor(colorBy)), 
+        geom_point(aes(x=PC1, y=PC2, color=colorBy), 
                    size=5, shape=20, show.legend = TRUE) +
         coord_fixed() +
         guides(color=guide_legend(phenotype),
@@ -51,7 +60,7 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE){
         theme_bw()
     if(show.ellispe){
         p <- p +
-        stat_ellipse(aes(x=PC1, y=PC2, fill=factor(colorBy)),
+        stat_ellipse(aes(x=PC1, y=PC2, fill=colorBy),
                      geom="polygon", type="norm", 
                      level=0.5, alpha=0.1, show.legend = TRUE)
     }

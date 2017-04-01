@@ -5,7 +5,7 @@
 \alias{plot_pca_v2}
 \title{PCA Plot}
 \usage{
-plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE)
+plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, show.NA = TRUE)
 
 plot_pca_v2(eset, phenotype = NULL, names = FALSE)
 }
@@ -13,6 +13,9 @@ plot_pca_v2(eset, phenotype = NULL, names = FALSE)
 \item{eset}{eset (or most likely eset subclass) object}
 
 \item{phenotype}{character one of the \code{colnames(pData(eset))}}
+
+\item{show.NA}{logical Should the datapoints for which phenotype is 
+unknown be shown? Default is TRUE}
 
 \item{show.ellipse}{logical determining to plot 95\% CI based on 
 Hotelling's T-test or not.}
