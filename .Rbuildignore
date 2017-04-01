@@ -1,6 +1,7 @@
 ^.*\.Rproj$
-^\.Rproj\.user$
+^\.Rproj\.user*$
 ^\.git$
 \.DS_Store
 README.md
 \.gitignore
+^\.Rproj\.user$
