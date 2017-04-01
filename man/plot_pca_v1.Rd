@@ -5,7 +5,8 @@
 \alias{plot_pca_v2}
 \title{PCA Plot}
 \usage{
-plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, show.NA = TRUE)
+plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, show.NA = TRUE,
+  legend.width = 20)
 
 plot_pca_v2(eset, phenotype = NULL, names = FALSE)
 }
@@ -16,6 +17,9 @@ plot_pca_v2(eset, phenotype = NULL, names = FALSE)
 
 \item{show.NA}{logical Should the datapoints for which phenotype is 
 unknown be shown? Default is TRUE}
+
+\item{legend.width}{integer Wrapping up too long legend titles.
+Passed to stringr::str_wrap as width argument. Default is 20.}
 
 \item{show.ellipse}{logical determining to plot 95\% CI based on 
 Hotelling's T-test or not.}
