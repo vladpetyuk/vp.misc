@@ -19,4 +19,3 @@ Reads SkyLine ouput file "Peptide Ratio Results.csv" as MSnSet
 \dontrun{#to be filled}
 
 }
-

@@ -49,4 +49,3 @@ out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1", N = 100)
 head(out)
 head(out[order(out$p.value),])
 }
-

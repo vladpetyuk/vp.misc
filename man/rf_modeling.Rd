@@ -72,4 +72,3 @@ plot(sort(out$prob))
 abline(h=0.5, col='red')
 
 }
-

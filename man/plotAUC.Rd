@@ -13,4 +13,3 @@ plotAUC(modelingResult)
 \description{
 Plot AUC after LOOCV Model Evaluation
 }
-

@@ -38,4 +38,3 @@ featureNames(m)
 \seealso{
 \code{\link[Biobase]{combine}} and \code{\link[MSnbase]{combine}}
 }
-

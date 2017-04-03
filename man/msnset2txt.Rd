@@ -27,4 +27,3 @@ data(srm_msnset)
 msnset2txt(msnset)
 }
 }
-

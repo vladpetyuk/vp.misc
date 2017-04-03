@@ -3,12 +3,16 @@
 \name{plot_pca_v1}
 \alias{plot_pca_v1}
 \alias{plot_pca_v2}
+\alias{plot_pca_v3}
 \title{PCA Plot}
 \usage{
 plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, show.NA = TRUE,
-  legend.width = 20)
+  legend.title.width = 20)
 
 plot_pca_v2(eset, phenotype = NULL, names = FALSE)
+
+plot_pca_v3(eset, phenotype = NULL, show.ellispe = TRUE, show.NA = TRUE,
+  legend.title.width = 20)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -18,7 +22,7 @@ plot_pca_v2(eset, phenotype = NULL, names = FALSE)
 \item{show.NA}{logical Should the datapoints for which phenotype is 
 unknown be shown? Default is TRUE}
 
-\item{legend.width}{integer Wrapping up too long legend titles.
+\item{legend.title.width}{integer Wrapping up too long legend titles.
 Passed to stringr::str_wrap as width argument. Default is 20.}
 
 \item{show.ellipse}{logical determining to plot 95\% CI based on 
@@ -34,7 +38,10 @@ for samples in ExpressionSet/MSnSet object.
 \section{Functions}{
 \itemize{
 \item \code{plot_pca_v2}: Alternative PCA
+
+\item \code{plot_pca_v3}: Alternative PCA
 }}
+
 \examples{
 data(srm_msnset)
 plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = F)
@@ -43,5 +50,7 @@ plot_pca_v1(msnset)
 data(srm_msnset)
 plot_pca_v2(msnset, phenotype = "subject.type")
 plot_pca_v2(msnset)
+data(srm_msnset)
+plot_pca_v3(msnset, phenotype = "subject.type")
+plot_pca_v3(msnset)
 }
-

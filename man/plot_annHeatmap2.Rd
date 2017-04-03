@@ -16,4 +16,3 @@ for missing values.  There is also a hack of
 \code{\link[Heatplus]{picketPlot}} that enforce axis labels 
 to be always perpendicular.
 }
-

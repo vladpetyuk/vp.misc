@@ -21,4 +21,3 @@ customization. E.g. starts counting with ".1" instead of blank.
 make.unique(c('a','b','b'))
 make.unique.2(c('a','b','b'))
 }
-

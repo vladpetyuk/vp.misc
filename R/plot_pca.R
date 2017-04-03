@@ -9,13 +9,14 @@
 #'          unknown be shown? Default is TRUE
 #' @param show.ellipse logical determining to plot 95\% CI based on 
 #'          Hotelling's T-test or not.
-#' @param legend.width integer Wrapping up too long legend titles.
+#' @param legend.title.width integer Wrapping up too long legend titles.
 #'          Passed to stringr::str_wrap as width argument. Default is 20.
 #' @return plot
 #' @importFrom Biobase exprs pData
 #' @importFrom ade4 "dudi.pca"
 #' @importFrom ggplot2 ggplot geom_point coord_fixed theme_bw
 #'                      guides guide_legend stat_ellipse aes
+#' @importFrom stringr str_wrap
 #' @export plot_pca_v1
 #' 
 #' @examples
@@ -24,7 +25,8 @@
 #' plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = T)
 #' plot_pca_v1(msnset)
 
-plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE, legend.width=20){
+plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, 
+                        show.NA=TRUE, legend.title.width=20){
     
     # handling coloring by phenotype
     if (!is.null(phenotype)) {
@@ -47,7 +49,7 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE, l
 
     # PCA itself
     px <- dudi.pca(exprs(eset), scannf = F, scale=T, center=T, nf = 2)
-    px <- px$co
+    px <- px$co # this is plotting loadings rather then scores!!!
     colnames(px) <- c("PC1", "PC2")
     
     # visualize
@@ -60,7 +62,7 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE, show.NA=TRUE, l
         theme_bw()
     
     # Ugly engtanglement of if/else statements. Needs to be improved.
-    phenotype_str <- strwrap(phenotype, legend.width)
+    phenotype_str <- str_wrap(phenotype, legend.title.width)
     if(show.ellispe){
         p <- p +
             stat_ellipse(aes(x=PC1, y=PC2, fill=colorBy),
@@ -115,18 +117,102 @@ plot_pca_v2 <- function(eset, phenotype=NULL, names=FALSE){
     grid()
 }
 
+
+
+
+
+#' @describeIn plot_pca_v1 Alternative PCA
+#' @export plot_pca_v3
+#' 
+#' @examples
+#' data(srm_msnset)
+#' plot_pca_v3(msnset, phenotype = "subject.type")
+#' plot_pca_v3(msnset)
+
+plot_pca_v3 <- function(eset, phenotype=NULL, show.ellispe=TRUE, 
+                        show.NA=TRUE, legend.title.width=20){
+    
+    # handling coloring by phenotype
+    if (!is.null(phenotype)) {
+        colorBy <- pData(eset)[[phenotype]]
+        if(!show.NA){
+            idx <- !is.na(colorBy)
+            eset <- eset[,idx]
+            colorBy <- colorBy[idx]
+        }
+    }
+    else {
+        colorBy <- ""
+        phenotype <- ""
+        show.ellispe <- FALSE
+    }
+    
+    # get rid of NA values
+    stopifnot(sum(complete.cases(exprs(eset))) > 1)
+    eset <- eset[complete.cases(exprs(eset)),]
+    
+    # PCA itself
+    z <- t(exprs(eset))
+    #  zero-center and scale because we more care about correlation 
+    #  rather Eucledian dist
+    z <- sweep(z, 1, rowMeans(z), FUN = "-")
+    z <- sweep(z, 1, apply(z,1,sd), FUN = "/")
+    pca1 <- prcomp(z, scale. = F)
+    # create data frame with scores
+    scores <- as.data.frame(pca1$x)
+    
+    exp_var <- 100 * summary(pca1)$importance[2,][c(1,2)] # from ggord
+    axes <- paste0("PC", c(1,2))
+    axes <- paste0(axes, " (", round(exp_var, 2), "%)")
+    
+    
+    # visualize
+    ggdata <- data.frame(scores[,c(1,2)], colorBy) # first two PCs
+    p <- 
+        ggplot(ggdata) +
+        geom_point(aes(x=PC1, y=PC2, color=colorBy), 
+                   size=5, shape=20, show.legend = TRUE) +
+        coord_fixed() +
+        xlab(axes[1]) + ylab(axes[2]) +
+        theme_bw()
+    
+    # Ugly engtanglement of if/else statements. Needs to be improved.
+    phenotype_str <- str_wrap(phenotype, legend.title.width)
+    if(show.ellispe){
+        p <- p +
+            stat_ellipse(aes(x=PC1, y=PC2, fill=colorBy),
+                         geom="polygon", type="norm", 
+                         level=0.5, alpha=0.1, show.legend = TRUE) +
+            guides(color=guide_legend(phenotype_str),
+                   fill=guide_legend(phenotype_str))
+    }else{
+        if(is.numeric(colorBy)){
+            p <- p + guides(color=guide_colorbar(phenotype_str))
+        } else if (colorBy != ""){
+            p <- p + guides(color=guide_legend(phenotype_str))
+        }
+    }
+    return(p)
+}
+
+
+
+
+
+
+
 # # I don't like this way of combining
 # #
 # #' @describeIn plot_pca_v1
 # #' @importFrom made4 ord plotarrays
 # # ' @importFrom ade4 dudi.coa dudi.pca
-# # ' @export plot_pca_v3
+# # ' @export plot_pca_v4
 # #' @examples 
 # #'
-# #' plot_pca_v3(msnset, type='pca', phenotype="subject.type")
-# #' plot_pca_v3(msnset, type='coa', phenotype="subject.type")
+# #' plot_pca_v4(msnset, type='pca', phenotype="subject.type")
+# #' plot_pca_v4(msnset, type='coa', phenotype="subject.type")
 # 
-# plot_pca_v3 <- function(eset, phenotype=NULL, ...){
+# plot_pca_v4 <- function(eset, phenotype=NULL, ...){
 #     phenotype <- as.factor(pData(eset)[[phenotype]])
 #     ord.res <- ord(exprs(eset), classvec=phenotype, ...)
 #     plotarrays(ord.res, ...)

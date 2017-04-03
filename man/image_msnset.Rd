@@ -28,4 +28,3 @@ quantile.}
 \description{
 Visualize MSnSet
 }
-

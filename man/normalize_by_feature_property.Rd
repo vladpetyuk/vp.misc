@@ -27,4 +27,3 @@ Converts one ExpressionSet/MSnSet to another ExpressionSet/MSnSet.
 So far the only property I have in mind is elution time in 
      label-free LC-MS/MS data.
 }
-

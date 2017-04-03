@@ -24,4 +24,3 @@ image_msnset(msnset)
 msnset2 <- normalizeByGlob(msnset)
 image_msnset(msnset2)
 }
-

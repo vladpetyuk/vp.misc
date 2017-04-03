@@ -60,4 +60,3 @@ volcano_plot(res$logFC,
    ylab("p-value") +
    xlab("log2 fold change")
 }
-

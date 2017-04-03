@@ -44,4 +44,3 @@ x <- knn_imputation(naset)
 image(x[1:50,])
 
 }
-

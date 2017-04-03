@@ -31,4 +31,3 @@ dim(msnset)
 msnset2 <- rrollup(msnset, rollBy="Gene", rollFun="-", verbose=TRUE)
 dim(msnset2)
 }
-

@@ -44,4 +44,3 @@ dist(x)
 dist(x, method="pearson")
 
 }
-

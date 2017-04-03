@@ -39,4 +39,4 @@ Imports:
 VignetteBuilder: knitr
 Suggests:
     knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

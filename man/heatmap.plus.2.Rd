@@ -38,4 +38,3 @@ heatmap.plus.2(z, ColSideColors=clab,
                   propColSide=0.1,
                   propRowSide=0.2);
 }
-

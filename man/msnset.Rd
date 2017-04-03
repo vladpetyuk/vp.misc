@@ -11,4 +11,3 @@ Targeted SRM analysis of 33 proteins in CSF
 \author{
 Vlad Petyuk, 2014-03-24
 }
-

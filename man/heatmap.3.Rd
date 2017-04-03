@@ -42,4 +42,3 @@ heatmap.3(cor(exprs(msnset)),
           ColSideColors=c('red3','yellow3','green3')[as.factor(pData(msnset)$subject.type)],
           RowSideColors=clrz[as.factor(pData(msnset)$match.group)])
 }
-

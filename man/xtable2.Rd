@@ -20,4 +20,3 @@ See \code{\link[xtable]{xtable}} for details.
 \seealso{
 \code{\link[xtable]{xtable}}
 }
-

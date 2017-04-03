@@ -51,4 +51,3 @@ rownames(res) <- NULL
 head(res)
 cnetplot(x)
 }
-

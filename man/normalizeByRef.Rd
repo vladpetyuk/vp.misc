@@ -16,4 +16,3 @@ It is evaluated and used as reference.}
 Subtracts expression data of one condition from another. 
 Converts one MSnSet to another MSnSet.
 }
-

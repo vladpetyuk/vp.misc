@@ -78,4 +78,3 @@ image_msnset(oca.fixed, facetBy="iTRAQ_Batch")
 \seealso{
 \code{\link[sva]{ComBat}}
 }
-

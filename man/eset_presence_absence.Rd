@@ -54,4 +54,3 @@ eset_presence_absence(x0, 'group', test='g')
 eset_presence_absence(x0, 'group', test='binom')
 
 }
-

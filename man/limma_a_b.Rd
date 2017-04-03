@@ -42,4 +42,3 @@ res <- limma_a_b(oca.set,
                  coef.str = "PLATINUM.STATUS")
 head(res)
 }
-
