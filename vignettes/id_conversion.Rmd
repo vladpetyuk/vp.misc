@@ -1,0 +1,97 @@
+---
+output: 
+  html_document: 
+    highlight: default
+    theme: spacelab
+---
+
+
+
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{VP Misc}
+%\VignetteKeyword{vp.mics}
+%\VignettePackage{vp.misc}
+-->
+
+```{r setup, message=FALSE, warning=FALSE}
+# set global chunk options
+library(knitr)
+library(dplyr)
+opts_chunk$set(size='tiny')
+```
+
+# Purpose
+To show different way to convert from one type of gene/protein IDs to another.
+The example task is to get UniProt [accession](http://www.uniprot.org/help/accession_numbers) 
+and [entry names](http://www.uniprot.org/help/entry_name) based on
+gene symbols. Bioconductor has multiple ways to get this done.
+An example gene list.
+```{r init}
+genes <- c("TH","GFAP","CLU","SNCA","APP","MAPT")
+```
+
+# UniProt.ws package
+There is now a key that directly corresponds to gene symbols. 
+However, GENECARDS ID works well for this purpose.
+```{r uniprot, warning=FALSE, message=FALSE}
+library(UniProt.ws)
+up <- UniProt.ws(taxId=9606)
+select(up, keys=genes, columns=c("ENTRY-NAME","UNIPROTKB"), keytype="GENECARDS")
+```
+
+# org.Hs.eg.db package
+The OrgDb packages are centered around Entrez IDs. Thus, first gene symbols
+need to be converted to Entrez IDs and then to UniProt IDs. The only UniProt IDs
+available through OrbDb are accessions. An important note is that it contains
+both reviewed and unreviewed accessions. This can cause a trouble once in a while.
+For example it will be confusing which accession to pick for the `APP` gene 
+(at least in the `2017_05` UniProt release).
+```{r orgDb, warning=FALSE, message=FALSE}
+library(org.Hs.eg.db)
+entrez_ids <- org.Hs.egSYMBOL2EG[genes] # AnnDbBimap object
+# selecting first Entrez ID in case there are multiple
+entrez_ids <- sapply(as.list(entrez_ids), '[', 1)
+# selecting first accession in case there are multiple. 
+# This is sometimes necessary, but dangerous step as the first one may not be
+# the primary ID.
+uniprot_ids <- sapply(as.list(org.Hs.egUNIPROT[entrez_ids]), '[', 1)
+data.frame(genes, uniprot_ids)
+```
+alternative
+```{r orgDb2, message=FALSE}
+entrez_ids <- org.Hs.egSYMBOL2EG[genes] %>% as.data.frame
+uniprot_ids <- org.Hs.egUNIPROT[entrez_ids$gene_id] %>% as.data.frame
+inner_join(entrez_ids, uniprot_ids)
+```
+
+
+# clusterProfiler package
+clusterProfiler has a convenience function bitr convienience function that at
+the backend uses OrgDb. Thus the problem of carrying through unreviewed IDs is 
+inherited from OrgDb.
+```{r clusterProfiler, message=FALSE}
+library(clusterProfiler)
+bitr(genes, fromType="SYMBOL", toType="UNIPROT", OrgDb="org.Hs.eg.db")
+```
+
+
+# biomaRt approach
+This one may or may not to work.  There some persistent troubles due to [BioMart 
+site migration](http://www.biomart.org/news.html).  
+When it works, it is really great, though.
+```{r biomartm, message=FALSE}
+library(biomaRt)
+# listMarts()
+ensembl <- useMart("ensembl")
+# listDatasets(ensembl)
+hsa <- useDataset( "hsapiens_gene_ensembl", mart=ensembl)
+# listAttributes(hsa)
+# listFilters(hsa)
+getBM(attributes= c("hgnc_symbol","uniprotswissprot"), 
+              filters=c("hgnc_symbol"), 
+              values=genes, 
+              mart=hsa)
+```
+
+
