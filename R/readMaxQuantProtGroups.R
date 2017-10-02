@@ -101,11 +101,6 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
                  "Peptides",
                  "Razor + unique peptides",
                  "Unique peptides")
-    ibac.col <- "iBAQ" # to resolve gene ambiguity in situations when
-                       # we need to select one gene per protein id.
-                       # that ".+" is pretty much a hack to ensure that 
-                       # I do not read in columns that have nothing to do 
-                       # with samples
     quant.cols <- paste(quantType, rownames(smmr), sep=' ')
     # safety check
     stopifnot(all(quant.cols %in% colnames(x)))
@@ -119,7 +114,25 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
         warning(warn_msg)
         id.cols <- intersect(colnames(x), id.cols)
     }
-    x <- x[,c(id.cols, ibac.col, quant.cols)]
+    ibaq.col <- NULL
+    if("iBAQ" %in% colnames(x)){
+        ibaq.col <- "iBAQ"  # to resolve gene ambiguity in situations when
+                            # we need to select one gene per protein id.
+                            # Since they'll be resolved by iBAQ intensity.
+                            # That ".+" is pretty much a hack to ensure that 
+                            # I do not read in columns that have nothing to do 
+                            # with samples.
+        x <- x[,c(id.cols, ibaq.col, quant.cols)]
+    }else{
+        msg <- paste("iBAQ setting was not enabled in MaxQuant!","\n",
+                     "It's not optimal, but OK.","\n",
+                     "I'll skip the step of selecting"," ",
+                     "top representative protein per gene.",
+                     sep="")
+        warning(msg)
+        x <- x[,c(id.cols, quant.cols)]
+    }
+    
 
     # trim the quant.cols name and retain only sample names
     pref <- paste(quantType,"\\s+",sep="")
@@ -135,7 +148,7 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     # not.con <- !grepl('CON__', x$`Majority protein IDs`)
     not.rev <- !grepl('REV__', x$`Majority protein IDs`)
     x <- x[not.rev,]
-    if('Gene names' %in% id.cols){
+    if(('Gene names' %in% id.cols) & (!is.null(ibaq.col))){
         not.empty <- x$`Gene names` != ''
         x <- x[not.empty,]
         gns <- sapply(strsplit(x$`Gene names`, split = ';'), '[', 1)
@@ -165,7 +178,10 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
                           dataset.name = smmr[colnames(x.exprs),],
                           stringsAsFactors = FALSE)
     rownames(x.pdata) <- colnames(x.exprs)
-    x.fdata <- x[,c(id.cols, ibac.col)]
+    if(!is.null(ibaq.col))
+        x.fdata <- x[,c(id.cols, ibaq.col)]
+    else
+        x.fdata <- x[,id.cols]
     rownames(x.fdata) <- x$feature.name
     ans <- MSnbase::MSnSet(exprs = x.exprs,
                            fData = x.fdata,
