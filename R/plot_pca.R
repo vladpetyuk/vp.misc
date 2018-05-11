@@ -191,9 +191,6 @@ plot_pca_v3 <- function(eset, phenotype=NULL, label=NULL, show.ellispe=TRUE,
           max.iter = 2500,
           segment.alpha = 0.50,
           size = 2.5)
-      
-      # Limit x axis to focus on certain area
-      # scale_x_continuous(limits = c(-30, -10))
     }
     
     # Ugly engtanglement of if/else statements. Needs to be improved.
