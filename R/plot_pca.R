@@ -180,8 +180,7 @@ plot_pca_v3 <- function(eset, phenotype=NULL, label=NULL, show.ellispe=TRUE,
     
     # Add labels by 'label'
     if (!is.null(label)) {
-      p <- ggplot(ggdata) + geom_point(aes(x = PC1 , y = PC2, color = colorBy), 
-                                       size = 3.5, shape = 20, show.legend = TRUE) + 
+      p <- p + 
         geom_label_repel(
           aes(x = PC1, y = PC2, fill = colorBy, label = pData(eset)[[label]]),
           fontface = 'bold', color = 'white',
@@ -191,12 +190,7 @@ plot_pca_v3 <- function(eset, phenotype=NULL, label=NULL, show.ellispe=TRUE,
           force = 1,
           max.iter = 2500,
           segment.alpha = 0.50,
-          size = 2.5
-        ) +
-        coord_fixed() + xlab(axes[1]) + ylab(axes[2]) + theme_bw()
-      
-      # Limit x axis to focus on certain area
-      # scale_x_continuous(limits = c(-30, -10))
+          size = 2.5)
     }
     
     # Ugly engtanglement of if/else statements. Needs to be improved.

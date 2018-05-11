@@ -35,7 +35,8 @@ Imports:
     ggplot2,
     xtable,
     clusterProfiler,
-    stringr
+    stringr,
+    FField
 VignetteBuilder: knitr
 Suggests:
     knitr
