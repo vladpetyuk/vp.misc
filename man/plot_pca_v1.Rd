@@ -11,8 +11,8 @@ plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, show.NA = TRUE,
 
 plot_pca_v2(eset, phenotype = NULL, names = FALSE)
 
-plot_pca_v3(eset, phenotype = NULL, label = NULL, show.ellispe = TRUE,
-  show.NA = TRUE, legend.title.width = 20)
+plot_pca_v3(eset, phenotype = NULL, label = NULL, point_size = 5,
+  show.ellispe = TRUE, show.NA = TRUE, legend.title.width = 20, ...)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -52,6 +52,6 @@ plot_pca_v2(msnset, phenotype = "subject.type")
 plot_pca_v2(msnset)
 data(srm_msnset)
 plot_pca_v3(msnset, phenotype = "subject.type")
-plot_pca_v3(msnset, phenotype = "subject.type", label = "subject.ID")
+plot_pca_v3(msnset, phenotype = "subject.type", label = "sample.id")
 plot_pca_v3(msnset)
 }
