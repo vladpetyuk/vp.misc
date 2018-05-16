@@ -122,6 +122,7 @@ plot_pca_v2 <- function(eset, phenotype=NULL, names=FALSE){
 
 
 #' @describeIn plot_pca_v1 Alternative PCA
+#' @importFrom ggrepel geom_label_repel
 #' @export plot_pca_v3
 #' 
 #' @examples
