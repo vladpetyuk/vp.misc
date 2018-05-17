@@ -7,7 +7,7 @@
 #' effects from the data.
 #' 
 #' @param x MSnSet or ExpressionSet object
-#' @param covName covariate name. Must be in pData(x). At this point it can be
+#' @param cov_name covariate name. Must be in pData(x). At this point it can be
 #' only one name.
 #' 
 #' @note The algorithm essentially uses an LM. The reason for re-inventing the 
@@ -71,10 +71,10 @@
 #' hist(res$p.value, 50)
 #' image_msnset(oca.fixed, facetBy="iTRAQ_Batch")
 
-remove_covariate <- function(x, covName){
+remove_covariate <- function(x, cov_name){
     e <- exprs(x)
     rmns <- apply(e, 1, mean, na.rm=TRUE) # to add later
-    cova <- pData(x)[[covName]]
+    cova <- pData(x)[[cov_name]]
     # the reason for splitting into factor vs continuous
     # is that I don't want to rely on (Intercept) reference group in factor
     if(is.factor(cova) || is.character(cova)){
@@ -105,3 +105,74 @@ remove_covariate <- function(x, covName){
     exprs(x) <- e.backmeans
     return(x)
 }
+
+
+
+#' @describeIn remove_covariate wrapper around sva::ComBat
+#' @importFrom sva ComBat
+#' @importFrom dplyr select inner_join group_by_at summarize filter pull "%>%"
+#' @importFrom tidyr gather
+#' @importFrom tibble rownames_to_column
+#' @importFrom Biobase exprs pData
+#' @export correct_batch_effect
+#' 
+#' @param batch_name same thing as covariate name. Using "batch" instead of 
+#' "covariate" to keep it consistent with `ComBat`. Must be in pData(x). 
+#' At this point it can be only one name.
+#' @param least_count_threshold minimum number of feature observations
+#' required per batch. The default values is 2, the minimum `ComBat` can 
+#' handle safely.
+#' @param BPPARAM BiocParallelParam for parallel operation. 
+#' Default is bpparam(). Use bpparam("SerialParam") if you want to restrict
+#' it to only one thread.
+#' @param ... other arguments for \code{\link[sva]{ComBat}}
+#' 
+#' @examples
+#' 
+#' data("cptac_oca") # oca.set object
+#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
+#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+
+correct_batch_effect <- function(m, batch_name, 
+                                 least_count_threshold = 2,
+                                 BPPARAM = bpparam(), 
+                                 ...){
+    
+    # check for problems
+    # is one of the batches empty?
+    
+    
+    batch_to_sample <- pData(m) %>%
+        select(batch_name) %>%
+        rownames_to_column("sample_name")
+    
+    sufficiently_present_features <- 
+        exprs(m) %>%
+        as.data.frame() %>%
+        rownames_to_column("feature_name") %>%
+        gather(sample_name, abundance, -feature_name) %>%
+        inner_join(batch_to_sample, by = "sample_name") %>%
+        group_by_at(c(batch_name, "feature_name")) %>%
+        summarize(cnt = sum(!is.na(abundance))) %>%
+        group_by_at("feature_name") %>%
+        summarize(min_cnt = min(cnt)) %>%
+        filter(min_cnt >= least_count_threshold) %>%
+        pull(feature_name)
+    
+    m <- m[sufficiently_present_features,]
+    
+    modcombat <- model.matrix(~1, data = select(pData(m), batch_name))
+    combat_edata <- ComBat(dat=exprs(m), 
+                           batch=pData(m)[,batch_name], 
+                           mod=modcombat, 
+                           par.prior=FALSE, 
+                           prior.plots=TRUE,
+                           BPPARAM = BPPARAM,
+                           ...)
+    exprs(m) <- combat_edata
+    return(m)
+}
+
+
+

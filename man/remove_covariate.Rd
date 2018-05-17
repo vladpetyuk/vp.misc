@@ -2,15 +2,33 @@
 % Please edit documentation in R/remove_covariate.R
 \name{remove_covariate}
 \alias{remove_covariate}
+\alias{correct_batch_effect}
 \title{Removing Covariate Effect form Expression Data}
 \usage{
-remove_covariate(x, covName)
+remove_covariate(x, cov_name)
+
+correct_batch_effect(m, batch_name, least_count_threshold = 2,
+  BPPARAM = bpparam(), ...)
 }
 \arguments{
 \item{x}{MSnSet or ExpressionSet object}
 
-\item{covName}{covariate name. Must be in pData(x). At this point it can be
+\item{cov_name}{covariate name. Must be in pData(x). At this point it can be
 only one name.}
+
+\item{batch_name}{same thing as covariate name. Using "batch" instead of 
+"covariate" to keep it consistent with `ComBat`. Must be in pData(x). 
+At this point it can be only one name.}
+
+\item{least_count_threshold}{minimum number of feature observations
+required per batch. The default values is 2, the minimum `ComBat` can 
+handle safely.}
+
+\item{BPPARAM}{BiocParallelParam for parallel operation. 
+Default is bpparam(). Use bpparam("SerialParam") if you want to restrict
+it to only one thread.}
+
+\item{...}{other arguments for \code{\link[sva]{ComBat}}}
 }
 \description{
 The main purpose of this function is to remove batch effect from the data.
@@ -18,6 +36,11 @@ Batch can be associated with different days of sample processing (as factor)
 or with run order (continuous). Can also be used to remove any unwanted
 effects from the data.
 }
+\section{Functions}{
+\itemize{
+\item \code{correct_batch_effect}: wrapper around sva::ComBat
+}}
+
 \note{
 The algorithm essentially uses an LM. The reason for re-inventing the 
 wheel is presense of missing values in proteomics datasets more then usual.
@@ -74,6 +97,11 @@ oca.fixed <- remove_covariate(oca.set, "iTRAQ_Batch")
 res <- eset_lm(oca.fixed, "y ~ iTRAQ_Batch", "y ~ 1")
 hist(res$p.value, 50)
 image_msnset(oca.fixed, facetBy="iTRAQ_Batch")
+
+data("cptac_oca") # oca.set object
+plot_pca_v3(oca.set, phenotype = 'Batch')
+oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
+plot_pca_v3(oca.set.2, phenotype = 'Batch')
 }
 \seealso{
 \code{\link[sva]{ComBat}}
