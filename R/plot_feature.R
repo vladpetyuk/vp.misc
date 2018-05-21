@@ -15,7 +15,6 @@
 #' @export plot_feature
 #' 
 #' @examples 
-#' 
 #' data(cptac_oca)
 #' plot_feature(oca.set, "NP_001077422.1")
 #' plot_feature(oca.set, "NP_001077422.1", color_by = "Batch")
