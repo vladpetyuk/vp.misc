@@ -21,6 +21,7 @@ Imports:
     ROCR,
     doParallel,
     plyr,
+    dplyr,
     gplots,
     foreach,
     glmnet,
