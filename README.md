@@ -1,14 +1,16 @@
 vp.misc
 ======
-# Installation
+
+## Installation
 ```r
 source("http://bioconductor.org/biocLite.R")
 options(repos=biocinstallRepos(character()))
 install.packages("devtools")
 library("devtools")
-install_github("vladpetyuk/N14N15")
+install_github("vladpetyuk/vp.misc")
 ```
-# Description
+## Description
+
 ======
 This is a collection of misc custom functions.  They are primarily geared towards proteomics/perhaps-other-omics data analysis using `MSnSet` or `ExpressionSet` as data containers.  
 * heatmaps
