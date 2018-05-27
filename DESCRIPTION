@@ -37,7 +37,8 @@ Imports:
     xtable,
     clusterProfiler,
     stringr,
-    FField
+    FField,
+    sva
 VignetteBuilder: knitr
 Suggests:
     knitr
