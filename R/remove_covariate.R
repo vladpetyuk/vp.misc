@@ -110,7 +110,8 @@ remove_covariate <- function(x, cov_name){
 
 #' @describeIn remove_covariate wrapper around sva::ComBat
 #' @importFrom sva ComBat
-#' @importFrom dplyr select inner_join group_by_at summarize filter pull "%>%"
+#' @importFrom magrittr "%>%"
+#' @importFrom dplyr select inner_join group_by_at summarize filter pull
 #' @importFrom tidyr gather
 #' @importFrom tibble rownames_to_column
 #' @importFrom Biobase exprs pData
