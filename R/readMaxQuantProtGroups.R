@@ -4,11 +4,11 @@
 #'
 #' Reads in "proteinGroups.txt" output (or its compressed version) as MSnSet.
 #'
-#' So far uses only LFQ data as quantitative data. As feature data, only first
+#' As feature data, only first
 #' 12 columns and iBAQ columns are used. Features are based on the genes.
 #' In case of multiple proteins matching the same gene, only the one with
 #' the highest iBAQ value is returned.
-#' @note The "proteinGroups.txt" file can be compressed to save space.
+#' @note The "proteinGroups.txt" file can be compressed (gzip) to save space.
 #' @param path character path to the folder containing "proteinGroups.txt file".
 #'          It should be in "{raw files folder}/combined/txt"
 #' @param quantType character Defines pattern what type of column to
