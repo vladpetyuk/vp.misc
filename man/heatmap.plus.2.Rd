@@ -6,12 +6,13 @@
 \usage{
 heatmap.plus.2(x, Rowv = NULL, Colv = if (symm) "Rowv" else NULL,
   distfun = dist, hclustfun = hclust, reorderfun = function(d, w)
-  reorder(d, w), add.expr, symm = FALSE, revC = identical(Colv, "Rowv"),
-  scale = c("row", "column", "none"), na.rm = TRUE, margins = c(5, 5),
-  ColSideColors, RowSideColors, propColSide = 0.1, propRowSide = 0.1,
-  cexRow = 0.2 + 1/log10(nr), cexCol = 0.2 + 1/log10(nc), labRow = NULL,
-  labCol = NULL, main = NULL, xlab = NULL, ylab = NULL,
-  keep.dendro = FALSE, verbose = getOption("verbose"), ...)
+  reorder(d, w), add.expr, symm = FALSE, revC = identical(Colv,
+  "Rowv"), scale = c("row", "column", "none"), na.rm = TRUE,
+  margins = c(5, 5), ColSideColors, RowSideColors, propColSide = 0.1,
+  propRowSide = 0.1, cexRow = 0.2 + 1/log10(nr), cexCol = 0.2 +
+  1/log10(nc), labRow = NULL, labCol = NULL, main = NULL,
+  xlab = NULL, ylab = NULL, keep.dendro = FALSE,
+  verbose = getOption("verbose"), ...)
 }
 \arguments{
 \item{propColSide}{numeric controls how much room to allocate for the

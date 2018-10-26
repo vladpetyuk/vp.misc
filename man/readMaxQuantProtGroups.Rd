@@ -3,7 +3,6 @@
 %   R/readMaxQuantProtGroups.R
 \name{readMaxQuantProtGroups}
 \alias{readMaxQuantProtGroups}
-\alias{readMaxQuantProtGroups}
 \title{Reading MaxQuant Output}
 \usage{
 readMaxQuantProtGroups(path, quantType, verbose = 1)
@@ -45,7 +44,7 @@ So far uses only LFQ data as quantitative data. As feature data, only first
 In case of multiple proteins matching the same gene, only the one with
 the highest iBAQ value is returned.
 
-So far uses only LFQ data as quantitative data. As feature data, only first
+As feature data, only first
 12 columns and iBAQ columns are used. Features are based on the genes.
 In case of multiple proteins matching the same gene, only the one with
 the highest iBAQ value is returned.
@@ -62,7 +61,7 @@ It looks like the convention for column naming in MaxQuant is
 iBAQ option must be enabled in MaxQuant analysis because it is used
       to resolve ambiguity between two proteins matching one gene.
 
-The "proteinGroups.txt" file can be compressed to save space.
+The "proteinGroups.txt" file can be compressed (gzip) to save space.
 
 It looks like the convention for column naming in MaxQuant is
       type of quantification followed by sample name separated by space.

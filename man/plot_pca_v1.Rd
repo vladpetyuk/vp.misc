@@ -6,8 +6,8 @@
 \alias{plot_pca_v3}
 \title{PCA Plot}
 \usage{
-plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE, show.NA = TRUE,
-  legend.title.width = 20)
+plot_pca_v1(eset, phenotype = NULL, show.ellispe = TRUE,
+  show.NA = TRUE, legend.title.width = 20)
 
 plot_pca_v2(eset, phenotype = NULL, names = FALSE)
 

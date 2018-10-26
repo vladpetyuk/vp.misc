@@ -4,8 +4,8 @@
 \alias{normalize_by_feature_property}
 \title{Normalization of LC-MS/MS Data}
 \usage{
-normalize_by_feature_property(eset, property, method = c("lowess", "loess"),
-  ...)
+normalize_by_feature_property(eset, property, method = c("lowess",
+  "loess"), ...)
 }
 \arguments{
 \item{eset}{ExpressionSet/MSnSet object}

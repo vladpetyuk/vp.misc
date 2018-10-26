@@ -4,7 +4,8 @@
 \alias{eset_lm}
 \title{Nested Linear Model Analysis}
 \usage{
-eset_lm(eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N = NULL)
+eset_lm(eset, form.alt, form.nul, facs = NULL, norm.coef = NULL,
+  N = NULL)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
