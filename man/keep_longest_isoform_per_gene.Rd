@@ -43,11 +43,13 @@ columns <- c("ENTREZ_GENE","GENES","UNIPROTKB")
 key_type <- "UNIPROTKB"
 res <- UniProt.ws::select(up, unique(ids_with_sites$UniProtAcc), columns, key_type)
 library(dplyr)
+res <- res \%>\%
+    mutate(GeneMain = sub("^([^ ]*)\\\\s.*$","\\\\1",GENES))
 ids_with_sites <- ids_with_sites \%>\% 
       inner_join(res, by=c("UniProtAcc" = "UNIPROTKB"))
 nrow(ids_with_sites)
 ids_with_sites <- keep_longest_isoform_per_gene(ids_with_sites, 
-     "GENES", "UniProtAccFull", "ProtLength")
+     "GeneMain", "UniProtAccFull", "ProtLength")
 nrow(ids_with_sites)
 
 }

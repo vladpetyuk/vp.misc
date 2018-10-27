@@ -162,11 +162,13 @@ map_PTM_sites <- function(ids, fasta, prot_id_col, peptide_col, mod_char){
 #' key_type <- "UNIPROTKB"
 #' res <- UniProt.ws::select(up, unique(ids_with_sites$UniProtAcc), columns, key_type)
 #' library(dplyr)
+#' res <- res %>%
+#'     mutate(GeneMain = sub("^([^ ]*)\\s.*$","\\1",GENES))
 #' ids_with_sites <- ids_with_sites %>% 
 #'       inner_join(res, by=c("UniProtAcc" = "UNIPROTKB"))
 #' nrow(ids_with_sites)
 #' ids_with_sites <- keep_longest_isoform_per_gene(ids_with_sites, 
-#'      "GENES", "UniProtAccFull", "ProtLength")
+#'      "GeneMain", "UniProtAccFull", "ProtLength")
 #' nrow(ids_with_sites)
 #' 
 
@@ -193,7 +195,8 @@ keep_longest_isoform_per_gene <- function(ids, gene_id_col, isoform_id_col, isof
         filter(row_number() == which.max(!!isoform_len_col_expr))
 
     # filter join
-    res <- semi_join(ids, top_iso)
+    res <- semi_join(ids, top_iso, 
+                     by=c(gene_id_col, isoform_id_col, isoform_len_col))
     return(res)
 
 }
