@@ -156,16 +156,13 @@ map_PTM_sites <- function(ids, fasta, prot_id_col, peptide_col, mod_char){
 #' ids_with_sites <- map_PTM_sites(ids, fst, "UniProtAccFull", "Peptide", "*")
 #'
 #' # Adding gene annotation. Note, this is rat data searched against UniProt.
-#' library(UniProt.ws)
-#' up <- UniProt.ws(taxId=10116) # 10116 is rattus norvegicus taxonomy ID
-#' columns <- c("ENTREZ_GENE","GENES","UNIPROTKB")
-#' key_type <- "UNIPROTKB"
-#' res <- UniProt.ws::select(up, unique(ids_with_sites$UniProtAcc), columns, key_type)
 #' library(dplyr)
-#' res <- res %>%
-#'     mutate(GeneMain = sub("^([^ ]*)\\s.*$","\\1",GENES))
-#' ids_with_sites <- ids_with_sites %>% 
-#'       inner_join(res, by=c("UniProtAcc" = "UNIPROTKB"))
+#' # 10116 is rat taxonomy ID
+#' URL <- "http://www.uniprot.org/uniprot/?query=organism:10116&columns=id,genes(PREFERRED)&format=tab"
+#' ids_with_sites <- read.delim(URL, check.names = F, stringsAsFactors = FALSE) %>%
+#'    rename(GeneMain = "Gene names  (primary )",
+#'           UniProtAcc = "Entry") %>%
+#'    inner_join(ids_with_sites, ., by="UniProtAcc")
 #' nrow(ids_with_sites)
 #' ids_with_sites <- keep_longest_isoform_per_gene(ids_with_sites, 
 #'      "GeneMain", "UniProtAccFull", "ProtLength")
