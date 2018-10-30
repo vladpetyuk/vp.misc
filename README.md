@@ -17,3 +17,5 @@ This is a collection of misc custom functions.  They are primarily geared toward
 * nested linear models
 * wrappers for the machine learning routines
 * custom imputation
+* reading of MaxQuant and SkyLine data
+* handling PTM mapping
