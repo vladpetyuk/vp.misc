@@ -34,12 +34,14 @@ rrollup <- function(msnset, rollBy, rollFun, verbose=TRUE){
         fData.new <- data.frame(rollBy=rownames(exprs.new), 
                                 stringsAsFactors = FALSE)
         colnames(fData.new) <- rollBy
+        rownames(fData.new) <- fData.new[,rollBy]
     }
-    fData(msnset) <- fData.new
-    exprs(msnset) <- exprs.new
-    featureNames(msnset) <- rownames(exprs.new)
-    return(msnset)
+    msnset.new <- MSnSet(exprs = exprs.new, 
+                         fData = fData.new, 
+                         pData = pData(msnset))
+    return(msnset.new)
 }
+
 
 
 rrollup_a_feature_set <- function(mat, rollFun, verbose){
