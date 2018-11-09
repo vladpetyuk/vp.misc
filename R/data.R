@@ -24,3 +24,19 @@ NULL
 #' head(fData(oca.set))
 #' head(exprs(oca.set))
 NULL
+
+
+#' @name longitudinal_biomarker_study
+#' @title Example of Longitudinal Biomarker Study
+#' @description Targeted SRM analysis. Time points A,B,C and D 
+#' increase in the corresponding order. A & B are prior the disease diagnosis 
+#' for the cases. C & D are correspondingly after the diagnosis. Time point D
+#' is after the treatment.
+#' @docType data
+# ' @usage 
+#' @format a \code{MSnSet} instance
+#' @source xxx study
+#' @author Vlad Petyuk, 2018-11-09
+# ' @export
+NULL
+
