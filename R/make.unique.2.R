@@ -14,6 +14,8 @@
 #' make.unique.2(c('a','b','b'))
 
 make.unique.2 <- function(x){
+    if(!any(duplicated(x)))
+        return(x)
     xu <- unique(x)
     x2 <- c(xu, x)
     x2 <- make.unique(x2)
