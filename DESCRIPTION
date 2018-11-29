@@ -40,9 +40,9 @@ Imports:
     stringr,
     FField,
     sva,
-    lme4
+    lme4,
+    e1071
 VignetteBuilder: knitr
 Suggests:
-    knitr,
-    e1071
+    knitr
 RoxygenNote: 6.1.0
