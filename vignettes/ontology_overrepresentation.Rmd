@@ -93,7 +93,9 @@ kable(head(res))
 
 ## `clusterProfiler` package
 ```{r gobp_clusterprofiler}
-xgobp2 <- enrichGO(gcSample[[6]], universe = unique(unlist((gcSample))),
+xgobp2 <- enrichGO(gcSample[[6]], 
+                   OrgDb = "org.Hs.eg.db",
+                   universe = unique(unlist((gcSample))),
                    ont = "BP", pvalueCutoff = 1, qvalueCutoff = 1,
                    minGSSize = 0) 
 xgobp2 <- subset_by_size(xgobp2, maxObsSize = 50)
@@ -137,7 +139,9 @@ kable(head(res))
 
 ## `clusterProfiler` package
 ```{r gocc_clusterprofiler}
-xgocc2 <- enrichGO(gcSample[[6]], universe = unique(unlist((gcSample))),
+xgocc2 <- enrichGO(gcSample[[6]], 
+                   OrgDb = "org.Hs.eg.db",
+                   universe = unique(unlist((gcSample))),
                    ont = "CC", pvalueCutoff = 1, qvalueCutoff = 1,
                    minGSSize = 0) 
 xgocc2 <- subset_by_size(xgocc2, maxObsSize = 50)
@@ -168,7 +172,9 @@ kable(head(res))
 
 ## `clusterProfiler` package
 ```{r gomf_clusterprofiler}
-xgomf2 <- enrichGO(gcSample[[6]], universe = unique(unlist((gcSample))),
+xgomf2 <- enrichGO(gcSample[[6]], 
+                   OrgDb = "org.Hs.eg.db",
+                   universe = unique(unlist((gcSample))),
                    ont = "MF", pvalueCutoff = 1, qvalueCutoff = 1,
                    minGSSize = 0) 
 xgomf2 <- subset_by_size(xgomf2, maxObsSize = 50)
@@ -185,7 +191,9 @@ As for _Reactome_ there is only one pre-canned solution - from `ReactomePA`
 
 ## `ReactomePA` package
 ```{r reactome_clusterprofiler}
-xreac <- enrichPathway(gcSample[[6]], universe = unique(unlist((gcSample))),
+xreac <- enrichPathway(gcSample[[6]], 
+                       organism = "human",
+                       universe = unique(unlist((gcSample))),
                        pvalueCutoff = 1, qvalueCutoff = 1, minGSSize = 0) 
 xreac <- subset_by_size(xreac, maxObsSize = 50)
 res <- summary(xreac)[,c("ID","Description","pvalue","GeneRatio","BgRatio")]
@@ -257,7 +265,7 @@ cnetplot(xfake, vertex.label.cex = 0.5)
 
 A different layout
 ```{r show_fake2}
-cnetplot(xfake, vertex.label.cex = 0.5, layout=igraph::layout_with_kk)
+cnetplot(xfake, vertex.label.cex = 0.5, layout="kk")
 ```
 
 Check out as well [HTSanalyzeR](http://bioconductor.org/packages/release/bioc/html/HTSanalyzeR.html) and  [geecc](http://bioconductor.org/packages/release/bioc/html/geecc.html) Bioconductor packages.
