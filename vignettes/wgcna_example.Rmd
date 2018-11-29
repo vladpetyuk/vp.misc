@@ -274,7 +274,8 @@ xx <- compareCluster(clustEG, fun="enrichPathway",
                      qvalueCutoff=0.05,
                      pAdjustMethod="none",
                      universe=unlist(clustEG))
-plot(xx, colorBy="qvalue")
+# plot(xx, colorBy="qvalue")
+dotplot(xx)
 ```
 
 ```{r reactome_summary, message=FALSE, warning=FALSE}
