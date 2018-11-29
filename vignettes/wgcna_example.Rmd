@@ -7,6 +7,13 @@ output:
     number_sections: true
 ---
 
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{VP Misc}
+%\VignetteKeyword{vp.mics}
+%\VignettePackage{vp.misc}
+-->
+
 
 ```{r setup, echo=FALSE}
 # set global chunk options
