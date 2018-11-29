@@ -45,7 +45,8 @@ Imports:
     UniProt.ws,
     org.Hs.eg.db,
     biomaRt,
-    GOstats
+    GOstats,
+    ReactomePA
 VignetteBuilder: knitr
 Suggests:
     knitr
