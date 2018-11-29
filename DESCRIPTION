@@ -39,7 +39,8 @@ Imports:
     clusterProfiler,
     stringr,
     FField,
-    sva
+    sva,
+    lme4
 VignetteBuilder: knitr
 Suggests:
     knitr
