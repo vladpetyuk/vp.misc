@@ -41,7 +41,8 @@ Imports:
     FField,
     sva,
     lme4,
-    e1071
+    e1071,
+    UniProt.ws
 VignetteBuilder: knitr
 Suggests:
     knitr
