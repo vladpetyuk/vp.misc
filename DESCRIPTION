@@ -43,5 +43,6 @@ Imports:
     lme4
 VignetteBuilder: knitr
 Suggests:
-    knitr
+    knitr,
+    e1071
 RoxygenNote: 6.1.0
