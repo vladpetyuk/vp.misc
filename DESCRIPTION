@@ -42,7 +42,8 @@ Imports:
     sva,
     lme4,
     e1071,
-    UniProt.ws
+    UniProt.ws,
+    org.Hs.eg.db
 VignetteBuilder: knitr
 Suggests:
     knitr
