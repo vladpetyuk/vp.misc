@@ -46,7 +46,8 @@ Imports:
     org.Hs.eg.db,
     biomaRt,
     GOstats,
-    ReactomePA
+    ReactomePA,
+    KEGG.db
 VignetteBuilder: knitr
 Suggests:
     knitr
