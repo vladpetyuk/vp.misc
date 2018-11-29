@@ -11,7 +11,7 @@ Description: A collection of customized functions used for
     The package contains customized heatmaps, colorschemes,
     convienient nested linear models, machine learning utilities, etc.
 License: Beerware
-biocViews:
+biocViews: Proteomics, MassSpectrometry
 Depends:
     R (>= 2.10),
     MSnbase
