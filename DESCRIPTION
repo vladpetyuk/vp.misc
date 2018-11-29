@@ -48,7 +48,8 @@ Imports:
     GOstats,
     ReactomePA,
     KEGG.db,
-    BiocStyle
+    BiocStyle,
+    WGCNA
 VignetteBuilder: knitr
 Suggests:
     knitr
