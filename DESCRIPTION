@@ -43,7 +43,8 @@ Imports:
     lme4,
     e1071,
     UniProt.ws,
-    org.Hs.eg.db
+    org.Hs.eg.db,
+    biomaRt
 VignetteBuilder: knitr
 Suggests:
     knitr
