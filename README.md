@@ -2,7 +2,7 @@ vp.misc
 ======
 
 ## Installation
-Make package `devtools` is installed.
+Make sure package `devtools` is installed.
 ```r
 devtools::install_github("vladpetyuk/vp.misc")
 ```
