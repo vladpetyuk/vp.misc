@@ -2,14 +2,11 @@ vp.misc
 ======
 
 ## Installation
+Make package `devtools` is installed.
 ```r
-source("http://bioconductor.org/biocLite.R")
-options(repos=biocinstallRepos(character()))
-install.packages("devtools")
-library("devtools")
-install_github("vladpetyuk/vp.misc")
+devtools::install_github("vladpetyuk/vp.misc")
 ```
-By default `install_github` does not compile vignettes. Thus to compile with vignettes use the following options for the last command.
+By default `install_github` does not compile vignettes. Thus to compile with vignettes use the following options.
 ```r
 install_github("vladpetyuk/vp.misc", build = TRUE, build_opts = c("--no-resave-data", "--no-manual"))
 ```
