@@ -4,7 +4,7 @@ vp.misc
 ## Installation
 Make sure package `devtools` is installed.
 
-To install run
+To install `vp.misc` run
 ```r
 devtools::install_github("vladpetyuk/vp.misc")
 ```
