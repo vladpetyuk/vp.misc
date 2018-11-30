@@ -8,7 +8,7 @@ devtools::install_github("vladpetyuk/vp.misc")
 ```
 By default `install_github` does not compile vignettes. Thus to compile with vignettes use the following options.
 ```r
-install_github("vladpetyuk/vp.misc", build = TRUE, build_opts = c("--no-resave-data", "--no-manual"))
+devtools::install_github("vladpetyuk/vp.misc", build = TRUE, build_opts = c("--no-resave-data", "--no-manual"))
 ```
 
 ## Description
