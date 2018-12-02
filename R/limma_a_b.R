@@ -49,7 +49,8 @@ limma_a_b <- function(eset, model.str, coef.str, ...){
 }
 
 
-#' @describeIn limma_a_b
+#' @describeIn limma_a_b More generalized approach. The tested variable doesn't have to be a
+#'                       factor with 2 levels like in limma_a_b.
 limma_gen <- function(eset, model.str, coef.str, ...){
     
     model.formula <- eval(parse(text=model.str), envir=pData(eset))
