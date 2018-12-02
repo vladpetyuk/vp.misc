@@ -204,7 +204,7 @@ remove_batch_effect <- function (x, batch_name, ref_level=NULL, subset_by=c(NULL
     
     # defining subset of values to compute batch effect on
     idx <- rep(TRUE, ncol(x))
-    if(all(subset_by != c(NULL,NULL))){ # both have values
+    if(length(subset_by) == 2){
         idx <- pData(x)[[subset_by[1]]] == subset_by[2]
     }
     
