@@ -218,6 +218,9 @@ remove_batch_effect <- function (x, batch_name, ref_level=NULL, subset_by=c(NULL
     for(i in 1:nrow(e)){
         # computing biases for each batch on subset [idx] of values
         batch_biases <- tapply(e[i,idx], cova[idx], mean, na.rm=T)
+        # If no samples were selected from a certain batch. 
+        # Set the correction factor to zero.
+        batch_biases[is.na(batch_biases)] <- 0
         # zeroing on reference level (if ref_level provided) & not NA
         if(!is.null(ref_level) && !is.na(as.numeric(batch_biases[ref_level]))) {
             batch_biases <- batch_biases - as.numeric(batch_biases[ref_level])
