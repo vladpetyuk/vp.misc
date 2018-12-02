@@ -3,12 +3,16 @@
 \name{remove_covariate}
 \alias{remove_covariate}
 \alias{correct_batch_effect}
+\alias{remove_batch_effect}
 \title{Removing Covariate Effect form Expression Data}
 \usage{
 remove_covariate(x, cov_name)
 
 correct_batch_effect(m, batch_name, least_count_threshold = 2,
   BPPARAM = bpparam(), ...)
+
+remove_batch_effect(x, batch_name, ref_level = NULL,
+  subset_by = c(NULL, NULL))
 }
 \arguments{
 \item{x}{MSnSet or ExpressionSet object}
@@ -29,6 +33,13 @@ Default is bpparam(). Use bpparam("SerialParam") if you want to restrict
 it to only one thread.}
 
 \item{...}{other arguments for \code{\link[sva]{ComBat}}}
+
+\item{ref_level}{In case a certain factor level should be reference 
+and kept at zero bias. Default is NULL, i.e. none.}
+
+\item{subset_by}{vector of two strings from varLabels(x). First is the 
+variable name for subsetting the data. Second is the variable value
+to retain.}
 }
 \description{
 The main purpose of this function is to remove batch effect from the data.
@@ -39,6 +50,8 @@ effects from the data.
 \section{Functions}{
 \itemize{
 \item \code{correct_batch_effect}: wrapper around sva::ComBat
+
+\item \code{remove_batch_effect}: A flexible batch correction function
 }}
 
 \note{
@@ -98,9 +111,17 @@ res <- eset_lm(oca.fixed, "y ~ iTRAQ_Batch", "y ~ 1")
 hist(res$p.value, 50)
 image_msnset(oca.fixed, facetBy="iTRAQ_Batch")
 
+# Example for correct_batch_effect
 data("cptac_oca") # oca.set object
 plot_pca_v3(oca.set, phenotype = 'Batch')
 oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
+plot_pca_v3(oca.set.2, phenotype = 'Batch')
+
+data("cptac_oca") # oca.set object
+plot_pca_v3(oca.set, phenotype = 'Batch')
+oca.set.2 <- remove_batch_effect(oca.set,
+                                 batch_name = "Batch", ref_level="X14",
+                                 subset_by=c("tumor_stage","IIIC"))
 plot_pca_v3(oca.set.2, phenotype = 'Batch')
 }
 \seealso{

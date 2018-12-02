@@ -130,6 +130,7 @@ remove_covariate <- function(x, cov_name){
 #' 
 #' @examples
 #' 
+#' # Example for correct_batch_effect
 #' data("cptac_oca") # oca.set object
 #' plot_pca_v3(oca.set, phenotype = 'Batch')
 #' oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
@@ -177,3 +178,56 @@ correct_batch_effect <- function(m, batch_name,
 
 
 
+
+
+
+
+#' @describeIn remove_covariate A flexible batch correction function
+#' @export remove_batch_effect
+#' 
+#' @param ref_level In case a certain factor level should be reference 
+#'                  and kept at zero bias. Default is NULL, i.e. none.
+#' @param subset_by vector of two strings from varLabels(x). First is the 
+#'                  variable name for subsetting the data. Second is the variable value
+#'                  to retain.
+#' 
+#' @examples
+#' 
+#' data("cptac_oca") # oca.set object
+#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' oca.set.2 <- remove_batch_effect(oca.set,
+#'                                  batch_name = "Batch", ref_level="X14",
+#'                                  subset_by=c("tumor_stage","IIIC"))
+#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+
+remove_batch_effect <- function (x, batch_name, ref_level=NULL, subset_by=c(NULL,NULL)) {
+    
+    # defining subset of values to compute batch effect on
+    idx <- rep(TRUE, ncol(x))
+    if(all(subset_by != c(NULL,NULL))){ # both have values
+        idx <- pData(x)[[subset_by[1]]] == subset_by[2]
+    }
+    
+    e <- exprs(x)
+    cova <- pData(x)[[batch_name]]
+    
+    if (!is.factor(cova) && !is.character(cova)) {
+        stop("The covariate is not a factor or character.")
+    }
+    
+    for(i in 1:nrow(e)){
+        # computing biases for each batch on subset [idx] of values
+        batch_biases <- tapply(e[i,idx], cova[idx], mean, na.rm=T)
+        # zeroing on reference level (if ref_level provided) & not NA
+        if(!is.null(ref_level) && !is.na(as.numeric(batch_biases[ref_level]))) {
+            batch_biases <- batch_biases - as.numeric(batch_biases[ref_level])
+        }
+        # correcting biases
+        e[i,] <- e[i,] - as.numeric(batch_biases[cova])
+    }
+    # re-zero-center
+    e <- sweep(e, 1, rowMeans(e, na.rm = T), "-")
+    # swap the expression values
+    exprs(x) <- e
+    return(x)
+}
