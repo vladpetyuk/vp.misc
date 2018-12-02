@@ -47,7 +47,9 @@ Imports:
     biomaRt,
     GOstats,
     ReactomePA,
-    KEGG.db
+    KEGG.db,
+    BiocStyle,
+    WGCNA
 VignetteBuilder: knitr
 Suggests:
     knitr

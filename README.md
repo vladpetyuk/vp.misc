@@ -2,12 +2,15 @@ vp.misc
 ======
 
 ## Installation
+Make sure package `devtools` is installed.
+
+To install `vp.misc` run
 ```r
-source("http://bioconductor.org/biocLite.R")
-options(repos=biocinstallRepos(character()))
-install.packages("devtools")
-library("devtools")
-install_github("vladpetyuk/vp.misc")
+devtools::install_github("vladpetyuk/vp.misc")
+```
+By default `install_github` does not compile vignettes. Thus to compile with vignettes use the following options.
+```r
+devtools::install_github("vladpetyuk/vp.misc", build = TRUE, build_opts = c("--no-resave-data", "--no-manual"))
 ```
 
 ## Description
