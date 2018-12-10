@@ -49,7 +49,9 @@ Imports:
     ReactomePA,
     KEGG.db,
     BiocStyle,
-    WGCNA
+    WGCNA,
+    gelnet,
+    multcomp
 VignetteBuilder: knitr
 Suggests:
     knitr
