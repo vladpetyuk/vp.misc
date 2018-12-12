@@ -51,7 +51,8 @@ Imports:
     BiocStyle,
     WGCNA,
     gelnet,
-    multcomp
+    multcomp,
+    bnlearn
 VignetteBuilder: knitr
 Suggests:
     knitr
