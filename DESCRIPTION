@@ -52,7 +52,9 @@ Imports:
     WGCNA,
     gelnet,
     multcomp,
-    bnlearn
+    bnlearn,
+    pracma,
+    MethComp
 VignetteBuilder: knitr
 Suggests:
     knitr
