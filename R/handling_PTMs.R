@@ -69,9 +69,16 @@ map_PTM_sites <- function(ids, fasta, prot_id_col, peptide_col, mod_char){
             mutate(TrimmedPeptide = str_replace_all(TrimmedPeptide, other_chars_pttrn, ""))
     }
     
+    # check for missing peptide sequences
+    if(any(is.na(ids$TrimmedPeptide))){
+        message("Entries with missing peptide sequences were detected. 
+                The correspoding rows will be removed.")
+        ids <- ids %>% filter(!is.na(TrimmedPeptide))
+    }
+    
     # check if there are peptides without mods
     mod_char_pttrn <- paste0("[\\", mod_char, "]")
-    if(!all(str_detect(ids$TrimmedPeptide, mod_char_pttrn))){
+    if(any(!str_detect(ids$TrimmedPeptide, mod_char_pttrn))){
         message("Peptide with no PTMs were detected. The correspoding rows will be removed.")
         ids <- ids %>%
             filter(str_detect(TrimmedPeptide, mod_char_pttrn))
