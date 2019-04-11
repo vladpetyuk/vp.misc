@@ -146,6 +146,8 @@ cv_onethread <- function(response, dSet, features, cv_idx, select){
 #'          featureNames(msnset) or in pData(msnset).
 #' @param response factor to classify along. Must be only 2 levels.
 #' @param pred.cls character, class to predict
+#' @param K specifies the cross-validation type. Default NULL means LOOCV. 
+#'          Another typical value is 10.
 #' @param sel.feat logical to select features using LASSO
 #'           or use the entire set?
 #' @param par.backend type of backend to support parallelizattion. 

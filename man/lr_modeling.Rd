@@ -18,6 +18,9 @@ featureNames(msnset) or in pData(msnset).}
 
 \item{pred.cls}{character, class to predict}
 
+\item{K}{specifies the cross-validation type. Default NULL means LOOCV. 
+Another typical value is 10.}
+
 \item{sel.feat}{logical to select features using LASSO
 or use the entire set?}
 
