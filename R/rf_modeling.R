@@ -99,6 +99,8 @@ train_model_rf <- function(x, y, ...){
 #'          featureNames(msnset) or in pData(msnset).
 #' @param response factor to classify along. Must be only 2 levels.
 #' @param pred.cls class to predict
+#' @param K specifies the cross-validation type. Default NULL means LOOCV. 
+#'          Another typical value is 10.
 #' @param sel.feat logical defining if to select features or use the entire set?
 #' @param sel.alg character.
 #'      \itemize{
@@ -108,6 +110,7 @@ train_model_rf <- function(x, y, ...){
 #'      }
 #' @param verbose 0 - silent, 1 - count round, 
 #'          2 - print selected features at each round
+#' @param ... Extra arguments. Currently passed only to Boruta algorithm.
 #'          
 #' @return list 
 #'      \describe{
@@ -132,10 +135,10 @@ train_model_rf <- function(x, y, ...){
 #' # reduce to two classes
 #' msnset <- msnset[,msnset$subject.type != "control.1"]
 #' msnset$subject.type <- as.factor(msnset$subject.type)
-#' out <- rf_modeling(msnset, 
-#'                    features=featureNames(msnset)[1:5], 
-#'                    response="subject.type", 
-#'                    pred.cls="case")
+# out <- rf_modeling(msnset,
+#                    features=featureNames(msnset)[1:5],
+#                    response="subject.type",
+#                    pred.cls="case")
 #' plotAUC(out)
 #' # top features consistently recurring in the models during LOOCV
 #' print(out$top)
@@ -146,8 +149,76 @@ train_model_rf <- function(x, y, ...){
 #' plot(sort(out$prob))
 #' abline(h=0.5, col='red')
 #'
+rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=T,
+                            sel.alg=c("varSelRF","Boruta","top"), ...){
+    #
+    if(.Platform$OS.type == "unix")
+        mc.cores <- detectCores()
+    else
+        mc.cores <- 1
+    # prepare data
+    dSet <- cbind(pData(msnset), t(exprs(msnset)))
+    #
+    stopifnot(length(unique(dSet[,response])) == 2)
+    stopifnot(pred.cls %in% dSet[,response] )
+    if(unique(dSet[,response])[1] == pred.cls){
+        lvlz <- rev(unique(dSet[,response]))
+    }else{
+        lvlz <- unique(dSet[,response])
+    }
+    dSet[,response] <- factor(dSet[,response], levels=lvlz)
+    #---
+    sel.alg <- match.arg(sel.alg)
+    FUN <- switch(sel.alg, 
+                  varSelRF = select_features_varSelRF,
+                  Boruta = function(x,y) select_features_Boruta(x,y,...),
+                  top = select_features_top)
+    
+    # do K-fold split here
+    if(is.null(K))
+        K <- nrow(dSet)
+    num_rep <- ceiling(nrow(dSet)/K)
+    cv_idx <- sample(rep(seq_len(K), num_rep)[seq_len(nrow(dSet))])
+    
+    res <- mclapply(1:K, function(i){
+        i <- cv_idx == i
+        if(sel.feat){
+            features.sel <- FUN(x=dSet[!i,features],
+                                y=dSet[!i,response])
+        }else{
+            features.sel <- features
+        }
+        # train model
+        x=dSet[!i,features.sel,drop=F]
+        colnames(x) <- make.names(colnames(x))
+        mdl <- train_model_rf(x=x, y=dSet[!i,response])
+        # predict
+        newdata <- dSet[i,features.sel,drop=F]
+        colnames(newdata) <- make.names(colnames(newdata))
+        predProb <- predict(mdl, newdata=newdata, type='prob')[,pred.cls]
+        names(predProb) <- rownames(newdata)
+        # print(i)
+        list(predProb, features.sel)
+    }, mc.cores=mc.cores, mc.set.seed = FALSE)
+    #
+    predProb <- unlist(sapply(res, '[[', 1, simplify = FALSE)) # unlist TODO
+    predProb <- predProb[rownames(dSet)]
+    names(predProb) <- NULL # for compatibility
+    selected <- sapply(res, '[[', 2)
+    #---
+    pred <- prediction(predProb, dSet[,response] == pred.cls)
+    return(list(prob = predProb, 
+                features = selected, 
+                top = rev(sort(table(unlist(selected)))),
+                auc = performance(pred,"auc")@y.values[[1]],
+                pred = pred))
+}
 
-rf_modeling <- function( msnset, features, response, pred.cls, sel.feat=T,
+
+
+
+
+rf_modeling_old <- function( msnset, features, response, pred.cls, sel.feat=T,
                          sel.alg=c("varSelRF","Boruta","top"), ...){
     #
     if(.Platform$OS.type == "unix")
@@ -201,5 +272,10 @@ rf_modeling <- function( msnset, features, response, pred.cls, sel.feat=T,
                 auc = performance(pred,"auc")@y.values[[1]],
                 pred = pred))
 }
+
+
+
+
+
 
 

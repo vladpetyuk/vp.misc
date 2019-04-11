@@ -3,10 +3,15 @@
 
 
 select_features_lasso <- function(x, y, ...){
+    # if the number of data points is low it may enable group=FALSE
+    if(length(y) > 100) # hardcoded for now. TODO move as argument.
+        nfolds <- 10
+    else
+        nfolds <- length(y)
     cv.glmmod <- cv.glmnet(x=as.matrix(x), 
                            y=y, 
                            alpha=1, 
-                           nfolds=length(y),
+                           nfolds=nfolds,
                            family="binomial")
     lambda.sel <- cv.glmmod$lambda.min
     if(lambda.sel == cv.glmmod$lambda[1])
@@ -26,19 +31,19 @@ train_model_lr <- function(x, y, ...){
 
 
 
-lr_cv_round <- function( i, dSet, features, response, select){
+lr_cv_round <- function( test_samples, dSet, features, response, select){
     # feature selection first.
     if(select){
-        features.sel <- select_features_lasso(x=dSet[-i,features],
-                                              y=dSet[-i,response])
+        features.sel <- select_features_lasso(x=dSet[!test_samples,features],
+                                              y=dSet[!test_samples,response])
     }else{
         features.sel <- features
     }
     # train model
-    mdl <- train_model_lr(x=dSet[-i,features.sel,drop=F], 
-                          y=dSet[-i,response])
+    mdl <- train_model_lr(x=dSet[!test_samples,features.sel,drop=F], 
+                          y=dSet[!test_samples,response])
     # predict
-    newdata <- dSet[i,features.sel,drop=F]
+    newdata <- dSet[test_samples,features.sel,drop=F]
     colnames(newdata) <- make.names(colnames(newdata))
     #
     list(predict(mdl, newdata=newdata, type='response'), 
@@ -53,20 +58,25 @@ cv_round <- function(FUN, ...){
 
 
 
-loocv_mclapply <- function(response, dSet, features, select){
-    res <- mclapply(1:nrow(dSet), function(i){
-                        cv_round(lr_cv_round, i, dSet=dSet, features=features, 
-                                 response=response, select=select)
-                        }, 
+cv_mclapply <- function(response, dSet, features, cv_idx, select){
+    res <- mclapply(sort(unique(cv_idx)), function(i){
+                        test_samples <- cv_idx == i
+                        cv_round(lr_cv_round, 
+                                 test_samples=test_samples, 
+                                 dSet=dSet, 
+                                 features=features, 
+                                 response=response, 
+                                 select=select)
+                        },
                   mc.cores=detectCores())
-    predProb <- sapply(res, '[[', 1)
+    predProb <- sapply(res, '[[', 1, simplify = FALSE)
     names(predProb) <- NULL # for compatibility
-    selected <- sapply(res, '[[', 2)
+    selected <- sapply(res, '[[', 2, simplify = FALSE)
     list(predProb, selected)
 }
 
 
-loocv_foreach <- function(response, dSet, features, select){
+cv_foreach <- function(response, dSet, features, cv_idx, select){
     #
     # nCores <- ifelse(is.null(nCores), detectCores(), nCores)
     nCores <- detectCores()
@@ -86,23 +96,33 @@ loocv_foreach <- function(response, dSet, features, select){
             c(...)
         }
     }
-    res <- foreach( i=icount(n), .packages=NULL, .combine=f()) %dopar%
-        cv_round(lr_cv_round, i, dSet, features, response, select)
+    res <- foreach( i=icount(max(cv_idx)), # TODO may need to be updated
+                    .packages=NULL, 
+                    .combine=f()) %dopar%
+    {
+        test_samples = cv_idx == i
+        cv_round(lr_cv_round, test_samples, dSet, 
+                 features, response, select)
+    }
     #
-    predProb <- as.numeric(res[(1:nrow(dSet))*2-1])
-    selected <- res[(1:nrow(dSet))*2]
+    predProb <- res[(1:max(cv_idx))*2-1]
+    selected <- res[(1:max(cv_idx))*2]
     list(predProb, selected)
 }
 
 
-loocv_onethread <- function(response, dSet, features, select){
+cv_onethread <- function(response, dSet, features, cv_idx, select){
     predProb <- numeric(nrow(dSet))
     selected <- vector("list",nrow(dSet))
     #---
     pb <- txtProgressBar(min=1, max=nrow(dSet)-1, style=3)
-    for( i in 1:nrow(dSet)){
-        res <- cv_round(lr_cv_round, i, dSet, features, response, select)
-        predProb[i] <- res[[1]]
+    predProb <- rep(list(NULL), max(cv_idx))
+    selected <- rep(list(NULL), max(cv_idx))
+    for( i in sort(unique(cv_idx))){
+        test_samples = cv_idx == i
+        res <- cv_round(lr_cv_round, test_samples, dSet, 
+                        features, response, select)
+        predProb[[i]] <- res[[1]]
         selected[[i]] <- res[[2]]
         setTxtProgressBar(pb, i)
     }
@@ -177,7 +197,8 @@ loocv_onethread <- function(response, dSet, features, select){
 #' 
 #' 
 #' 
-lr_modeling <- function( msnset, features, response, pred.cls, sel.feat=T,
+lr_modeling <- function( msnset, features, response, pred.cls, 
+                         K=NULL, sel.feat=T,
                          par.backend=c('mc','foreach','none')){
     # features - name vector. What if I want to add stuff from pData? G'head.
     # msnset - MSnSet (eSet) object
@@ -199,13 +220,20 @@ lr_modeling <- function( msnset, features, response, pred.cls, sel.feat=T,
     }
     dSet[,response] <- factor(dSet[,response], levels=lvlz)
     #
+    # do K-fold split here
+    if(is.null(K))
+        K <- nrow(dSet)
+    num_rep <- ceiling(nrow(dSet)/K)
+    cv_idx <- sample(rep(seq_len(K), num_rep)[seq_len(nrow(dSet))])
+
     res <- switch(par.backend,
-                  mc = loocv_mclapply(response, dSet, features, sel.feat),
-                  foreach = loocv_foreach(response, dSet, features, sel.feat),
-                  none = loocv_onethread(response, dSet, features, sel.feat))
-    pred <- prediction(res[[1]], dSet[,response] == pred.cls)
-    return(list(prob = res[[1]], 
-                features = res[[2]], 
+                  mc = cv_mclapply(response, dSet, features, cv_idx, sel.feat),
+                  foreach = cv_foreach(response, dSet, features, cv_idx, sel.feat),
+                  none = cv_onethread(response, dSet, features, cv_idx, sel.feat))
+    pred_prob <- unlist(res[[1]])[rownames(dSet)]
+    pred <- prediction(pred_prob, dSet[,response] == pred.cls) # TODO
+    return(list(prob = pred_prob, 
+                features = unlist(res[[2]]), 
                 top = rev(sort(table(unlist(res[[2]])))),
                 auc = performance(pred,"auc")@y.values[[1]],
                 pred = pred))

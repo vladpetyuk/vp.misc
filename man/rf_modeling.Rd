@@ -4,8 +4,8 @@
 \alias{rf_modeling}
 \title{Random Forest Predictive Models}
 \usage{
-rf_modeling(msnset, features, response, pred.cls, sel.feat = T,
-  sel.alg = c("varSelRF", "Boruta", "top"), ...)
+rf_modeling(msnset, features, response, pred.cls, K = NULL,
+  sel.feat = T, sel.alg = c("varSelRF", "Boruta", "top"), ...)
 }
 \arguments{
 \item{msnset}{MSnSet object}
@@ -18,6 +18,9 @@ featureNames(msnset) or in pData(msnset).}
 
 \item{pred.cls}{class to predict}
 
+\item{K}{specifies the cross-validation type. Default NULL means LOOCV. 
+Another typical value is 10.}
+
 \item{sel.feat}{logical defining if to select features or use the entire set?}
 
 \item{sel.alg}{character.
@@ -26,6 +29,8 @@ featureNames(msnset) or in pData(msnset).}
     \item Boruta
     \item top - just selecting top 3 features
 }}
+
+\item{...}{Extra arguments. Currently passed only to Boruta algorithm.}
 
 \item{verbose}{0 - silent, 1 - count round, 
 2 - print selected features at each round}
@@ -57,10 +62,6 @@ head(msnset$subject.type)
 # reduce to two classes
 msnset <- msnset[,msnset$subject.type != "control.1"]
 msnset$subject.type <- as.factor(msnset$subject.type)
-out <- rf_modeling(msnset, 
-                   features=featureNames(msnset)[1:5], 
-                   response="subject.type", 
-                   pred.cls="case")
 plotAUC(out)
 # top features consistently recurring in the models during LOOCV
 print(out$top)

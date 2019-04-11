@@ -4,8 +4,8 @@
 \alias{lr_modeling}
 \title{Logistic Regression Predictive Models}
 \usage{
-lr_modeling(msnset, features, response, pred.cls, sel.feat = T,
-  par.backend = c("mc", "foreach", "none"))
+lr_modeling(msnset, features, response, pred.cls, K = NULL,
+  sel.feat = T, par.backend = c("mc", "foreach", "none"))
 }
 \arguments{
 \item{msnset}{MSnSet object. Note - can it be generalized to eset?}
