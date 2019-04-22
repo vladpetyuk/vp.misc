@@ -45,8 +45,11 @@ heatmap.3 <- function( x,
     # library( "gplots" )
     # library( "RColorBrewer" )
     
-    if(isTRUE(z.transf))
-        x = x/apply(x,1,sd,na.rm=TRUE)
+    if(isTRUE(z.transf)){
+        x <- sweep(x, 1, apply(x, 1, mean, na.rm=TRUE), "-")
+        x <- sweep(x, 1, apply(x, 1, sd,   na.rm=TRUE), "/")
+        # x <- x/apply(x,1,sd,na.rm=TRUE)
+    }
     
     # column coloring
     # if NULL, then ColSideColors has to be missing in the call
