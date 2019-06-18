@@ -16,7 +16,9 @@
 #' @importFrom dplyr rename full_join mutate case_when
 #' @importFrom magrittr %>%
 #' @importFrom rlang !! :=
+#' 
 #' @export protein_inference
+#' 
 #' @examples
 #' library(tibble)
 #' x <- tribble(
@@ -29,6 +31,7 @@
 #'     "AAAAK", "P3") 
 #' protein_inference(x, Accession = "prot", PepSeq = "pep")    
 #' 
+
 protein_inference <- function(x, Accession = "Accession", PepSeq = "PepSeq"){
     
     infer_parsimonious_set <- function(x){
@@ -37,8 +40,8 @@ protein_inference <- function(x, Accession = "Accession", PepSeq = "PepSeq"){
         while(nrow(x) > 0){
             top_prot <- x[, .N, by=Accession][which.max(N),,]$Accession
             top_peps <- subset(x, Accession == top_prot)
-            res <- c(res, list(top_peps))
-            x <- subset(x, !(PepSeq %in% top_peps[[1]]))
+            res <- c(res, list(top_pps))
+            x <- subset(x, !(PepSeq %in% top_peps$PepSeq))
         }
         return(rbindlist(res, use.names=F, fill=FALSE, idcol=NULL))
     }
