@@ -21,6 +21,7 @@ Imports:
     Boruta,
     ROCR,
     doParallel,
+    BiocParallel,
     plyr,
     dplyr,
     gplots,

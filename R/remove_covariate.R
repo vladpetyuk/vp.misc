@@ -115,6 +115,7 @@ remove_covariate <- function(x, cov_name){
 #' @importFrom tidyr gather
 #' @importFrom tibble rownames_to_column
 #' @importFrom Biobase exprs pData
+#' @importFrom BiocParallel bpparam
 #' @export correct_batch_effect
 #' 
 #' @param batch_name same thing as covariate name. Using "batch" instead of 
