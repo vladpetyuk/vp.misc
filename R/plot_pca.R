@@ -73,7 +73,7 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellispe=TRUE,
     }else{
         if(is.numeric(colorBy)){
             p <- p + guides(color=guide_colorbar(phenotype_str))
-        } else if (colorBy != ""){
+        } else if (!identical(colorBy,"")){
             p <- p + guides(color=guide_legend(phenotype_str))
         }
     }
@@ -207,7 +207,7 @@ if (!is.null(label)) {
     }else{
         if(is.numeric(colorBy)){
             p <- p + guides(color=guide_colorbar(phenotype_str))
-        } else if (colorBy != ""){
+        } else if (!identical(colorBy,"")){
             p <- p + guides(color=guide_legend(phenotype_str))
         }
     }
