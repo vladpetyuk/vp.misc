@@ -12,7 +12,7 @@
 #' 
 #' @note The algorithm essentially uses an LM. The reason for re-inventing the 
 #' wheel is presense of missing values in proteomics datasets more then usual.
-#' @seealso \code{\link[sva]{ComBat}}
+#' @seealso \code{\link[sva]{ComBat}} \code{\link[WGCNA]{empiricalBayesLM}}
 #' 
 #' @importFrom Biobase exprs pData
 #' @importClassesFrom Matrix dgCMatrix
@@ -235,3 +235,60 @@ remove_batch_effect <- function (x, batch_name, ref_level=NULL, subset_by=c(NULL
     exprs(x) <- e
     return(x)
 }
+
+
+
+
+
+
+#' @describeIn remove_covariate An empirical Bayesian approach to batch correction
+#'   with discrete or continuous covariates
+#' @importFrom WGCNA empiricalBayesLM
+#' @importFrom Biobase exprs pData
+#' @export correct_batch_effect_empiricalBayesLM
+#' 
+#' @param removed_cov_name covariate name to be removed. Must be in pData(x).
+#' @param retained_cov_name covariate name to be included in the model but
+#' not removed. Must be in pData(x).
+#' @param least_proportion_threshold minimum proportion of feature observations
+#' required for the whole dataset. The default value is 50\%.
+#' 
+#' @examples
+#' 
+#' # Example for correct_batch_effect_empiricalBayesLM
+#' data("cptac_oca") # oca.set object
+#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' oca.set.2 <- correct_batch_effect_empiricalBayesLM(oca.set,
+#'                                  removed_cov_name = "Batch",
+#'                                  retained_cov_name = "tumor_stage")
+#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+
+correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained_cov_name=NULL, least_proportion_threshold=0.5, 
+                                                   ...) {
+    n.samples <- ncol(x)
+    least_count_threshold = least_proportion_threshold * n.samples
+    sufficiently_present_features <- which(rowSums(!is.na(exprs(x))) >= least_count_threshold)
+    x <- x[sufficiently_present_features, ]
+    e <- exprs(x)
+    e <- as.data.frame(t(e))
+    
+    if (!all(c(removed_cov_name, retained_cov_name) %in% names(pData(x)))) {
+        stop("The covariates are not recognized")
+    }
+    
+    if (is.null(retained_cov_name)) {
+        soln <- WGCNA::empiricalBayesLM(data = e,
+                                        removedCovariates = pData(x)[,removed_cov_name])
+    } else {
+        soln <- WGCNA::empiricalBayesLM(data = e,
+                                        removedCovariates = pData(x)[,removed_cov_name],
+                                        retainedCovariates = pData(x)[,retained_cov_name])
+    }
+ 
+    e <- soln[["adjustedData"]]
+    exprs(x) <- t(as.matrix(e))
+    
+    return(x)
+}
+
+
