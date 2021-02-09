@@ -34,16 +34,8 @@ readMaxQuantPeptides <- function (path=".",
                                   msms_id_only = FALSE,
                                   verbose = 1){
     
-    fpath <- list.files(path = path, pattern = "summary.txt", full.names = TRUE)
-    stopifnot(length(fpath) == 1)
-    smmr <- read.delim(fpath, check.names = FALSE, stringsAsFactors = FALSE)
-    warning("Asumming \"summary.txt\" file contains 2n+1 rows (excluding header).
-            Where n is the number of datasets.
-            Please double check.")
-    smmr <- smmr[seq_len((nrow(smmr) - 1)/2), ]
-    smmr <- data.frame(dataset.name = smmr[, "Raw file"], 
-                       row.names = smmr[,"Experiment"], 
-                       stringsAsFactors = FALSE)
+    smmr <- readMaxQuantSummary(path)
+    
     fpath <- list.files(path = path, pattern = "peptides.txt", full.names = TRUE)
     stopifnot(length(fpath) == 1)
     x <- read.delim(fpath, check.names = FALSE, stringsAsFactors = FALSE)

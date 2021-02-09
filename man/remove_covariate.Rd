@@ -4,15 +4,28 @@
 \alias{remove_covariate}
 \alias{correct_batch_effect}
 \alias{remove_batch_effect}
+\alias{correct_batch_effect_empiricalBayesLM}
 \title{Removing Covariate Effect form Expression Data}
 \usage{
 remove_covariate(x, cov_name)
 
-correct_batch_effect(m, batch_name, least_count_threshold = 2,
-  BPPARAM = bpparam(), ...)
+correct_batch_effect(
+  m,
+  batch_name,
+  least_count_threshold = 2,
+  BPPARAM = bpparam(),
+  ...
+)
 
-remove_batch_effect(x, batch_name, ref_level = NULL,
-  subset_by = c(NULL, NULL))
+remove_batch_effect(x, batch_name, ref_level = NULL, subset_by = c(NULL, NULL))
+
+correct_batch_effect_empiricalBayesLM(
+  x,
+  removed_cov_name,
+  retained_cov_name = NULL,
+  least_proportion_threshold = 0.5,
+  ...
+)
 }
 \arguments{
 \item{x}{MSnSet or ExpressionSet object}
@@ -40,6 +53,14 @@ and kept at zero bias. Default is NULL, i.e. none.}
 \item{subset_by}{vector of two strings from varLabels(x). First is the 
 variable name for subsetting the data. Second is the variable value
 to retain.}
+
+\item{removed_cov_name}{covariate name to be removed. Must be in pData(x).}
+
+\item{retained_cov_name}{covariate name to be included in the model but
+not removed. Must be in pData(x).}
+
+\item{least_proportion_threshold}{minimum proportion of feature observations
+required for the whole dataset. The default value is 50\%.}
 }
 \description{
 The main purpose of this function is to remove batch effect from the data.
@@ -52,6 +73,9 @@ effects from the data.
 \item \code{correct_batch_effect}: wrapper around sva::ComBat
 
 \item \code{remove_batch_effect}: A flexible batch correction function
+
+\item \code{correct_batch_effect_empiricalBayesLM}: An empirical Bayesian approach to batch correction
+with discrete or continuous covariates
 }}
 
 \note{
@@ -123,7 +147,15 @@ oca.set.2 <- remove_batch_effect(oca.set,
                                  batch_name = "Batch", ref_level="X14",
                                  subset_by=c("tumor_stage","IIIC"))
 plot_pca_v3(oca.set.2, phenotype = 'Batch')
+
+# Example for correct_batch_effect_empiricalBayesLM
+data("cptac_oca") # oca.set object
+plot_pca_v3(oca.set, phenotype = 'Batch')
+oca.set.2 <- correct_batch_effect_empiricalBayesLM(oca.set,
+                                 removed_cov_name = "Batch",
+                                 retained_cov_name = "tumor_stage")
+plot_pca_v3(oca.set.2, phenotype = 'Batch')
 }
 \seealso{
-\code{\link[sva]{ComBat}}
+\code{\link[sva]{ComBat}} \code{\link[WGCNA]{empiricalBayesLM}}
 }

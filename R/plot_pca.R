@@ -217,6 +217,78 @@ if (!is.null(label)) {
 
 
 
+#' @describeIn plot_pca_v1 Alternative PCA with option to select pair of principal components
+#' @importFrom ggrepel geom_label_repel
+#' @export plot_pca_v4
+#' 
+#' @examples
+#' data(srm_msnset)
+#' plot_pca_v4(msnset, phenotype = "subject.type", pc.index=c(1,3))
+#' plot_pca_v4(msnset, phenotype = "subject.type", label = "sample.id", pc.index=c(1,3))
+#' plot_pca_v4(msnset, pc.index=c(1,3))
+
+plot_pca_v4 <- function (eset, phenotype = NULL, label = NULL, point_size = 5, 
+                         show.ellispe = TRUE, show.NA = TRUE, legend.title.width = 20,
+                         pc.index = c(1, 2),
+                         ...) 
+{
+  if (!is.null(phenotype)) {
+    colorBy <- pData(eset)[[phenotype]]
+    if (!show.NA) {
+      idx <- !is.na(colorBy)
+      eset <- eset[, idx]
+      colorBy <- colorBy[idx]
+    }
+  }
+  else {
+    colorBy <- ""
+    phenotype <- ""
+    show.ellispe <- FALSE
+  }
+  stopifnot(sum(complete.cases(exprs(eset))) > 1)
+  eset <- eset[complete.cases(exprs(eset)), ]
+  z <- t(exprs(eset))
+  z <- sweep(z, 1, rowMeans(z), FUN = "-")
+  z <- sweep(z, 1, apply(z, 1, sd), FUN = "/")
+  pca1 <- prcomp(z, scale. = F)
+  scores <- as.data.frame(pca1$x)
+  exp_var <- 100 * summary(pca1)$importance[2, ][pc.index]
+  axes <- paste0("PC", pc.index)
+  axes <- paste0(axes, " (", round(exp_var, 2), "%)")
+  ggdata <- data.frame(scores[, pc.index], colorBy)
+  p <- ggplot(ggdata) + geom_point(aes(x = ggdata[,1], y = ggdata[,2], color = colorBy), 
+                                   size = point_size, shape = 20, show.legend = TRUE) + 
+    coord_fixed() + xlab(axes[1]) + ylab(axes[2]) + theme_bw()
+  if (!is.null(label)) {
+    custom_args <- list(mapping = aes(x = ggdata[,1], y = ggdata[,2], 
+                                      fill = colorBy, label = pData(eset)[[label]]), fontface = "bold", 
+                        color = "white", box.padding = 0.25, point.padding = 0.25, 
+                        segment.color = "grey50", label.size = 0.01, segment.alpha = 0.5, 
+                        size = 2.5)
+    user_args <- list(...)
+    custom_args[names(user_args)] <- user_args
+    p <- p + do.call(geom_label_repel, custom_args)
+  }
+  phenotype_str <- str_wrap(phenotype, legend.title.width)
+  if (show.ellispe) {
+    p <- p + stat_ellipse(aes(x = ggdata[,1], y = ggdata[,2], fill = colorBy), 
+                          geom = "polygon", type = "norm", level = 0.5, alpha = 0.1, 
+                          show.legend = TRUE) + guides(color = guide_legend(phenotype_str), 
+                                                       fill = guide_legend(phenotype_str))
+  }
+  else {
+    if (is.numeric(colorBy)) {
+      p <- p + guides(color = guide_colorbar(phenotype_str))
+    }
+    else if (!identical(colorBy, "")) {
+      p <- p + guides(color = guide_legend(phenotype_str))
+    }
+  }
+  return(p)
+}
+
+
+
 
 
 
