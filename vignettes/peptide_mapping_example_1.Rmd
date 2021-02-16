@@ -7,7 +7,7 @@ output:
 
 <!--
 %\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{VP Misc}
+%\VignetteIndexEntry{peptide mapping example 1}
 %\VignetteKeyword{vp.mics}
 %\VignettePackage{vp.misc}
 -->
