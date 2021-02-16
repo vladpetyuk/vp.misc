@@ -6,7 +6,7 @@ output:
 
 <!--
 %\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{VP Misc}
+%\VignetteIndexEntry{heatmap_examples}
 %\VignetteKeyword{vp.mics}
 %\VignettePackage{vp.misc}
 -->
