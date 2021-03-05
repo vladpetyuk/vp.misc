@@ -30,10 +30,10 @@
 #' @examples
 #' data(srm_msnset)
 #' head(varLabels(msnset))
-#' out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1")
+#' out <- eset_lm(msnset, "~ subject.type", "~ 1")
 #' head(out)
 #' # now with shuffling
-#' out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1", N = 100)
+#' out <- eset_lm(msnset, "~ subject.type", "~ 1", N = 100)
 #' head(out)
 #' head(out[order(out$p.value),])
 
@@ -125,8 +125,8 @@ lm_for_one <- function(ints, form.alt, form.nul, facs, off) {
     selected.rows <- rownames(model.frame(as.formula(form.alt), data=data))
     data <- data[selected.rows,]
     #
-    mod.alt <- lm(as.formula(form.alt), offset = off, data = data)
-    mod.nul <- lm(as.formula(form.nul), offset = off, data = data)
+    mod.alt <- lm(as.formula(paste("y", form.alt)), offset = off, data = data)
+    mod.nul <- lm(as.formula(paste("y", form.nul)), offset = off, data = data)
     anstat  <- anova(mod.alt, mod.nul, test = "F")
     p.value <- anstat[2, 'Pr(>F)']
     F.stat <- anstat[2, 'F']
