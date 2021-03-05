@@ -52,8 +52,9 @@ eset_lm <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N=
 eset_lm_one_pass <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL) 
 {
     # Check models. They should be nested and differ only in one term.
-    stopifnot(length(setdiff(all.vars(as.formula(form.alt)),
-                             all.vars(as.formula(form.nul)))) == 1)
+    #stopifnot(length(setdiff(all.vars(as.formula(form.alt)),
+    #                         all.vars(as.formula(form.nul)))) == 1)
+    
     #
     data <- exprs(eset)
     if (is.null(facs)) 
@@ -91,8 +92,9 @@ eset_lm_shuffled <- function(eset, form.alt, form.nul,
                              facs = NULL, norm.coef = NULL, N=1000)
 {
     # Check models. They should be nested and differ only in one term.
-    stopifnot(length(setdiff(all.vars(as.formula(form.alt)),
-                             all.vars(as.formula(form.nul)))) == 1)
+    # stopifnot(length(setdiff(all.vars(as.formula(form.alt)),
+    #                         all.vars(as.formula(form.nul)))) == 1)
+    
     #
     # normal test here
     res <- eset_lm(eset, form.alt, form.nul, facs, norm.coef)
@@ -130,8 +132,9 @@ lm_for_one <- function(ints, form.alt, form.nul, facs, off) {
     F.stat <- anstat[2, 'F']
     # now extract the effect
     # detemine is this is multifactorial ANOVA
-    dif.term <- setdiff(all.vars(as.formula(form.alt)), 
-                        all.vars(as.formula(form.nul)))
+    # dif.term <- setdiff(all.vars(as.formula(form.alt)), 
+    #                    all.vars(as.formula(form.nul)))
+    
     if(is.factor(data[[dif.term]]) & nlevels(data[[dif.term]]) > 2){
         # basically I want to pull out maximum contrast
         col.pos <- grep(dif.term, names(coef(mod.alt)))
