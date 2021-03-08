@@ -30,10 +30,10 @@
 #' @examples
 #' data(srm_msnset)
 #' head(varLabels(msnset))
-#' out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1")
+#' out <- eset_lm(msnset, "~ subject.type", "~ 1")
 #' head(out)
 #' # now with shuffling
-#' out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1", N = 100)
+#' out <- eset_lm(msnset, "~ subject.type", "~ 1", N = 100)
 #' head(out)
 #' head(out[order(out$p.value),])
 
@@ -125,16 +125,32 @@ lm_for_one <- function(ints, form.alt, form.nul, facs, off) {
     selected.rows <- rownames(model.frame(as.formula(form.alt), data=data))
     data <- data[selected.rows,]
     #
-    mod.alt <- lm(as.formula(form.alt), offset = off, data = data)
-    mod.nul <- lm(as.formula(form.nul), offset = off, data = data)
+    mod.alt <- lm(as.formula(paste("y", form.alt)), offset = off, data = data)
+    mod.nul <- lm(as.formula(paste("y", form.nul)), offset = off, data = data)
     anstat  <- anova(mod.alt, mod.nul, test = "F")
     p.value <- anstat[2, 'Pr(>F)']
     F.stat <- anstat[2, 'F']
-    # now extract the effect
-    # detemine is this is multifactorial ANOVA
-    # dif.term <- setdiff(all.vars(as.formula(form.alt)), 
-    #                    all.vars(as.formula(form.nul)))
     
+    # extract the effect ---
+    # get terms from models
+    alt.terms <- attr(terms(as.formula(form.alt)), "term.labels")
+    null.terms <- attr(terms(as.formula(form.nul)), "term.labels")
+    dif.term <- setdiff(alt.terms, null.terms)
+    
+    if(length(dif.term) != 1) {
+        stop(c("form.alt should have exactly 1 more term than form.nul.",
+               "\nNumber of different terms: ", length(dif.term)))
+    }
+    
+    if(length(grep(":", dif.term)) != 0) {
+        stop("Interaction terms are not currently supported.")
+    }
+    
+    if(is.null(data[[dif.term]])) {
+        stop(c(dif.term, " is not a variable in the eset object."))
+    }
+    
+    # determine if this is a multifactorial ANOVA
     if(is.factor(data[[dif.term]]) & nlevels(data[[dif.term]]) > 2){
         # basically I want to pull out maximum contrast
         col.pos <- grep(dif.term, names(coef(mod.alt)))
