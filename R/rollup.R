@@ -25,17 +25,25 @@
 
 
 rrollup <- function(msnset, rollBy, rollFun, verbose=TRUE){
-    summarisedFeatures <- by(exprs(msnset), fData(msnset)[[rollBy]], 
-                             rrollup_a_feature_set, rollFun, verbose,
-                             simplify = FALSE)
-    exprs.new <- do.call(rbind, as.list(summarisedFeatures))
+    summarisedFeatures <- list()
+    unique_rollBy <- unique(fData(msnset)[[rollBy]])
+    for (i in 1:length(unique_rollBy)) {
+        # Subset msnset to each rollBy group
+        msnset_sub <- msnset[fData(msnset)[[rollBy]] == unique_rollBy[i], ,
+                             drop = FALSE]
+        summarisedFeatures[[i]] <- rrollup_a_feature_set(msnset_sub, rollBy, 
+                                                         rollFun, verbose)
+    }
+    exprs.new <- do.call(rbind, summarisedFeatures)
+    rownames(exprs.new) <- unique_rollBy
+    
     if(nrow(unique(fData(msnset))) == nrow(exprs.new)){
         fData.new <- unique(fData(msnset))
     }else{
-        fData.new <- data.frame(rollBy=rownames(exprs.new), 
+        fData.new <- data.frame(rollBy = rownames(exprs.new), 
                                 stringsAsFactors = FALSE)
         colnames(fData.new) <- rollBy
-        rownames(fData.new) <- fData.new[,rollBy]
+        rownames(fData.new) <- fData.new[, rollBy]
     }
     msnset.new <- MSnSet(exprs = as.matrix(exprs.new), 
                          fData = fData.new, 
@@ -45,7 +53,14 @@ rrollup <- function(msnset, rollBy, rollFun, verbose=TRUE){
 
 
 
-rrollup_a_feature_set <- function(mat, rollFun, verbose){
+rrollup_a_feature_set <- function(mat, rollBy, rollFun, verbose){
+    # Get the group name (protein name)
+    rollBy_name <- unique(fData(mat)[[rollBy]])
+    
+    # We don't want a named vector if nrow(exprs(mat)) == 1
+    # We need a data frame
+    mat <- exprs(mat) %>% as.data.frame()
+    
     if (nrow(mat) > 1) {
         # Calculate reference index
         refIdx <- which.max(rowSums(!is.na(mat)))
@@ -55,11 +70,15 @@ rrollup_a_feature_set <- function(mat, rollFun, verbose){
                   function(x) 
                       sum(!is.na(as.numeric(x) == as.numeric(mat[refIdx, ]))))
         overlap_count <- as.numeric(overlap_count)
+        
         # Subset to rows that overlap more than once with reference
         mat <- mat[overlap_count != 1, , drop = F]
         
+        # If rows were removed and verbose = TRUE, output a message
+        # that includes the group name.
         if (any(overlap_count == 1) & verbose) {
-            warning("Some peptides associated with this protein will be removed.")
+            message(paste0("Some rows associated with group ", 
+                           rollBy_name, " have been removed."))
         }
         
         # Recalculate index using subset mat
@@ -85,10 +104,12 @@ rrollup_a_feature_set <- function(mat, rollFun, verbose){
             }
         }
         # protein abundance estimates
-        mat <- mat[!is.na(maxVals),]
+        mat <- mat[!is.na(maxVals), , drop = FALSE]
         protProfile <- apply(mat, 2, median, na.rm=TRUE)
     } else {
-        protProfile <- mat
+        # The output should be a named vector,
+        # not a data frame with 1 row.
+        protProfile <- mat[1, ]
     }
     
     return(protProfile)
