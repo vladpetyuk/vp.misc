@@ -99,25 +99,16 @@ plot_umap <- function(eset, phenotype = NULL, standardize = F,
     
     pval <- apply(t(expl_var_perm) >= expl_var, 1, sum) / n_perm
     optPC <- which(pval >= 0.05)[1] - 1
+    
+    z <- as.matrix(PC$x[, 1:optPC])
   }
   
   # UMAP ---
-  # Set UMAP parameters
-  user.args <- list(...)
-  custom.config <- umap.defaults
-  custom.config[names(user.args)] <- user.args
-  
-  if (pca) {
-    res_umap <- umap(as.matrix(PC$x[, 1:optPC]), 
-                     n_neighbors = n_neighbors, 
-                     n_epochs = n_epochs,
-                     min_dist = min_dist)
-  } else {
-    res_umap <- umap(z, 
-                     n_neighbors = n_neighbors, 
-                     n_epochs = n_epochs,
-                     min_dist = min_dist)
-  }
+  res_umap <- umap(z, 
+                   n_neighbors = n_neighbors, 
+                   n_epochs = n_epochs,
+                   min_dist = min_dist,
+                   ...)
   
   umap_df <- data.frame(UMAP1 = res_umap$layout[, 1], 
                         UMAP2 = res_umap$layout[, 2],
