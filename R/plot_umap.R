@@ -39,7 +39,7 @@
 #' @importFrom ggplot2 ggplot geom_point coord_fixed theme_bw
 #'                      guides guide_legend stat_ellipse aes
 #' @importFrom stringr str_wrap
-#' @export plot_pca_v1
+#' @export plot_umap
 #' 
 #' @examples
 #' data(srm_msnset)
