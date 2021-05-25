@@ -4,8 +4,15 @@
 \alias{volcano_plot}
 \title{Volcano Plot}
 \usage{
-volcano_plot(logFC, significance, feature_names = NULL,
-  threshold = NULL, top_n_names = 5, scale_xy = 1, ...)
+volcano_plot(
+  logFC,
+  significance,
+  feature_names = NULL,
+  threshold = NULL,
+  top_n_names = 5,
+  scale_xy = 1,
+  ...
+)
 }
 \arguments{
 \item{logFC}{a numeric vector of log2 of fold change for each feature}

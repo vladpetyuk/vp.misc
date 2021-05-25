@@ -4,8 +4,7 @@
 \alias{mixed_effects_anova}
 \title{Mixed Effects ANOVA}
 \usage{
-mixed_effects_anova(m, alt_model, test_factor, order_by = c("none",
-  "p-value"))
+mixed_effects_anova(m, alt_model, test_factor, order_by = c("none", "p-value"))
 }
 \arguments{
 \item{m}{ExpressionSet or MSnSet object}

@@ -4,8 +4,12 @@
 \alias{keep_longest_isoform_per_gene}
 \title{Resolving ambiguity in PTM mapping.}
 \usage{
-keep_longest_isoform_per_gene(ids, gene_id_col, isoform_id_col,
-  isoform_len_col)
+keep_longest_isoform_per_gene(
+  ids,
+  gene_id_col,
+  isoform_id_col,
+  isoform_len_col
+)
 }
 \arguments{
 \item{ids}{data.frame object. Must contain 3 columns described below.}

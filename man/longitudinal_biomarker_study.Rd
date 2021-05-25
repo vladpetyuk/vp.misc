@@ -4,7 +4,9 @@
 \name{longitudinal_biomarker_study}
 \alias{longitudinal_biomarker_study}
 \title{Example of Longitudinal Biomarker Study}
-\format{a \code{MSnSet} instance}
+\format{
+a \code{MSnSet} instance
+}
 \source{
 xxx study
 }

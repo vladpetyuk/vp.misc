@@ -4,8 +4,15 @@
 \alias{image_msnset}
 \title{Visualize MSnSet}
 \usage{
-image_msnset(m, valueName = "value", facetBy = NULL, sOrderBy = NULL,
-  fOrderBy = NULL, valRange = NULL, maxNRows = 50)
+image_msnset(
+  m,
+  valueName = "value",
+  facetBy = NULL,
+  sOrderBy = NULL,
+  fOrderBy = NULL,
+  valRange = NULL,
+  maxNRows = 50
+)
 }
 \arguments{
 \item{m}{MSnSet object}

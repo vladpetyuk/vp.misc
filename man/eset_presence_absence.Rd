@@ -4,8 +4,12 @@
 \alias{eset_presence_absence}
 \title{Presence/Absence Testing}
 \usage{
-eset_presence_absence(eset, grouping, test = c("fisher", "chisq", "g",
-  "binom"), ...)
+eset_presence_absence(
+  eset,
+  grouping,
+  test = c("fisher", "chisq", "g", "binom"),
+  ...
+)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}

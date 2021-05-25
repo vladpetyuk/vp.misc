@@ -4,19 +4,22 @@
 \alias{subset_by_size}
 \title{Filter of ontology enrichment results by size}
 \usage{
-subset_by_size(x, minObsSize = 0, maxObsSize = Inf, minSetSize = 0,
-  maxSetSize = Inf)
+subset_by_size(
+  x,
+  minObsSize = 0,
+  maxObsSize = Inf,
+  minSetSize = 0,
+  maxSetSize = Inf
+)
 }
 \arguments{
 \item{x}{is an \code{enrichResults} instance}
 
 \item{minObsSize}{mininum number of genes must be observed per set}
 
-\item{maxObsSize}{maxinum number of genes must be observed per set}
+\item{maxObsSize}{maxinum number of genes must be in the set}
 
 \item{minSetSize}{mininum number of genes must be in the set}
-
-\item{maxObsSize}{maxinum number of genes must be in the set}
 }
 \value{
 filtered \code{enrichResults} isntance
