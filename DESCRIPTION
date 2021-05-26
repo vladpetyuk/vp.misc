@@ -48,13 +48,13 @@ Imports:
     biomaRt,
     GOstats,
     ReactomePA,
-    KEGG.db,
     BiocStyle,
     WGCNA,
     gelnet,
     multcomp,
     bnlearn,
-    pracma
+    pracma,
+    umap
 VignetteBuilder: knitr
 Suggests:
     knitr
