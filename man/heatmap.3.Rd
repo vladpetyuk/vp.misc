@@ -4,10 +4,18 @@
 \alias{heatmap.3}
 \title{Heatmap}
 \usage{
-heatmap.3(x, dist.fun = c("euclidean", "pearson"), na.avg = TRUE,
-  col.ramp = bluered, z.transf = c(FALSE, TRUE), breaks = seq(-1, +1,
-  length = 100), linkage = c("average", "ward.D", "ward.D2", "single",
-  "complete", "mcquitty", "median", "centroid"), nLabLim = 30, ...)
+heatmap.3(
+  x,
+  dist.fun = c("euclidean", "pearson"),
+  na.avg = TRUE,
+  col.ramp = bluered,
+  z.transf = c(FALSE, TRUE),
+  breaks = seq(-1, +1, length = 100),
+  linkage = c("average", "ward.D", "ward.D2", "single", "complete", "mcquitty",
+    "median", "centroid"),
+  nLabLim = 30,
+  ...
+)
 }
 \arguments{
 \item{x}{MSnSet object}

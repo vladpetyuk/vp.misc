@@ -4,8 +4,16 @@
 \alias{rf_modeling}
 \title{Random Forest Predictive Models}
 \usage{
-rf_modeling(msnset, features, response, pred.cls, K = NULL,
-  sel.feat = T, sel.alg = c("varSelRF", "Boruta", "top"), ...)
+rf_modeling(
+  msnset,
+  features,
+  response,
+  pred.cls,
+  K = NULL,
+  sel.feat = T,
+  sel.alg = c("varSelRF", "Boruta", "top"),
+  ...
+)
 }
 \arguments{
 \item{msnset}{MSnSet object}

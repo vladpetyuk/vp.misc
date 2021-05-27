@@ -4,8 +4,7 @@
 \alias{eset_lm}
 \title{Nested Linear Model Analysis}
 \usage{
-eset_lm(eset, form.alt, form.nul, facs = NULL, norm.coef = NULL,
-  N = NULL)
+eset_lm(eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N = NULL)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -43,10 +42,10 @@ Shuffling-based FDR estimation is available as an option.
 \examples{
 data(srm_msnset)
 head(varLabels(msnset))
-out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1")
+out <- eset_lm(msnset, "~ subject.type", "~ 1")
 head(out)
 # now with shuffling
-out <- eset_lm(msnset, "y ~ subject.type", "y ~ 1", N = 100)
+out <- eset_lm(msnset, "~ subject.type", "~ 1", N = 100)
 head(out)
 head(out[order(out$p.value),])
 }

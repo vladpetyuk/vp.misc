@@ -4,8 +4,13 @@
 \alias{plot_feature}
 \title{Plotting Individual Protein (Feature)}
 \usage{
-plot_feature(m, feature, feature_name_col = NULL, color_by = NULL,
-  order_by = color_by)
+plot_feature(
+  m,
+  feature,
+  feature_name_col = NULL,
+  color_by = NULL,
+  order_by = color_by
+)
 }
 \arguments{
 \item{m}{MSnSet or ExpressionSet object}

@@ -4,7 +4,9 @@
 \name{msnset}
 \alias{msnset}
 \title{SRM proteomics data from human CSF}
-\format{a \code{MSnSet} instance}
+\format{
+a \code{MSnSet} instance
+}
 \description{
 Targeted SRM analysis of 33 proteins in CSF
 }

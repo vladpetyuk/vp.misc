@@ -3,7 +3,9 @@
 \name{oca.set}
 \alias{oca.set}
 \title{CPTAC Ovarian Cancer Proteomics Dataset}
-\format{an \code{MSnID} instance.  8103 proteins by 73 features.}
+\format{
+an \code{MSnID} instance.  8103 proteins by 73 features.
+}
 \source{
 CPTAC study
 }
