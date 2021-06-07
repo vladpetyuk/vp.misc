@@ -1,16 +1,16 @@
-vp.misc
+MSnSet.utils
 ======
 
 ## Installation
 Make sure package `devtools` is installed.
 
-To install `vp.misc` run
+To install `MSnSet.utils` run
 ```r
-devtools::install_github("vladpetyuk/vp.misc")
+devtools::install_github("PNNL-Comp-Mass-Spec/MSnSet.utils")
 ```
 By default `install_github` does not compile vignettes. Thus to compile with vignettes use the following options.
 ```r
-devtools::install_github("vladpetyuk/vp.misc", build = TRUE, build_opts = c("--no-resave-data", "--no-manual"))
+devtools::install_github("PNNL-Comp-Mass-Spec/MSnSet.utils", build_vignettes = TRUE)
 ```
 
 ## Description
