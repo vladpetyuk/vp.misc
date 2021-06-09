@@ -3,11 +3,14 @@
 \name{limma_a_b}
 \alias{limma_a_b}
 \alias{limma_gen}
+\alias{limma_contrasts}
 \title{Wrapper for Limma}
 \usage{
 limma_a_b(eset, model.str, coef.str, ...)
 
 limma_gen(eset, model.str, coef.str, ...)
+
+limma_contrasts(eset, model.str, coef.str, ref.str = NULL, ...)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -18,6 +21,8 @@ limma_gen(eset, model.str, coef.str, ...)
 Either numeric or factor with 2 levels.}
 
 \item{...}{arguments for \code{\link[limma]{lmFit}}}
+
+\item{ref.str}{(character) Reference string for pairwise comparisons}
 }
 \value{
 data.frame. Basically output of 
@@ -30,6 +35,9 @@ A convenience wrapper for limma
 \itemize{
 \item \code{limma_gen}: More generalized approach. The tested variable doesn't have to be a
 factor with 2 levels like in limma_a_b.
+
+\item \code{limma_contrasts}: For multiple pairwise comparisons. The tested variable doesn't have to be a
+factor with 2 levels like in limma_a_b.
 }}
 
 \note{
@@ -38,7 +46,7 @@ limma_a_b is for either 2-factor ANOVA or linear regression.
       for all the coefficients that match \code{coef.str} pattern.
 }
 \examples{
-library("vp.misc")
+library("MSnSet.utils")
 data("cptac_oca")
 library("limma")
 ee <- oca.set
