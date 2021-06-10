@@ -6,6 +6,7 @@
 #' @param model.str character formulation of the model (e.g. "~ a + b")
 #' @param coef.str character coefficient of interest. E.g. "a".
 #'              Either numeric or factor with 2 levels. 
+#' @param ref.str (character) Reference string for pairwise comparisons
 #' @param ... arguments for \code{\link[limma]{lmFit}}
 #' @return data.frame. Basically output of 
 #'      \code{\link[limma]{topTable}} function.
@@ -13,10 +14,12 @@
 #'       limma_gen is a more generic version and will return results
 #'       for all the coefficients that match \code{coef.str} pattern.
 #' @importFrom Biobase exprs pData
-#' @importFrom limma lmFit topTable eBayes
-#' @export limma_a_b limma_gen
+#' @importFrom limma lmFit topTable eBayes contrasts.fit makeContrasts
+#' @importFrom dplyr mutate select %>%
+#' @importFrom tidyr everything
+#' @export limma_a_b limma_gen limma_contrasts
 #' @examples
-#' library("vp.misc")
+#' library("MSnSet.utils")
 #' data("cptac_oca")
 #' library("limma")
 #' ee <- oca.set
@@ -55,7 +58,7 @@ limma_gen <- function(eset, model.str, coef.str, ...){
     
     model.formula <- eval(parse(text=model.str), envir=pData(eset))
     design <- model.matrix( model.formula)
-
+    
     # this malfunctions if coefficient of interest coincided with
     # suffix of some of the covariates. E.g. Plate and PlateCol.
     # Testing for Plate is problematic
@@ -77,4 +80,42 @@ limma_gen <- function(eset, model.str, coef.str, ...){
     return(sig)
 }
 
+
+
+#' @describeIn limma_a_b For multiple pairwise comparisons. The tested variable doesn't have to be a
+#'                       factor with 2 levels like in limma_a_b.
+limma_contrasts <- function(eset, model.str, coef.str, ref.str=NULL, ...) {
+    model.formula <- eval(parse(text = model.str), envir = pData(eset))
+    design <- model.matrix(model.formula)
+    
+    eset <- eset[, as.numeric(rownames(design))]
+    fit <- lmFit(exprs(eset), design, ...)
+    fit.smooth <- eBayes(fit)
+    
+    if (!is.null(ref.str)) {
+        eset[[coef.str]] <- relevel(as.factor(eset[[coef.str]]), ref=ref.str)
+    }
+    
+    contrasts <- paste0(colnames(design)[1], "-", colnames(design))
+    contrasts <- contrasts[-1]
+    args <- c(as.list(contrasts), list(levels=design))
+    contrast.matrix <- do.call(makeContrasts, args)
+    
+    fit2 <- contrasts.fit(fit.smooth, contrast.matrix, ...)
+    fit2.smooth <- eBayes(fit2)
+    
+    sig <- lapply(colnames(contrast.matrix),
+                  function(coef) {
+                      sig <- topTable(fit2.smooth,
+                                      number = nrow(eset), 
+                                      sort.by = "none",
+                                      coef = coef)
+                      sig$feature <- rownames(sig)
+                      rownames(sig) <- NULL
+                      sig <- sig %>%
+                          mutate(contrast = gsub(coef.str, "", coef)) %>%
+                          select(contrast, feature, everything())
+                  })
+    sig <- do.call(rbind, sig)
+}
 
