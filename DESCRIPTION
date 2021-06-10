@@ -1,6 +1,6 @@
 Package: MSnSet.utils
 Type: Package
-Title: Miscellaneous functions used by Vlad Petyuk for proteomics data analysis
+Title: Miscellaneous functions for proteomics data analysis
 Version: 0.1
 Date: 2015-03-24
 Encoding: UTF-8
