@@ -18,32 +18,32 @@
 #' @param adjust.method method for p-value adjustment. Default is "BH"
 #' (Benjamini-Hochberg).
 #' @param ... arguments for \code{\link[limma]{lmFit}}
-#' 
+#'
 #' @return data.frame. Basically output of \code{\link[limma]{topTable}}
 #'      function with additional columns \code{feature} and \code{contrast}.
-#'      
+#'
 #' @importFrom Biobase exprs pData
 #' @importFrom limma lmFit topTable eBayes contrasts.fit makeContrasts
 #' @importFrom dplyr mutate select %>%
 #' @importFrom tidyr everything
-#' @export limma_contrasts limma_contrasts limma_contrasts_ref
+#' @export limma_contrasts
+#' @export limma_contrasts_ref
 #' @examples
-#' 
+#'
 #' library(MSnSet.utils)
 #' data(cptac_oca)
 #'
 #' coef.str <- c("SUBTYPE", "SURVIVALSTATUS")
 #' covariates <- c("AGE", "Batch")
-#' 
-#' # All combinations of coef.str
-#' contrasts <- levels(interaction(pData(oca.set)[, coef.str],
-#'                     sep = "_"))
-#' 
+#'
+#' # Testing a single contrast
+#' contrasts <- c("Immunoreactive_LIVING - Immunoreactive_DECEASED")
+#'
 #' res <- limma_contrasts(oca.set,
 #'                        coef.str = coef.str,
 #'                        covariates = covariates,
 #'                        contrasts = contrasts)
-#' 
+#'
 #' head(res)
 
 limma_contrasts <- function(eset, coef.str, covariates = NULL, contrasts,
@@ -95,7 +95,7 @@ limma_contrasts <- function(eset, coef.str, covariates = NULL, contrasts,
     # Bind topTable output
     res <- do.call(rbind, res)
     rownames(res) <- NULL
-    
+
     # Adjust p-value across all contrasts
     res <- res %>%
         mutate(adj.P.Val = p.adjust(P.Value, method = adjust.method)) %>%
@@ -106,27 +106,27 @@ limma_contrasts_ref <- function(eset, model.str, coef.str,
                                 ref.str = NULL, adjust.method = "BH", ...) {
     model.formula <- eval(parse(text = model.str), envir = pData(eset))
     design <- model.matrix(model.formula)
-    
+
     eset <- eset[, as.numeric(rownames(design))]
     fit <- lmFit(exprs(eset), design, ...)
     fit.smooth <- eBayes(fit)
-    
+
     if (!is.null(ref.str)) {
         eset[[coef.str]] <- relevel(as.factor(eset[[coef.str]]), ref=ref.str)
     }
-    
+
     contrasts <- paste0(colnames(design)[1], "-", colnames(design))
     contrasts <- contrasts[-1]
     args <- c(as.list(contrasts), list(levels=design))
     contrast.matrix <- do.call(makeContrasts, args)
-    
+
     fit2 <- contrasts.fit(fit.smooth, contrast.matrix, ...)
     fit2.smooth <- eBayes(fit2)
-    
+
     sig <- lapply(colnames(contrast.matrix),
                   function(coef) {
                       sig <- topTable(fit2.smooth,
-                                      number = nrow(eset), 
+                                      number = nrow(eset),
                                       sort.by = "none",
                                       coef = coef)
                       sig$feature <- rownames(sig)
@@ -136,7 +136,7 @@ limma_contrasts_ref <- function(eset, model.str, coef.str,
                           select(contrast, feature, everything())
                   })
     sig <- do.call(rbind, sig)
-    
+
     res <- res %>%
         mutate(adj.P.Val = p.adjust(P.Value, method = adjust.method))
 }

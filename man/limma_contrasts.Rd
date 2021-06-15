@@ -55,9 +55,8 @@ data(cptac_oca)
 coef.str <- c("SUBTYPE", "SURVIVALSTATUS")
 covariates <- c("AGE", "Batch")
 
-# All combinations of coef.str
-contrasts <- levels(interaction(pData(oca.set)[, coef.str],
-                    sep = "_"))
+# Testing a single contrast
+contrasts <- c("Immunoreactive_LIVING - Immunoreactive_DECEASED")
 
 res <- limma_contrasts(oca.set,
                        coef.str = coef.str,
