@@ -3,20 +3,19 @@
 #' A convenience wrapper for limma contrast testing.
 #'
 #' @param eset eset (or most likely eset subclass) object
-#' @param model.str character formulation of the model (e.g. "~ 0 + a + b")
+#' @param model.str character formulation of the model (e.g. "~ 0 + a + b").
+#'     This should be a no-intercept model (it should include 0 or -1 as
+#'     terms).
 #' @param coef.str vector of character coefficients of interest from
 #'      \code{colnames(pData(eset))}. E.g. "a" or c("a", "b").
-#' @param ref.str (character) Reference string for pairwise comparisons
-#' @param covariates character vector of potential covariates that
-#'      should be included in the model.
-#' @param contrasts character vector of contrasts to test.
-#' @param contrast.sep string used to join the level labels of the columns
-#'      specified by \code{coef.str}. The default is an underscore, so factor A
-#'      with entries \code{c("a1", "a1", "a2")} and factor B with entries
-#'      \code{c("b1", "b2", "b3")} would combine to form a factor with entries
-#'      \code{c("a1_b1", "a1_b2", "a2_b3")}.
+#' @param contrasts character vector of contrasts to test. All factor levels in
+#'     the contrasts should begin with the name of that factor. It is
+#'     recommended to use \code{[MSnSet.utils]{pairwise_contrasts}} to create
+#'     the contrasts.
 #' @param adjust.method method for p-value adjustment. Default is "BH"
-#' (Benjamini-Hochberg).
+#'     (Benjamini-Hochberg).
+#' @param remove_name if \code{TRUE} (the default) the name of \code{coef.str}
+#'     will be removed from the contrasts. This simply improves readability.
 #' @param ... arguments for \code{\link[limma]{lmFit}}
 #'
 #' @return data.frame. Basically output of \code{\link[limma]{topTable}}
@@ -27,17 +26,17 @@
 #' @importFrom dplyr mutate select %>%
 #' @importFrom tidyr everything
 #' @export limma_contrasts
-#' @export limma_contrasts_ref
-#' @examples
 #'
+#' @examples
 #' library(MSnSet.utils)
 #' data(cptac_oca)
 #'
-#' coef.str <- c("SUBTYPE", "SURVIVALSTATUS")
-#' covariates <- c("AGE", "Batch")
+#' # A no-intercept model is required
+#' model.str <- "~ 0 + SUBTYPE + AGE"
+#' coef.str <- "SUBTYPE"
 #'
-#' # Testing a single contrast
-#' contrasts <- c("Immunoreactive_LIVING - Immunoreactive_DECEASED")
+#' # Create contrasts
+#' contrasts <- pairwise_contrasts(pData(oca.set), fct = coef.str)
 #'
 #' res <- limma_contrasts(oca.set,
 #'                        coef.str = coef.str,
@@ -46,38 +45,27 @@
 #'
 #' head(res)
 
-limma_contrasts <- function(eset, coef.str, covariates = NULL, contrasts,
-                            contrast.sep = "_", adjust.method = "BH", ...) {
 
-    pData(eset)[["coef.new"]] <- interaction(pData(eset)[, coef.str],
-                                             sep = contrast.sep)
+limma_contrasts <- function(eset, model.str, coef.str, contrasts,
+                            adjust.method = "BH", remove_name = TRUE,
+                            ...) {
 
-    # Model without intercept. Must include the "0".
-    model.str <- paste("~ coef.new", covariates, "0", sep = " + ")
+    model.formula <- eval(parse(text = model.str), envir = pData(eset))
 
-    # Replace any "+  +" with "+"
-    model.str <- gsub("\\+  \\+", "\\+", model.str)
-
-    model.formula <- eval(parse(text = model.str),
-                          envir = pData(eset))
+    if (attr(terms(model.formula), which = "intercept") != 0) {
+        stop(paste("Please specify a no-intercept model for model.str",
+                   "See lm() documentation for more details.", sep = "\n"))
+    }
 
     design <- model.matrix(model.formula)
 
-    # R doesn't like when column names begin with anything
-    # other than a character, so we need to make sure that
-    # each level in contrasts begins with "coef.new". We will
-    # remove "coef.new" from the contrasts during the lapply step.
-    for (i in 1:nlevels(pData(eset)[["coef.new"]])) {
-        contrasts <- gsub(levels(pData(eset)[["coef.new"]])[i],
-                          colnames(design)[i], contrasts)
-    }
+    # Some samples may be NA, so they will be dropped in the design matrix.
+    # Subset eset to only those rows present in the design matrix.
+    eset <- eset[, as.numeric(rownames(design))]
 
     contrast.matrix <- makeContrasts(contrasts = contrasts,
                                      levels = design)
 
-    # This line is in limma_gen and limma_contrasts,
-    # but it doesn't seem to do anything:
-    eset <- eset[, as.numeric(rownames(design))]
     fit.smooth <-
         lmFit(exprs(eset), design, ...) %>%
         contrasts.fit(contrast.matrix) %>%
@@ -89,56 +77,21 @@ limma_contrasts <- function(eset, coef.str, covariates = NULL, contrasts,
                                coef = contrast_i,
                                number = nrow(eset)) %>%
                           mutate(feature = rownames(.),
-                                 contrast = gsub("coef.new", "", contrast_i))
+                                 contrast = contrast_i)
                   })
 
     # Bind topTable output
     res <- do.call(rbind, res)
     rownames(res) <- NULL
 
+    # Remove the name of coef.str from the contrasts
+    if (remove_name) {
+        res$contrast <- gsub(coef.str, "", res$contrast)
+    }
+
     # Adjust p-value across all contrasts
     res <- res %>%
         mutate(adj.P.Val = p.adjust(P.Value, method = adjust.method)) %>%
         select(feature, contrast, everything())
 }
-
-limma_contrasts_ref <- function(eset, model.str, coef.str,
-                                ref.str = NULL, adjust.method = "BH", ...) {
-    model.formula <- eval(parse(text = model.str), envir = pData(eset))
-    design <- model.matrix(model.formula)
-
-    eset <- eset[, as.numeric(rownames(design))]
-    fit <- lmFit(exprs(eset), design, ...)
-    fit.smooth <- eBayes(fit)
-
-    if (!is.null(ref.str)) {
-        eset[[coef.str]] <- relevel(as.factor(eset[[coef.str]]), ref=ref.str)
-    }
-
-    contrasts <- paste0(colnames(design)[1], "-", colnames(design))
-    contrasts <- contrasts[-1]
-    args <- c(as.list(contrasts), list(levels=design))
-    contrast.matrix <- do.call(makeContrasts, args)
-
-    fit2 <- contrasts.fit(fit.smooth, contrast.matrix, ...)
-    fit2.smooth <- eBayes(fit2)
-
-    sig <- lapply(colnames(contrast.matrix),
-                  function(coef) {
-                      sig <- topTable(fit2.smooth,
-                                      number = nrow(eset),
-                                      sort.by = "none",
-                                      coef = coef)
-                      sig$feature <- rownames(sig)
-                      rownames(sig) <- NULL
-                      sig <- sig %>%
-                          mutate(contrast = gsub(coef.str, "", coef)) %>%
-                          select(contrast, feature, everything())
-                  })
-    sig <- do.call(rbind, sig)
-
-    res <- res %>%
-        mutate(adj.P.Val = p.adjust(P.Value, method = adjust.method))
-}
-
 

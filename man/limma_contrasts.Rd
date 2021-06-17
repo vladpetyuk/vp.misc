@@ -6,39 +6,36 @@
 \usage{
 limma_contrasts(
   eset,
+  model.str,
   coef.str,
-  covariates = NULL,
   contrasts,
-  contrast.sep = "_",
   adjust.method = "BH",
+  remove_name = TRUE,
   ...
 )
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
 
+\item{model.str}{character formulation of the model (e.g. "~ 0 + a + b").
+This should be a no-intercept model (it should include 0 or -1 as
+terms).}
+
 \item{coef.str}{vector of character coefficients of interest from
 \code{colnames(pData(eset))}. E.g. "a" or c("a", "b").}
 
-\item{covariates}{character vector of potential covariates that
-should be included in the model.}
-
-\item{contrasts}{character vector of contrasts to test.}
-
-\item{contrast.sep}{string used to join the level labels of the columns
-specified by \code{coef.str}. The default is an underscore, so factor A
-with entries \code{c("a1", "a1", "a2")} and factor B with entries
-\code{c("b1", "b2", "b3")} would combine to form a factor with entries
-\code{c("a1_b1", "a1_b2", "a2_b3")}.}
+\item{contrasts}{character vector of contrasts to test. All factor levels in
+the contrasts should begin with the name of that factor. It is
+recommended to use \code{[MSnSet.utils]{pairwise_contrasts}} to create
+the contrasts.}
 
 \item{adjust.method}{method for p-value adjustment. Default is "BH"
 (Benjamini-Hochberg).}
 
+\item{remove_name}{if \code{TRUE} (the default) the name of \code{coef.str}
+will be removed from the contrasts. This simply improves readability.}
+
 \item{...}{arguments for \code{\link[limma]{lmFit}}}
-
-\item{model.str}{character formulation of the model (e.g. "~ 0 + a + b")}
-
-\item{ref.str}{(character) Reference string for pairwise comparisons}
 }
 \value{
 data.frame. Basically output of \code{\link[limma]{topTable}}
@@ -48,15 +45,15 @@ data.frame. Basically output of \code{\link[limma]{topTable}}
 A convenience wrapper for limma contrast testing.
 }
 \examples{
-
 library(MSnSet.utils)
 data(cptac_oca)
 
-coef.str <- c("SUBTYPE", "SURVIVALSTATUS")
-covariates <- c("AGE", "Batch")
+# A no-intercept model is required
+model.str <- "~ 0 + SUBTYPE + AGE"
+coef.str <- "SUBTYPE"
 
-# Testing a single contrast
-contrasts <- c("Immunoreactive_LIVING - Immunoreactive_DECEASED")
+# Create contrasts
+contrasts <- pairwise_contrasts(pData(oca.set), fct = coef.str)
 
 res <- limma_contrasts(oca.set,
                        coef.str = coef.str,

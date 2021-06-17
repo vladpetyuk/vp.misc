@@ -12,11 +12,11 @@ limma_gen(eset, model.str, coef.str, ...)
 
 limma_contrasts(
   eset,
+  model.str,
   coef.str,
-  covariates = NULL,
   contrasts,
-  contrast.sep = "_",
   adjust.method = "BH",
+  remove_name = TRUE,
   ...
 )
 }
