@@ -56,6 +56,7 @@ coef.str <- "SUBTYPE"
 contrasts <- pairwise_contrasts(pData(oca.set), fct = coef.str)
 
 res <- limma_contrasts(oca.set,
+                       model.str = model.str,
                        coef.str = coef.str,
                        covariates = covariates,
                        contrasts = contrasts)

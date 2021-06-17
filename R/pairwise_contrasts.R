@@ -30,7 +30,7 @@
 #'
 #' # Data frame for testing
 #' x <- data.frame(v1 = c("a", "b", NA, "c", "d"),
-#'                 v2 = c("e", "e", "f", "f", "g")) %>%
+#'                 v2 = c("e", "e", "f", "f", "g"))
 #' x$v3 <- ifelse(is.na(x$v1) | is.na(x$v2), NA,
 #'                paste(x$v1, x$v2, sep = "_"))
 #'
