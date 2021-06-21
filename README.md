@@ -1,5 +1,5 @@
-The package moved to [PNNL-Comp-Mass-Spec](https://github.com/PNNL-Comp-Mass-Spec) as [MSnSet.utils](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils). This repository may or may not be maintained.
-
+**The package has been moved to [PNNL-Comp-Mass-Spec](https://github.com/PNNL-Comp-Mass-Spec) as [MSnSet.utils](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils). This repository may or may not be maintained.**
+======
 
 
 vp.misc
