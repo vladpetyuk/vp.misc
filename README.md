@@ -22,3 +22,8 @@ This is a collection of misc custom functions.  They are primarily geared toward
 * custom imputation
 * reading of MaxQuant and SkyLine data
 * handling PTM mapping
+
+
+Original Location
+====
+The orignal location is on the [vladpetyuk](https://github.com/vladpetyuk) account, repo [vp.misc](https://github.com/vladpetyuk/vp.misc).
