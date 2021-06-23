@@ -14,9 +14,7 @@
 #'       limma_gen is a more generic version and will return results
 #'       for all the coefficients that match \code{coef.str} pattern.
 #' @importFrom Biobase exprs pData
-#' @importFrom limma lmFit topTable eBayes contrasts.fit makeContrasts
-#' @importFrom dplyr mutate select %>%
-#' @importFrom tidyr everything
+#' @importFrom limma lmFit topTable eBayes
 #' @export limma_a_b limma_gen limma_contrasts
 #' @examples
 #' library("MSnSet.utils")

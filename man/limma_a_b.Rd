@@ -10,7 +10,15 @@ limma_a_b(eset, model.str, coef.str, ...)
 
 limma_gen(eset, model.str, coef.str, ...)
 
-limma_contrasts(eset, model.str, coef.str, ref.str = NULL, ...)
+limma_contrasts(
+  eset,
+  model.str,
+  coef.str,
+  contrasts,
+  adjust.method = "BH",
+  remove_name = TRUE,
+  ...
+)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
