@@ -1,6 +1,10 @@
 MSnSet.utils
 ======
 
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/workflows/R-CMD-check/badge.svg)](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions)
+  <!-- badges: end -->
+
 ## Installation
 Make sure package `devtools` is installed.
 

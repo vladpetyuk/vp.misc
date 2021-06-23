@@ -5,3 +5,4 @@
 README.md
 \.gitignore
 ^\.Rproj\.user$
+^\.github$
