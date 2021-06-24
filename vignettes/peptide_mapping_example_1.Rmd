@@ -1,4 +1,5 @@
 ---
+title: "Peptide Mapping Example 1"
 output: 
   html_document: 
     highlight: default
@@ -8,8 +9,8 @@ output:
 <!--
 %\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{peptide mapping example 1}
-%\VignetteKeyword{vp.mics}
-%\VignettePackage{vp.misc}
+%\VignetteKeyword{MSnSet.utils}
+%\VignettePackage{MSnSet.utils}
 -->
 
 ```{r setup, echo=FALSE}
@@ -20,10 +21,12 @@ opts_chunk$set(size='tiny')
 
 
 # Purpose
+
 A quick example of visualizing peptide spectral counts on protein sequence. This example is based on a very big protein Titin (3.8 MDa).
 
 
 ```{r libs, message=FALSE}
+# Packages
 library(scales)
 library(tidyverse)
 library(Biostrings)
@@ -33,87 +36,105 @@ library(ggforce)
 
 # Reading data
 ```{r reading_data, message=FALSE}
-x <- system.file("extdata/titin_peptide_mapping", "titin_peptides.txt.gz", package = "vp.misc") %>%
-    read_tsv()
+x <- system.file("extdata/titin_peptide_mapping", "titin_peptides.txt.gz", 
+                 package = "MSnSet.utils") %>%
+  read_tsv()
 head(x)
-fst <- system.file("extdata/titin_peptide_mapping", "titin.fasta.gz", package = "vp.misc") %>%
-    readAAStringSet(format="fasta", nrec=-1L, skip=0L, use.names=TRUE)
+
+fst <- system.file("extdata/titin_peptide_mapping", "titin.fasta.gz", 
+                   package = "MSnSet.utils") %>%
+  readAAStringSet(format="fasta", nrec=-1L, skip=0L, use.names=TRUE)
 print(fst)
 ```
 
 
 # Mapping peptides to protein sequence
-```{r mapping}
+```{r mapping, message = FALSE}
 x <- x %>%
-   mutate(Pos = map(pepSeq, ~ str_locate(fst, .x)),
-          Start = map_int(Pos, 1),
-          End = map_int(Pos, 2)) %>%
-   filter(!is.na(Start), !is.na(End)) %>%
-   group_by(Start, End) %>%
-   summarise(Counts = n()) %>%
-   ungroup() %>%
-   arrange(Counts)
+  mutate(Pos = map(pepSeq, ~ str_locate(fst, .x)),
+         Start = map_int(Pos, 1),
+         End = map_int(Pos, 2)) %>%
+  filter(!is.na(Start), !is.na(End)) %>%
+  group_by(Start, End) %>%
+  summarise(Counts = n()) %>%
+  ungroup() %>%
+  arrange(Counts)
 ```
 
 # Prepare for plotting
 ```{r prep_plotting}
 lbls <- pretty_breaks(10)(1:width(fst)) %>%
-   keep(~ `<`(.,width(fst))) %>%
-   keep(~ `>`(.,0))
+  keep(~ `<`(., width(fst))) %>%
+  keep(~ `>`(., 0))
+
 p <- ggplot(data = x) +
-    annotate("rect", xmin = 0.5, xmax=width(fst) + 0.5, ymin = -0.5, ymax = 0.5, fill = "grey70") +
-    geom_rect(aes(xmin = Start - 0.5,
-                  xmax = End + 0.5,
-                  ymin = -0.5,
-                  ymax = 0.5,
-                  fill = Counts)) +
-    scale_y_continuous(expand=c(0,1)) +
-    scale_x_continuous(expand=c(0,0)) +
-    scale_fill_distiller(palette = "Reds", direction = 1) +
-    facet_zoom(x = Start > 4950 & End < 5050, zoom.size = 1, split = F)
+  annotate("rect", xmin = 0.5, xmax = width(fst) + 0.5, 
+           ymin = -0.5, ymax = 0.5, fill = "grey70") +
+  geom_rect(aes(xmin = Start - 0.5,
+                xmax = End + 0.5,
+                ymin = -0.5,
+                ymax = 0.5,
+                fill = Counts)) +
+  scale_y_continuous(expand = c(0,1)) +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_fill_distiller(palette = "Reds", direction = 1) +
+  facet_zoom(xlim = c(4950 - 0.5, 5050 + 0.5), zoom.size = 1, split = F)
 ```
 
 
 # Plot 1
 ```{r plot1, fig.height=4, fig.width=10}
 p1 <- p +
-    annotate("text", x = lbls, y = -0.55, label = lbls, angle=90, hjust=1, vjust=0.5) +
-    theme_void() +
-    theme(panel.border = element_rect(fill = NA, colour = "grey20"),
-          strip.background = element_rect(fill = "grey85", colour = "grey20"),
-          plot.margin = margin(10, 10, 10, 10))
+  annotate("text", x = lbls, y = -0.55, label = lbls, angle=90, 
+           hjust = 1, vjust = 0.5) +
+  theme_void() +
+  theme(panel.border = element_rect(fill = NA, colour = "grey20"),
+        strip.background = element_rect(fill = "grey85", colour = "grey20"),
+        plot.margin = margin(10, 10, 10, 10))
 plot(p1)
 ```
 
 # Plot 2
 ```{r plot2, fig.height=4, fig.width=10}
 p2 <- p +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle=90, vjust=0.5, hjust=1),
-          axis.text.y=element_blank(),
-          axis.ticks.y=element_blank(),
-          panel.grid.major.x = element_line(color = "grey30", linetype="dashed"),
-          panel.grid.major.y = element_blank(),
-          panel.grid.minor = element_blank())
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_line(color = "grey30", 
+                                          linetype = "dashed"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank())
 plot(p2)
 ```
-
-
 
 
 # Plot 3. With overlaid sequence.
 ```{r plot3, fig.height=4, fig.width=10}
 seq_ann <- fst %>%
-   as.character() %>%
-   strsplit(split="") %>%
-   as.data.frame() %>%
-   setNames("AA") %>%
-   mutate(Pos = row_number())
+  as.character() %>%
+  strsplit(split = "") %>%
+  as.data.frame() %>%
+  setNames("AA") %>%
+  mutate(Pos = row_number())
 
 p3 <- p2 +   
-    geom_text(data=seq_ann, aes(label=AA, x=Pos, y=0)) +
-    xlab("") + ylab("")
-plot(p3)
+  geom_text(data = seq_ann, aes(label = AA, x = Pos, y = 0), size = 3) +
+  xlab("") + 
+  ylab("")
+
+# Only show sequence in zoom panel
+pb <- ggplot_build(p3)
+# Select the number of the geom_text layer.
+# If PANEL is 1, remove the label.
+pb$data[[3]][pb$data[[3]][, "PANEL"] == 1, "label"] <- " "
+pg <- ggplot_gtable(pb)
+plot(pg)
 ```
 
+# Session Info
+
+```{r}
+print(sessionInfo(), locale = FALSE)
+```
 
