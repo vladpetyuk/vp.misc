@@ -58,5 +58,6 @@ Imports:
     umap
 VignetteBuilder: knitr
 Suggests:
-    knitr
+    knitr,
+    rmarkdown
 RoxygenNote: 7.1.1
