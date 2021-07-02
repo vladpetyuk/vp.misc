@@ -16,6 +16,7 @@ plot_volcano(
   point_color = "grey",
   point_size = 3,
   use_theme = theme_bw(),
+  label_outside_sig_range = FALSE,
   ...
 )
 }
@@ -49,6 +50,11 @@ Default is \code{"grey"}.}
 \item{point_size}{the size of the points. Default is \code{3}.}
 
 \item{use_theme}{the plot theme. Default is \code{theme_bw()}.}
+
+\item{label_outside_sig_range}{If \code{sig_threshold} is provided, this
+determines whether labels can be plotted between \code{sig_threshold}
+and 1. Default is \code{FALSE}, so labels will only be plotted in
+the range of significant features.}
 
 \item{...}{additional arguments passed to
 \code{\link[ggrepel]{geom_text_repel}}}

@@ -6,8 +6,6 @@ output:
     theme: spacelab
 ---
 
-
-
 <!--
 %\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{fuzzy cmeans}

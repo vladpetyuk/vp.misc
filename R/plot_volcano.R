@@ -21,6 +21,10 @@
 #'        Default is \code{"grey"}.
 #' @param point_size the size of the points. Default is \code{3}.
 #' @param use_theme the plot theme. Default is \code{theme_bw()}.
+#' @param label_outside_sig_range If \code{sig_threshold} is provided, this
+#'        determines whether labels can be plotted between \code{sig_threshold}
+#'        and 1. Default is \code{FALSE}, so labels will only be plotted in
+#'        the range of significant features.
 #' @param ... additional arguments passed to
 #'          \code{\link[ggrepel]{geom_text_repel}}
 #'
@@ -77,6 +81,7 @@ plot_volcano <- function(logFC,
                          point_color = "grey",
                          point_size = 3,
                          use_theme = theme_bw(),
+                         label_outside_sig_range = FALSE,
                          ...) {
 
   # Check input
@@ -107,9 +112,6 @@ plot_volcano <- function(logFC,
 
   y_min = min(significance, na.rm = T)
   breaks <- signif(10^(pretty_breaks()(0:floor(log10(y_min) * 2)) / 2), 1)
-  if (!is.null(sig_threshold)) {
-    breaks <- c(signif(sig_threshold, 1), breaks)
-  }
   x_extreme <- max(abs(range(logFC))) * 1.08
 
   # Base layer
@@ -125,14 +127,18 @@ plot_volcano <- function(logFC,
     }
   }
 
+  # Add sig_threshold to breaks, if provided
+  if (!is.null(sig_threshold)) {
+    breaks <- c(signif(sig_threshold, 1), breaks)
+  }
+
   # Scatterplot layer
   if (length(point_color) == 1) {
     p <- p + geom_point(aes(x = logFC, y = significance),
-                        size = point_size,
-                        color = point_color)
+                        size = point_size, color = point_color, alpha = 0.5)
   } else {
     p <- p + geom_point(aes(x = logFC, y = significance, color = point_color),
-                        size = point_size)
+                        size = point_size, alpha = 0.5)
   }
 
   # Format axes
@@ -176,17 +182,39 @@ plot_volcano <- function(logFC,
 
   # Label top n features or user-provided features
   if (!is.null(feature_labels)) {
+
+    if (!(label_outside_sig_range & is.null(sig_threshold))) {
+      # Only plot labels within range of significant values
+      ylim <- c(-log10(min(sig_threshold, 1)), NA)
+    } else {
+      ylim <- c(NA, NA)
+    }
+
     p <- p +
-      geom_text_repel(aes(x = logFC, y = significance,
-                          label = feature_labels),
+      # Labels with positive logFC plotted to right of x = 0
+      geom_label_repel(aes(x = logFC, y = significance,
+                          label = ifelse(logFC >= 0, feature_labels, NA)),
                       min.segment.length = 0,
                       na.rm = TRUE, # silently remove missing values
-                      ...)
+                      xlim = c(0, NA),
+                      ylim = ylim,
+                      # Make label box partially transparent
+                      fill = alpha("white", 0.5),
+                      # Remove label box outline
+                      label.size = NA,
+                      ...) +
+      # Labels with negative logFC plotted to left of x = 0
+      geom_label_repel(aes(x = logFC, y = significance,
+                           label = ifelse(logFC < 0, feature_labels, NA)),
+                       min.segment.length = 0,
+                       na.rm = TRUE, # silently remove missing values
+                       xlim = c(NA, 0),
+                       ylim = ylim,
+                       fill = alpha("white", 0.5),
+                       label.size = NA,
+                       ...)
   }
 
   p
 }
-
-
-
 

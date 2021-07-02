@@ -55,7 +55,23 @@ Imports:
     multcomp,
     bnlearn,
     pracma,
-    umap
+    umap, 
+    Matrix, 
+    RColorBrewer, 
+    data.table, 
+    ggrepel, 
+    gtools, 
+    limma,
+    magrittr, 
+    pcaMethods, 
+    purrr, 
+    qvalue, 
+    reshape2, 
+    rlang,
+    scales, 
+    tibble, 
+    tidyr, 
+    tidyselect
 VignetteBuilder: knitr
 Suggests:
     knitr,
