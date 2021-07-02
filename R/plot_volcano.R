@@ -135,11 +135,10 @@ plot_volcano <- function(logFC,
   # Scatterplot layer
   if (length(point_color) == 1) {
     p <- p + geom_point(aes(x = logFC, y = significance),
-                        size = point_size,
-                        color = point_color)
+                        size = point_size, color = point_color, alpha = 0.5)
   } else {
     p <- p + geom_point(aes(x = logFC, y = significance, color = point_color),
-                        size = point_size)
+                        size = point_size, alpha = 0.5)
   }
 
   # Format axes
