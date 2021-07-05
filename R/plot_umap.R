@@ -36,7 +36,7 @@
 #'
 #' @return A ggplot object
 #'
-#' @importFrom Biobase exprs pData
+#' @importFrom MSnbase exprs pData
 #' @import     umap
 #' @importFrom ggplot2 ggplot geom_point coord_fixed theme_bw
 #'                      guides guide_legend stat_ellipse aes
@@ -144,7 +144,7 @@ plot_umap <- function(eset, phenotype = NULL, standardize = FALSE,
   } else {
     p <- ggplot(umap_df) +
       geom_point(aes(x = UMAP1, y = UMAP2, color = colorBy),
-                 size = point_size, shape = 20, show.legend = F) +
+                 size = point_size, shape = 20, show.legend = TRUE) +
       guides(color = guide_legend(legend_title)) +
       theme_bw()
   }
