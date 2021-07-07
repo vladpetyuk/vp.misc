@@ -26,7 +26,7 @@
 #' plot_sample_correlation_heatmap(m, "Batch")
 #' 
 #' # Using `pheatmap` (pretty heatmap)
-#' plot_sample_correlation_heatmap(m, "Batch")
+#' plot_sample_correlation_pheatmap(m, "Batch")
 #' 
 
 #' @export
@@ -34,7 +34,9 @@ plot_sample_correlation_heatmap <- function(m, phenotype, ...) {
     m <- m[,order(pData(m)[,phenotype])]
     x <- cor(exprs(m), use = "complete.obs")
     x <- x[nrow(x):1, ]
-    heatmap(x, Rowv = NA, Colv = NA, ...)
+    heatmap(x, Rowv = NA, Colv = NA, 
+            scale = "none", symm = TRUE,
+            ...)
 }
 
 #' @export
@@ -44,6 +46,7 @@ plot_sample_correlation_pheatmap <- function(m, phenotype, ...) {
     pheno = pData(m) %>%
         select(!!phenotype)
     pheatmap(x, 
-             cluster_rows=F, cluster_cols=F,
-             annotation_col = pheno, annotation_row = pheno)
+             cluster_rows = FALSE, cluster_cols = FALSE,
+             annotation_col = pheno, annotation_row = pheno,
+             ...)
 }

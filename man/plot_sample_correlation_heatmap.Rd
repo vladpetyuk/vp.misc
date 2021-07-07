@@ -32,6 +32,6 @@ m <- oca.set
 plot_sample_correlation_heatmap(m, "Batch")
 
 # Using `pheatmap` (pretty heatmap)
-plot_sample_correlation_heatmap(m, "Batch")
+plot_sample_correlation_pheatmap(m, "Batch")
 
 }
