@@ -33,24 +33,26 @@ correct_batch_effect_empiricalBayesLM(
 \item{cov_name}{covariate name. Must be in pData(x). At this point it can be
 only one name.}
 
-\item{batch_name}{same thing as covariate name. Using "batch" instead of 
-"covariate" to keep it consistent with `ComBat`. Must be in pData(x). 
+\item{m}{an object of class Eset or MSnSet.}
+
+\item{batch_name}{same thing as covariate name. Using "batch" instead of
+"covariate" to keep it consistent with `ComBat`. Must be in pData(x).
 At this point it can be only one name.}
 
 \item{least_count_threshold}{minimum number of feature observations
-required per batch. The default values is 2, the minimum `ComBat` can 
+required per batch. The default values is 2, the minimum `ComBat` can
 handle safely.}
 
-\item{BPPARAM}{BiocParallelParam for parallel operation. 
+\item{BPPARAM}{BiocParallelParam for parallel operation.
 Default is bpparam(). Use bpparam("SerialParam") if you want to restrict
 it to only one thread.}
 
 \item{...}{other arguments for \code{\link[sva]{ComBat}}}
 
-\item{ref_level}{In case a certain factor level should be reference 
+\item{ref_level}{In case a certain factor level should be reference
 and kept at zero bias. Default is NULL, i.e. none.}
 
-\item{subset_by}{vector of two strings from varLabels(x). First is the 
+\item{subset_by}{vector of two strings from varLabels(x). First is the
 variable name for subsetting the data. Second is the variable value
 to retain.}
 
@@ -79,7 +81,7 @@ with discrete or continuous covariates
 }}
 
 \note{
-The algorithm essentially uses an LM. The reason for re-inventing the 
+The algorithm essentially uses an LM. The reason for re-inventing the
 wheel is presense of missing values in proteomics datasets more then usual.
 }
 \examples{
@@ -87,9 +89,9 @@ wheel is presense of missing values in proteomics datasets more then usual.
 set.seed(1)
 means <- rep(c(1,2,3), each=3)
 nrows <- 5
-e <- matrix(rep(means, nrows), ncol=length(means), byrow=T)
-e <- e + 
-    matrix(rnorm(Reduce(`*`, dim(e)), sd=0.3), ncol=length(means), byrow=T)
+e <- matrix(rep(means, nrows), ncol=length(means), byrow=TRUE)
+e <- e +
+    matrix(rnorm(Reduce(`*`, dim(e)), sd=0.3), ncol=length(means), byrow=TRUE)
 
 # add missing values in increasing frequency
 extreme <- 10 # controls how quickly increases propotion of NAs
@@ -103,7 +105,7 @@ mis[mis == 1] <- NA
 e[5,8:9] <- NA
 e[4,4:6] <- NA
 e <- e + mis
-image(e) 
+image(e)
 library("ggplot2"); library("reshape2")
 ggplot(melt(e), aes(x=Var1, y=Var2, fill=value)) + geom_raster()
 
@@ -126,20 +128,23 @@ image(exprs(m3))
 # Example 2 (real-world)
 data(cptac_oca)
 # let's test for iTRAQ_Batch effect
-res <- eset_lm(oca.set, "y ~ iTRAQ_Batch", "y ~ 1")
+res <- eset_lm(oca.set, "~ iTRAQ_Batch", "~ 1")
 # not too strong, but there
 hist(res$p.value, 50)
 image_msnset(oca.set, facetBy="iTRAQ_Batch")
 oca.fixed <- remove_covariate(oca.set, "iTRAQ_Batch")
-res <- eset_lm(oca.fixed, "y ~ iTRAQ_Batch", "y ~ 1")
+res <- eset_lm(oca.fixed, "~ iTRAQ_Batch", "~ 1")
 hist(res$p.value, 50)
 image_msnset(oca.fixed, facetBy="iTRAQ_Batch")
 
 # Example for correct_batch_effect
+# Not run
+\dontrun{
 data("cptac_oca") # oca.set object
 plot_pca_v3(oca.set, phenotype = 'Batch')
 oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
 plot_pca_v3(oca.set.2, phenotype = 'Batch')
+}
 
 data("cptac_oca") # oca.set object
 plot_pca_v3(oca.set, phenotype = 'Batch')
@@ -151,10 +156,14 @@ plot_pca_v3(oca.set.2, phenotype = 'Batch')
 # Example for correct_batch_effect_empiricalBayesLM
 data("cptac_oca") # oca.set object
 plot_pca_v3(oca.set, phenotype = 'Batch')
+
+# Not run
+\dontrun{
 oca.set.2 <- correct_batch_effect_empiricalBayesLM(oca.set,
                                  removed_cov_name = "Batch",
                                  retained_cov_name = "tumor_stage")
 plot_pca_v3(oca.set.2, phenotype = 'Batch')
+}
 }
 \seealso{
 \code{\link[sva]{ComBat}} \code{\link[WGCNA]{empiricalBayesLM}}

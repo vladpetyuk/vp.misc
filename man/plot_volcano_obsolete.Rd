@@ -41,6 +41,8 @@ A convenience function for creating volcano plot. This function is obsolete.
 Please use \code{\link[MSnSet.utils]{plot_volcano}} instead.
 }
 \examples{
+# Not run
+\dontrun{
 library("MSnSet.utils")
 data("cptac_oca")
 
@@ -54,7 +56,6 @@ volcano_plot_obsolete(res$logFC,
                       threshold = 0.05,
                       top_n_names = sum(res$P.Value < 0.01, na.rm=TRUE),
                       rep.fact=10000, adj.lmt=1000, adj.max=1000) +
-theme(text=element_text(size = 20)) +
-ylab("p-value") +
-xlab("log2 fold change")
+theme(text=element_text(size = 20))
+}
 }

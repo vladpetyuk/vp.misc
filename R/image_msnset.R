@@ -1,8 +1,8 @@
 
 #' Visualize MSnSet
-#' 
+#'
 #' Visualize MSnSet
-#' 
+#'
 #' @param m MSnSet object
 #' @param valueName name of the value to be displayed. Default - "value".
 #' @param facetBy character of pheno data column containing factor value.
@@ -21,17 +21,17 @@
 #' @importFrom gplots bluered
 #' @importFrom grid unit
 #' @export image_msnset
-#' 
-image_msnset <- function(m, valueName="value", 
-                         facetBy=NULL, 
-                         sOrderBy=NULL, 
+#'
+image_msnset <- function(m, valueName="value",
+                         facetBy=NULL,
+                         sOrderBy=NULL,
                          fOrderBy=NULL,
                          valRange=NULL,
                          maxNRows=50){
-    
+
     # convertion to long format
     mlong <- melt(exprs(m),
-                  varnames=c("feature id", "sample name"), 
+                  varnames=c("feature id", "sample name"),
                   value.name='value')
     mlong[['feature id']] <- as.character(mlong[['feature id']])
     mlong[['sample name']] <- as.character(mlong[['sample name']])
@@ -39,10 +39,10 @@ image_msnset <- function(m, valueName="value",
     mlong <- merge(mlong, pData(m), by.x="sample name", by.y=0) # slow
     x <- mlong # not nice
     # order by feature name just for image purpose
-    x[['feature id']] <- 
-        ordered(x[['feature id']], 
+    x[['feature id']] <-
+        ordered(x[['feature id']],
                 levels=rev(sort(unique(x[['feature id']]))))
-    
+
     #----------------------------
     if(is.null(valRange))
         valRange <- mean(abs(quantile(x$value, c(0.025, 0.975), na.rm = TRUE)))
@@ -50,29 +50,29 @@ image_msnset <- function(m, valueName="value",
     x$value[x$value < -valRange] <- -valRange
     qn01 <- rescale(c(c(-valRange,+valRange),range(x$value,na.rm=TRUE)))
     #----------------------------
-    
+
     if(!is.null(sOrderBy))
         x[['sample name']] <- reorder(x[['sample name']], x[[sOrderBy]])
-    
+
     if(!is.null(fOrderBy))
         x[['feature id']] <- reorder(x[['feature id']], x[[fOrderBy]])
-    
+
     if(!is.null(facetBy)) x$facetBy <- x[[facetBy]]
 
-    p <- ggplot(x, aes(x=`sample name`, y=`feature id`, fill=value)) + 
+    p <- ggplot(x, aes(x=`sample name`, y=`feature id`, fill=value)) +
         geom_raster() +
         scale_fill_gradientn(
             colours=bluered(100),
             values = c(0, seq(qn01[1], qn01[2], length.out = 98), 1),
             limits = c(-valRange,+valRange)) +
         # scale_fill_gradientn(colours=bluered(100)) +
-        # scale_fill_gradient2(low="blue", high="red", na.value="black", name="") 
+        # scale_fill_gradient2(low="blue", high="red", na.value="black", name="")
         theme(
             axis.text.x=element_text(angle=+90),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
-            panel.margin = unit(1.5, "lines"),
-            panel.border = element_rect(linetype = "dashed", 
+            panel.spacing = unit(1.5, "lines"),
+            panel.border = element_rect(linetype = "dashed",
                                         size=1, colour = "black", fill=NA),
             legend.key.height = unit(2, "lines")
         )
@@ -90,12 +90,12 @@ image_msnset <- function(m, valueName="value",
 
 
 
-image_msnset_old <- function(m, valueName="value", facetBy=NULL, 
+image_msnset_old <- function(m, valueName="value", facetBy=NULL,
                          sOrderBy=NULL, valRange=NULL){
-    
+
     # convertion to long format
     mlong <- melt(exprs(m),
-                  varnames=c("feature id", "sample name"), 
+                  varnames=c("feature id", "sample name"),
                   value.name='value')
     mlong[['feature id']] <- as.character(mlong[['feature id']])
     mlong[['sample name']] <- as.character(mlong[['sample name']])
@@ -103,25 +103,25 @@ image_msnset_old <- function(m, valueName="value", facetBy=NULL,
     mlong <- merge(mlong, pData(m), by.x="sample name", by.y=0) # slow
     x <- mlong # not nice
     # order by feature name just for image purpose
-    x[['feature id']] <- 
-        ordered(x[['feature id']], 
+    x[['feature id']] <-
+        ordered(x[['feature id']],
                 levels=rev(sort(unique(x[['feature id']]))))
-    
+
     #----------------------------
     qn <- mean(abs(quantile(x$value, c(0.025, 0.975), na.rm = TRUE)))
     qn <- c(-qn, +qn)
     qn01 <- rescale(c(qn,range(x$value,na.rm=TRUE)))
     #----------------------------
-    
+
     # what does that do? reordering by run order?
-    #     x[['sample name']] <- 
+    #     x[['sample name']] <-
     #         with(x, reorder(`sample name`, SampleNum))
     if(!is.null(sOrderBy))
         x[['sample name']] <- reorder(x[['sample name']], x[[sOrderBy]])
-    
+
     if(!is.null(facetBy)) x$facetBy <- x[[facetBy]]
-    
-    p <- ggplot(x, aes(x=`sample name`, y=`feature id`, fill=value)) + 
+
+    p <- ggplot(x, aes(x=`sample name`, y=`feature id`, fill=value)) +
         geom_raster() +
         scale_fill_gradientn(
             colours=bluered(100),
@@ -130,8 +130,8 @@ image_msnset_old <- function(m, valueName="value", facetBy=NULL,
             axis.text.x=element_text(angle=+90),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
-            panel.margin = unit(1.5, "lines"),
-            panel.border = element_rect(linetype = "dashed", 
+            panel.spacing = unit(1.5, "lines"),
+            panel.border = element_rect(linetype = "dashed",
                                         size=1, colour = "black", fill=NA),
             legend.key.height = unit(2, "lines")
         )

@@ -8,6 +8,10 @@ xtable2(x, col.lab.rot = FALSE, ...)
 }
 \arguments{
 \item{x}{typically a \code{data.frame}.}
+
+\item{col.lab.rot}{describe this parameter.}
+
+\item{...}{additional arguments passed to \code{link[xtable]{xtable}}.}
 }
 \value{
 an object of class \code{"xtable"}

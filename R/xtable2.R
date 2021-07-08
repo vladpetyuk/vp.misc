@@ -1,16 +1,19 @@
-#' 
+#'
 #' Customized xtable
 #'
 #' The main customization pertains to alternating
 #' row shading. This one will work only in LaTeX-type documents.
 #' See \code{\link[xtable]{xtable}} for details.
 #'
-#' @param x typically a \code{data.frame}. 
+#' @param x typically a \code{data.frame}.
+#' @param col.lab.rot describe this parameter.
+#' @param ... additional arguments passed to \code{link[xtable]{xtable}}.
+#'
 #' @return an object of class \code{"xtable"}
 #' @importFrom xtable xtable print.xtable
 #' @seealso \code{\link[xtable]{xtable}}
 #' @export xtable2
-#' 
+#'
 xtable2 <- function(x, col.lab.rot=FALSE, ...){
     rws <- seq(1, (nrow(x)-1), by = 2)
     col <- rep("\\rowcolor[gray]{0.95}", length(rws))
@@ -26,9 +29,9 @@ xtable2 <- function(x, col.lab.rot=FALSE, ...){
     arg1 <- list(...)[intersect(names(formals(xtable)), names(list(...)))]
     arg2 <- list(...)[intersect(names(formals(print.xtable)), names(list(...)))]
     x <- do.call(xtable, c(list(x=x), arg1))
-    do.call(print.xtable, c(list(x=x, 
-                               booktabs = TRUE, 
+    do.call(print.xtable, c(list(x=x,
+                               booktabs = TRUE,
                                add.to.row = add.to.row,
-                               include.colnames = include.colnames), 
+                               include.colnames = include.colnames),
                                arg2))
 }

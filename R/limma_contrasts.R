@@ -21,7 +21,7 @@
 #' @return data.frame. Basically output of \code{\link[limma]{topTable}}
 #'      function with additional columns \code{feature} and \code{contrast}.
 #'
-#' @importFrom Biobase exprs pData
+#' @importFrom MSnbase exprs pData
 #' @importFrom limma lmFit topTable eBayes contrasts.fit makeContrasts
 #' @importFrom dplyr mutate select %>%
 #' @importFrom tidyr everything

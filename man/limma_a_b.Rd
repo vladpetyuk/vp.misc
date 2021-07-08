@@ -3,22 +3,11 @@
 \name{limma_a_b}
 \alias{limma_a_b}
 \alias{limma_gen}
-\alias{limma_contrasts}
 \title{Wrapper for Limma}
 \usage{
 limma_a_b(eset, model.str, coef.str, ...)
 
 limma_gen(eset, model.str, coef.str, ...)
-
-limma_contrasts(
-  eset,
-  model.str,
-  coef.str,
-  contrasts,
-  adjust.method = "BH",
-  remove_name = TRUE,
-  ...
-)
 }
 \arguments{
 \item{eset}{eset (or most likely eset subclass) object}
@@ -29,11 +18,9 @@ limma_contrasts(
 Either numeric or factor with 2 levels.}
 
 \item{...}{arguments for \code{\link[limma]{lmFit}}}
-
-\item{ref.str}{(character) Reference string for pairwise comparisons}
 }
 \value{
-data.frame. Basically output of 
+data.frame. Basically output of
      \code{\link[limma]{topTable}} function.
 }
 \description{
@@ -41,11 +28,8 @@ A convenience wrapper for limma
 }
 \section{Functions}{
 \itemize{
-\item \code{limma_gen}: More generalized approach. The tested variable doesn't have to be a
-factor with 2 levels like in limma_a_b.
-
-\item \code{limma_contrasts}: For multiple pairwise comparisons. The tested variable doesn't have to be a
-factor with 2 levels like in limma_a_b.
+\item \code{limma_gen}: More generalized approach. The tested variable doesn't
+have to be a factor with 2 levels like in limma_a_b.
 }}
 
 \note{
@@ -62,8 +46,8 @@ ee <- ee[rowSums(!is.na(exprs(ee))) >= 30,]
 model.string <- "~ PLATINUM.STATUS + AGE" # model with covariates
 coef.string <- "PLATINUM.STATUS" # note, only two levels allowed here
 
-res <- limma_a_b(oca.set, 
-                 model.str = "~ PLATINUM.STATUS + AGE", 
+res <- limma_a_b(oca.set,
+                 model.str = "~ PLATINUM.STATUS + AGE",
                  coef.str = "PLATINUM.STATUS")
 head(res)
 }

@@ -43,8 +43,6 @@ x$v3 <- ifelse(is.na(x$v1) | is.na(x$v2), NA,
                paste(x$v1, x$v2, sep = "_"))
 
 pairwise_contrasts(x, "v1", make_names = FALSE)
-# This results in an error
-pairwise_contrasts(x, "v1", ref.str = c("hello", "a"))
 pairwise_contrasts(x, "v2")
 pairwise_contrasts(x, "v2", ref.str = "g",
                    make_names = FALSE)

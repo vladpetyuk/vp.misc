@@ -15,31 +15,36 @@ subset_by_size(
 \arguments{
 \item{x}{is an \code{enrichResults} instance}
 
-\item{minObsSize}{mininum number of genes must be observed per set}
+\item{minObsSize}{minimum number of genes must be observed per set}
 
-\item{maxObsSize}{maxinum number of genes must be in the set}
+\item{maxObsSize}{maximum number of genes must be observed per set}
 
-\item{minSetSize}{mininum number of genes must be in the set}
+\item{minSetSize}{minimum number of genes must be in the set}
+
+\item{maxSetSize}{maximum number of genes must be in the set}
 }
 \value{
-filtered \code{enrichResults} isntance
+filtered \code{enrichResults} instance
 }
 \description{
 This utility works to filter results of enrich* test
-from \code{\link[clusterProfiler]{cluterProfiler-package}},
-\code{\link[DOSE]{DOSE-package}} or 
+from \code{\link[clusterProfiler]{clusterProfiler-package}},
+\code{\link[DOSE]{DOSE-package}} or
 \code{\link[ReactomePA]{ReactomePA-package}}
 }
 \examples{
 library(clusterProfiler)
+library(enrichplot)
+library(org.Hs.eg.db)
 data(gcSample)
-x <- enrichGO(gcSample[[6]], 
+x <- enrichGO(gcSample[[6]],
               universe = unique(unlist((gcSample))),
-              ont = "CC", 
-              pvalueCutoff = 1, 
-              qvalueCutoff = 1, 
+              OrgDb = "org.Hs.eg.db",
+              ont = "CC",
+              pvalueCutoff = 1,
+              qvalueCutoff = 1,
               minGSSize = 0)
-res <- summary(x)
+res <- x@result
 res$geneID <- NULL
 rownames(res) <- NULL
 head(res)
@@ -47,7 +52,7 @@ cnetplot(x)
 
 # E.g. the "cell", "cell part" & "cellular_component" seem too generic
 x <- subset_by_size(x, maxObsSize=50)
-res <- summary(x)
+res <- x@result
 res$geneID <- NULL
 rownames(res) <- NULL
 # Now they are gone

@@ -9,7 +9,7 @@ concatenate_by_features(..., tags = NULL)
 \arguments{
 \item{...}{MSnSet objects}
 
-\item{tags}{vector of characters attached to feature names of 
+\item{tags}{vector of characters attached to feature names of
 corresponding MSnSet objects}
 }
 \value{
@@ -17,7 +17,7 @@ MSnSet object with concatenated features
 }
 \description{
 Combines MSnset objects by concatenating features. Samples must
-be the same and maintained the same. Pheno data also must be the 
+be the same and maintained the same. Pheno data also must be the
 same.
 }
 \examples{
@@ -34,7 +34,4 @@ m <- concatenate_by_features(msnset, msnset2, msnset3,
 dim(m)
 featureNames(m)
 
-}
-\seealso{
-\code{\link[Biobase]{combine}} and \code{\link[MSnbase]{combine}}
 }

@@ -1,5 +1,4 @@
 
-
 # improved list of objects
 .ls.objects <- function (pos = 1, pattern, order.by,
                          decreasing=FALSE, head=FALSE, n=5) {
@@ -23,7 +22,12 @@
     out
 }
 
-# shorthand
+#' Improved list of objects
+#'
+#' Description goes here.
+#'
+#' @param n number of rows to output
+#' @param ... arguments passed to \code{.ls.objects}.
 #' @export lsos
 lsos <- function(..., n=10) {
     .ls.objects(..., order.by="Size", decreasing=TRUE, head=TRUE, n=n)

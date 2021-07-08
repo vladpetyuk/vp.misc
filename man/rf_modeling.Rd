@@ -10,7 +10,7 @@ rf_modeling(
   response,
   pred.cls,
   K = NULL,
-  sel.feat = T,
+  sel.feat = TRUE,
   sel.alg = c("varSelRF", "Boruta", "top"),
   ...
 )
@@ -18,7 +18,7 @@ rf_modeling(
 \arguments{
 \item{msnset}{MSnSet object}
 
-\item{features}{character vector features to select from for 
+\item{features}{character vector features to select from for
 building prediction model. The features can be either in
 featureNames(msnset) or in pData(msnset).}
 
@@ -26,7 +26,7 @@ featureNames(msnset) or in pData(msnset).}
 
 \item{pred.cls}{class to predict}
 
-\item{K}{specifies the cross-validation type. Default NULL means LOOCV. 
+\item{K}{specifies the cross-validation type. Default NULL means LOOCV.
 Another typical value is 10.}
 
 \item{sel.feat}{logical defining if to select features or use the entire set?}
@@ -39,12 +39,9 @@ Another typical value is 10.}
 }}
 
 \item{...}{Extra arguments. Currently passed only to Boruta algorithm.}
-
-\item{verbose}{0 - silent, 1 - count round, 
-2 - print selected features at each round}
 }
 \value{
-list 
+list
      \describe{
          \item{\code{prob}}{is the probabilities (response) from LOOCV
          that the sample is "case"}
@@ -59,11 +56,13 @@ list
 \description{
 The objective is - given the number of features,
 select the most informative ones and evaluate
-the predictive random forest model. 
+the predictive random forest model.
 The feature and model selection performed independently
 for each round of LOOCV.
 }
 \examples{
+# Not run
+\dontrun{
 data(srm_msnset)
 head(varLabels(msnset))
 head(msnset$subject.type)
@@ -79,5 +78,5 @@ print(out$auc)
 # and model training was performed on other samples
 plot(sort(out$prob))
 abline(h=0.5, col='red')
-
+}
 }

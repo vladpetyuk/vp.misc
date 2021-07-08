@@ -33,7 +33,7 @@ The quantitative data reported by this function is in "Intensity" columns of
 
 # label-free data
 m <- readMaxQuantPeptides(system.file("extdata/MaxQuantPep",
-                                       package="vp.misc"))
+                                       package="MSnSet.utils"))
 exprs(m) <- log2(exprs(m))
 exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
 image_msnset(m)

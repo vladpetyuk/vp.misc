@@ -46,19 +46,18 @@
 #' data(srm_msnset)
 #' plot_umap(msnset,
 #'           phenotype = "subject.type",
-#'           show_ellipse = F)
+#'           show_ellipse = FALSE)
 #' plot_umap(msnset,
 #'           phenotype = "subject.type",
 #'           min_dist = 0.5,
-#'           show_ellipse = T)
+#'           show_ellipse = TRUE)
 #' plot_umap(msnset,
 #'           phenotype = "subject.type",
-#'           pca = F,
-#'           show_ellipse = T)
+#'           pca = FALSE,
+#'           show_ellipse = TRUE)
 #' plot_umap(msnset)
 #'
-#' @export
-#' @rdname plot_umap
+#' @export plot_umap
 
 plot_umap <- function(eset, phenotype = NULL, standardize = FALSE,
                       pca = TRUE, n_perm = 10,

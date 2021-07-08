@@ -79,15 +79,15 @@ for samples in an ExpressionSet/MSnSet object.
 data(srm_msnset)
 plot_umap(msnset,
           phenotype = "subject.type",
-          show_ellipse = F)
+          show_ellipse = FALSE)
 plot_umap(msnset,
           phenotype = "subject.type",
           min_dist = 0.5,
-          show_ellipse = T)
+          show_ellipse = TRUE)
 plot_umap(msnset,
           phenotype = "subject.type",
-          pca = F,
-          show_ellipse = T)
+          pca = FALSE,
+          show_ellipse = TRUE)
 plot_umap(msnset)
 
 }
