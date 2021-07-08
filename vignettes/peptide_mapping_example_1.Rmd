@@ -28,7 +28,10 @@ A quick example of visualizing peptide spectral counts on protein sequence. This
 ```{r libs, message=FALSE}
 # Packages
 library(scales)
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(stringr)
 library(Biostrings)
 library(ggforce)
 ```
@@ -38,7 +41,7 @@ library(ggforce)
 ```{r reading_data, message=FALSE}
 x <- system.file("extdata/titin_peptide_mapping", "titin_peptides.txt.gz", 
                  package = "MSnSet.utils") %>%
-  read_tsv()
+  read.table(sep = "\t", header = T)
 head(x)
 
 fst <- system.file("extdata/titin_peptide_mapping", "titin.fasta.gz", 
@@ -130,11 +133,5 @@ pb <- ggplot_build(p3)
 pb$data[[3]][pb$data[[3]][, "PANEL"] == 1, "label"] <- " "
 pg <- ggplot_gtable(pb)
 plot(pg)
-```
-
-# Session Info
-
-```{r}
-print(sessionInfo(), locale = FALSE)
 ```
 
