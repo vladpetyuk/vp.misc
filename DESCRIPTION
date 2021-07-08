@@ -11,7 +11,7 @@ Description: A collection of customized functions used for
     MSnSet (or ExpressionSet) object as the key data container.
     The package contains customized heatmaps, colorschemes,
     convienient nested linear models, machine learning utilities, etc.
-License: Beerware
+License: GPL (>= 3)
 biocViews: Proteomics, MassSpectrometry
 Depends:
     R (>= 2.10),
@@ -29,13 +29,13 @@ Imports:
     foreach,
     glmnet,
     iterators,
+    outliers,
     randomForest,
     varSelRF,
     Biobase,
     Heatplus,
     ade4,
     made4,
-    outliers,
     ggplot2,
     xtable,
     clusterProfiler,
@@ -72,8 +72,13 @@ Imports:
     tibble, 
     tidyr, 
     tidyselect
-VignetteBuilder: knitr
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggforce,
+    rvest,
+    enrichplot,
+    ggnewscale
+Remotes: cran/heatmap.plus
+VignetteBuilder: knitr
 RoxygenNote: 7.1.1

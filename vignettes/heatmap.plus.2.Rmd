@@ -53,10 +53,3 @@ heatmap.plus.2(exprs(msnset),
 )
 ```
 
-
-# Session Info
-
-```{r}
-print(sessionInfo(), locale = FALSE)
-```
-

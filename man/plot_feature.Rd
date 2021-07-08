@@ -17,8 +17,8 @@ plot_feature(
 
 \item{feature}{Name of the feature to plot. Should be in featureNames(m).}
 
-\item{feature_name_col}{Name of the column in fData(m) that 
-should contain name of the feature. 
+\item{feature_name_col}{Name of the column in fData(m) that
+should contain name of the feature.
 The default value is NULL and matches feature
 against featureNames(m).}
 

@@ -36,7 +36,7 @@
 #'
 #' @return A ggplot object
 #'
-#' @importFrom Biobase exprs pData
+#' @importFrom MSnbase exprs pData
 #' @import     umap
 #' @importFrom ggplot2 ggplot geom_point coord_fixed theme_bw
 #'                      guides guide_legend stat_ellipse aes
@@ -46,19 +46,18 @@
 #' data(srm_msnset)
 #' plot_umap(msnset,
 #'           phenotype = "subject.type",
-#'           show_ellipse = F)
+#'           show_ellipse = FALSE)
 #' plot_umap(msnset,
 #'           phenotype = "subject.type",
 #'           min_dist = 0.5,
-#'           show_ellipse = T)
+#'           show_ellipse = TRUE)
 #' plot_umap(msnset,
 #'           phenotype = "subject.type",
-#'           pca = F,
-#'           show_ellipse = T)
+#'           pca = FALSE,
+#'           show_ellipse = TRUE)
 #' plot_umap(msnset)
 #'
-#' @export
-#' @rdname plot_umap
+#' @export plot_umap
 
 plot_umap <- function(eset, phenotype = NULL, standardize = FALSE,
                       pca = TRUE, n_perm = 10,
@@ -144,7 +143,7 @@ plot_umap <- function(eset, phenotype = NULL, standardize = FALSE,
   } else {
     p <- ggplot(umap_df) +
       geom_point(aes(x = UMAP1, y = UMAP2, color = colorBy),
-                 size = point_size, shape = 20, show.legend = F) +
+                 size = point_size, shape = 20, show.legend = TRUE) +
       guides(color = guide_legend(legend_title)) +
       theme_bw()
   }

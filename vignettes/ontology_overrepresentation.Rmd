@@ -1,5 +1,5 @@
 ---
-title: "Over-representation Analysis in R"
+title: "Over-representation Analysis"
 output: 
   html_document: 
     highlight: default
@@ -279,12 +279,5 @@ A different layout
 
 ```{r show_fake2}
 cnetplot(xfake, layout = "kk", cex_label_category = 0.8, cex_label_gene = 0.4)
-```
-
-
-# Session Info
-
-```{r session_info}
-print(sessionInfo(), locale = FALSE)
 ```
 

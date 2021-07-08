@@ -14,24 +14,30 @@ keep_longest_isoform_per_gene(
 \arguments{
 \item{ids}{data.frame object. Must contain 3 columns described below.}
 
-\item{gene_id_col}{character. Name of the column with gene IDs in the `ids` object.}
+\item{gene_id_col}{character. Name of the column with gene IDs in the `ids`
+object.}
 
-\item{isoform_id_col}{character. Name of the column with protein isoform IDs in the `ids` object.}
+\item{isoform_id_col}{character. Name of the column with protein isoform IDs
+in the `ids` object.}
 
-\item{isoform_len_col}{character. Name of the column with protein isoform lengths.}
+\item{isoform_len_col}{character. Name of the column with protein isoform
+lengths.}
 }
 \description{
 Typically the downstream use of data is based on gene symbols. One gene
-symbol may map to multiple UniProt or RefSeq IDs corresponding to different isoforms. 
+symbol may map to multiple UniProt or RefSeq IDs corresponding to different
+isoforms.
 This utility simply retains only the longest isoform per gene.
 }
 \examples{
-fasta_file_name <- system.file("extdata/FASTAs", 
-                               "rattus_norvegics_uniprot_2018_09.fasta.gz", 
-                               package = "vp.misc")
+# Not run
+\dontrun{
+fasta_file_name <- system.file("extdata/FASTAs",
+                               "rattus_norvegics_uniprot_2018_09.fasta.gz",
+                               package = "MSnSet.utils")
 library(Biostrings)
 # FASTA
-fst <- readAAStringSet(fasta_file_name, format="fasta", 
+fst <- readAAStringSet(fasta_file_name, format="fasta",
                        nrec=-1L, skip=0L, use.names=TRUE)
 # extracting UniProt Accessions
 names(fst) <- sub("^.*\\\\|(.*)\\\\|.*$","\\\\1",names(fst))
@@ -44,13 +50,13 @@ ids_with_sites <- map_PTM_sites(ids, fst, "UniProtAccFull", "Peptide", "*")
 library(dplyr)
 # 10116 is rat taxonomy ID
 URL <- "http://www.uniprot.org/uniprot/?query=organism:10116&columns=id,genes(PREFERRED)&format=tab"
-ids_with_sites <- read.delim(URL, check.names = F, stringsAsFactors = FALSE) \%>\%
-   rename(GeneMain = "Gene names  (primary )",
-          UniProtAcc = "Entry") \%>\%
-   inner_join(ids_with_sites, ., by="UniProtAcc")
+ids_with_sites <- read.delim(URL, check.names = FALSE, stringsAsFactors = FALSE) \%>\%
+   rename(GeneMain = `Gene names  (primary )`,
+          UniProtAcc = `Entry`) \%>\%
+   inner_join(ids_with_sites, ., by = "UniProtAcc")
 nrow(ids_with_sites)
-ids_with_sites <- keep_longest_isoform_per_gene(ids_with_sites, 
+ids_with_sites <- keep_longest_isoform_per_gene(ids_with_sites,
      "GeneMain", "UniProtAccFull", "ProtLength")
 nrow(ids_with_sites)
-
+}
 }

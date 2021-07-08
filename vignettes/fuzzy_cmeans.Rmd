@@ -76,10 +76,3 @@ for (cluster_num in colnames(res$membership)) {
 }
 ```
 
-
-# Session Info
-
-```{r}
-print(sessionInfo(), locale = FALSE)
-```
-

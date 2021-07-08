@@ -10,7 +10,7 @@
 plot_pca_v1(
   eset,
   phenotype = NULL,
-  show.ellispe = TRUE,
+  show.ellipse = TRUE,
   show.NA = TRUE,
   legend.title.width = 20
 )
@@ -22,7 +22,7 @@ plot_pca_v3(
   phenotype = NULL,
   label = NULL,
   point_size = 5,
-  show.ellispe = TRUE,
+  show.ellipse = TRUE,
   show.NA = TRUE,
   legend.title.width = 20,
   ...
@@ -33,7 +33,7 @@ plot_pca_v4(
   phenotype = NULL,
   label = NULL,
   point_size = 5,
-  show.ellispe = TRUE,
+  show.ellipse = TRUE,
   show.NA = TRUE,
   legend.title.width = 20,
   pc.index = c(1, 2),
@@ -45,17 +45,29 @@ plot_pca_v4(
 
 \item{phenotype}{character one of the \code{colnames(pData(eset))}}
 
-\item{show.NA}{logical Should the datapoints for which phenotype is 
-unknown be shown? Default is TRUE}
+\item{show.ellipse}{logical determining to plot 95\% CI based on
+Hotelling's T-test or not.}
+
+\item{show.NA}{logical whether the datapoints for which phenotype is
+unknown be shown. Default is \code{TRUE}.}
 
 \item{legend.title.width}{integer Wrapping up too long legend titles.
 Passed to stringr::str_wrap as width argument. Default is 20.}
 
-\item{show.ellipse}{logical determining to plot 95\% CI based on 
-Hotelling's T-test or not.}
+\item{names}{this parameter is specified, but not actually used.}
+
+\item{label}{character vector of point labels.}
+
+\item{point_size}{numeric; the size of the plotted points.}
+
+\item{...}{additional arguments passed to
+\code{\link[ggrepel]{geom_label_repel}}.}
+
+\item{pc.index}{numeric vector of principal components to plot. Defaults to
+\code{c(1,2)}, so PC1 and PC2 will be used as the axes.}
 }
 \value{
-plot
+A ggplot object
 }
 \description{
 A convenience function for plotting PCA scatter plot
@@ -72,8 +84,8 @@ for samples in ExpressionSet/MSnSet object.
 
 \examples{
 data(srm_msnset)
-plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = F)
-plot_pca_v1(msnset, phenotype = "subject.type", show.ellispe = T)
+plot_pca_v1(msnset, phenotype = "subject.type", show.ellipse = FALSE)
+plot_pca_v1(msnset, phenotype = "subject.type", show.ellipse = TRUE)
 plot_pca_v1(msnset)
 data(srm_msnset)
 plot_pca_v2(msnset, phenotype = "subject.type")

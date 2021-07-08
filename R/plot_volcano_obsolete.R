@@ -23,6 +23,8 @@
 #'              theme_bw xlim ylim geom_hline geom_segment geom_text
 #'
 #' @examples
+#' # Not run
+#' \dontrun{
 #' library("MSnSet.utils")
 #' data("cptac_oca")
 #'
@@ -36,9 +38,8 @@
 #'                       threshold = 0.05,
 #'                       top_n_names = sum(res$P.Value < 0.01, na.rm=TRUE),
 #'                       rep.fact=10000, adj.lmt=1000, adj.max=1000) +
-#' theme(text=element_text(size = 20)) +
-#' ylab("p-value") +
-#' xlab("log2 fold change")
+#' theme(text=element_text(size = 20))
+#' }
 
 plot_volcano_obsolete <- function(logFC,
                          significance,
