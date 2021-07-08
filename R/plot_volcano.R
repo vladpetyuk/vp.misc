@@ -12,7 +12,9 @@
 #'        Default is \code{"red"}.
 #' @param features a character vector of feature names or \code{NULL} (default).
 #' @param top_n_features the number of top significant features to label on
-#'        the plot if \code{features} is not \code{NULL}. Default is \code{5}.
+#'        the plot if \code{features} is not \code{NULL}. The default is \code{5},
+#'        which will label the top 5 features with a negative log fold-change
+#'        and the top 5 features with a positive log fold-change.
 #' @param feature_labels a character vector with the names of the features to
 #'        be labeled. Any features that should not be labeled must be \code{NA}.
 #' @param metadata a data frame containing information that should be
@@ -20,17 +22,21 @@
 #' @param point_color a color or a vector used to color the points.
 #'        Default is \code{"grey"}.
 #' @param point_size the size of the points. Default is \code{3}.
-#' @param use_theme the plot theme. Default is \code{theme_bw()}.
+#' @param plot_theme the plot theme. Default is \code{theme_bw()}.
 #' @param label_outside_sig_range If \code{sig_threshold} is provided, this
 #'        determines whether labels can be plotted between \code{sig_threshold}
 #'        and 1. Default is \code{FALSE}, so labels will only be plotted in
 #'        the range of significant features.
+#' @param add_space_above if \code{TRUE} (default), additional space will
+#'        be added above the most significant points on the plot. This is useful
+#'        to prevent overcrowding of labels when \code{features} and
+#'        \code{top_n_features} are supplied.
 #' @param ... additional arguments passed to
 #'          \code{\link[ggrepel]{geom_text_repel}}
 #'
 #' @return A ggplot object.
 #'
-#' @importFrom scales trans_new log_breaks pretty_breaks
+#' @importFrom scales trans_new log_breaks pretty_breaks alpha
 #' @importFrom ggplot2 ggplot geom_point aes scale_y_continuous
 #'             theme theme_bw xlim geom_hline
 #' @importFrom ggrepel geom_text_repel
@@ -55,9 +61,7 @@
 #'              significance = res$P.Value,
 #'              sig_threshold = 0.05,
 #'              features = rownames(res),
-#'              top_n_features = 10) +
-#' ylab("p-value") +
-#' xlab(expression(log[2](paste(fold, "-", change))))
+#'              top_n_features = 10)
 #'
 #' # Label top 5 most significant features and
 #' # color by the sign of the average expression.
@@ -65,9 +69,7 @@
 #'              significance = res$P.Value,
 #'              sig_threshold = 0.05,
 #'              features = rownames(res),
-#'              point_color = factor(sign(res$AveExpr))) +
-#' ylab("p-value") +
-#' xlab(expression(log[2](paste(fold, "-", change))))
+#'              point_color = factor(sign(res$AveExpr)))
 
 
 plot_volcano <- function(logFC,
@@ -80,8 +82,9 @@ plot_volcano <- function(logFC,
                          metadata = NULL,
                          point_color = "grey",
                          point_size = 3,
-                         use_theme = theme_bw(),
+                         plot_theme = theme_bw(),
                          label_outside_sig_range = FALSE,
+                         add_space_above = TRUE,
                          ...) {
 
   # Check input
@@ -111,19 +114,26 @@ plot_volcano <- function(logFC,
   res <- arrange(res, significance)
 
   y_min = min(significance, na.rm = T)
-  breaks <- signif(10^(pretty_breaks()(0:floor(log10(y_min) * 2)) / 2), 1)
-  x_extreme <- max(abs(range(logFC))) * 1.08
+  if (add_space_above) {
+    y_min <- ifelse(y_min > 1e-3, 1e-3, y_min)
+    scale_coef <- 2.15
+  } else {
+    scale_coef <- 2
+  }
+  breaks <- signif(10^(pretty_breaks()(0:floor(log10(y_min) * scale_coef))
+                       / 2), 1)
+  x_extreme <- max(abs(range(logFC))) * 1.1
 
   # Base layer
   p <- ggplot(data = res)
 
   # Use horizontal lines instead of grid lines so that
   # the cutoff can be included in the y-axis
-  if (!is.null(use_theme$panel.grid$colour)) {
+  if (!is.null(plot_theme$panel.grid$colour)) {
     for (i in 1:length(breaks)) {
       p <- p + geom_hline(yintercept = breaks[i],
-                          color = use_theme$panel.grid$colour,
-                          size = use_theme$line$size)
+                          color = plot_theme$panel.grid$colour,
+                          size = plot_theme$line$size)
     }
   }
 
@@ -154,9 +164,10 @@ plot_volcano <- function(logFC,
   p <- p +
     scale_y_continuous(trans = log10_rev_trans,
                        breaks = breaks,
-                       limits = c(1, min(breaks))) +
+                       limits = c(1, min(breaks)),
+                       expand = expansion(mult = c(0, 0.05))) +
     xlim(x_extreme*c(-1, +1)) +
-    use_theme +
+    plot_theme +
     theme(panel.grid.major.y = element_blank(),
           panel.grid.minor.y = element_blank())
 
@@ -174,9 +185,18 @@ plot_volcano <- function(logFC,
       stop("If features is provided, top_n_features must be at least 1.")
     } else {
       # Get top n features
-      res$features[which(!is.na(res$features))[
-        top_n_features + 1:nrow(res)]] <- NA
-      feature_labels <- res$features
+      # res$features[which(!is.na(res$features))[
+      #   top_n_features + 1:nrow(res)]] <- NA
+      top_feature_labels <- res %>%
+        mutate(logFC_sign = sign(logFC), feature_labels = features) %>%
+        group_by(logFC_sign) %>%
+        slice_min(order_by = significance, n = top_n_features)
+      if (!is.null(sig_threshold)) {
+        top_feature_labels <- top_feature_labels %>%
+          filter(significance < sig_threshold)
+      }
+      res <- left_join(res, top_feature_labels)
+      feature_labels <- res$feature_labels
     }
   }
 
