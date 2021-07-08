@@ -247,3 +247,13 @@
 #' head(exprs(longitudinal_biomarker_study))
 "longitudinal_biomarker_study"
 
+
+#' Rat Phospho Identifications
+#'
+#' Description goes here.
+#'
+#' @usage data("phospho_identifications_rat")
+#'
+#' @docType data
+"ids"
+
