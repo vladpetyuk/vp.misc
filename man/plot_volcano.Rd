@@ -82,9 +82,7 @@ plot_volcano(logFC = res$logFC,
              significance = res$P.Value,
              sig_threshold = 0.05,
              features = rownames(res),
-             top_n_features = 10) +
-ylab("p-value") +
-xlab(expression(log[2](paste(fold, "-", change))))
+             top_n_features = 10)
 
 # Label top 5 most significant features and
 # color by the sign of the average expression.
@@ -92,7 +90,5 @@ plot_volcano(logFC = res$logFC,
              significance = res$P.Value,
              sig_threshold = 0.05,
              features = rownames(res),
-             point_color = factor(sign(res$AveExpr))) +
-ylab("p-value") +
-xlab(expression(log[2](paste(fold, "-", change))))
+             point_color = factor(sign(res$AveExpr)))
 }
