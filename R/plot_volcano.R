@@ -38,9 +38,9 @@
 #'
 #' @importFrom scales trans_new log_breaks pretty_breaks alpha
 #' @importFrom ggplot2 ggplot geom_point aes scale_y_continuous
-#'             theme theme_bw xlim geom_hline
+#'             theme theme_bw xlim geom_hline expansion
 #' @importFrom ggrepel geom_text_repel
-#' @importFrom dplyr arrange
+#' @importFrom dplyr arrange filter slice slice_min left_join
 #'
 #' @export plot_volcano
 #'
