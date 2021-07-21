@@ -10,11 +10,11 @@ plot_sample_correlation_heatmap(m, phenotype, ...)
 plot_sample_correlation_pheatmap(m, phenotype, ...)
 }
 \arguments{
-\item{m}{an MSnSet object}
+\item{m}{(MSnSet)}
 
 \item{phenotype}{(character) name of the column to order by (usually plex)}
 
-\item{...}{additional arguments passed to \code{\link[stats]{heatmap}}}
+\item{...}{additional params to the heatmap call}
 }
 \value{
 (list) plot object
@@ -26,6 +26,8 @@ order the columns (samples) by.
 }
 \section{Functions}{
 \itemize{
+\item \code{plot_sample_correlation_heatmap}: Using base heatmap
+
 \item \code{plot_sample_correlation_pheatmap}: Using the \code{pheatmap} package
 }}
 

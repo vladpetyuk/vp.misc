@@ -4,17 +4,16 @@
 #' for MSnSet objects. There is a parameter for the phenotype to
 #' order the columns (samples) by.
 #'
-#' @param m an MSnSet object
+#' @param m (MSnSet)
 #' @param phenotype (character) name of the column to order by (usually plex)
 #'
-#' @param ... additional arguments passed to \code{\link[stats]{heatmap}}
+#' @param ... additional params to the heatmap call
 #'
 #' @return (list) plot object
 #'
-#' @export plot_sample_correlation_heatmap
-#'
 #' @importFrom MSnbase pData exprs
 #' @importFrom dplyr %>% select
+#' @importFrom pheatmap pheatmap
 #'
 #' @examples
 #'
@@ -29,7 +28,8 @@
 #' # Using `pheatmap` (pretty heatmap)
 #' plot_sample_correlation_pheatmap(m, "Batch")
 
-
+#' @export
+#' @describeIn plot_sample_correlation_heatmap Using base heatmap
 plot_sample_correlation_heatmap <- function(m, phenotype, ...) {
     m <- m[,order(pData(m)[,phenotype])]
     x <- cor(exprs(m), use = "complete.obs")
@@ -40,10 +40,8 @@ plot_sample_correlation_heatmap <- function(m, phenotype, ...) {
 }
 
 
-
+#' @export
 #' @describeIn plot_sample_correlation_heatmap Using the \code{pheatmap} package
-#' @importFrom pheatmap pheatmap
-#' @export plot_sample_correlation_pheatmap
 plot_sample_correlation_pheatmap <- function(m, phenotype, ...) {
     m <- m[,order(pData(m)[,phenotype])]
     x <- cor(exprs(m), use = "complete.obs")
