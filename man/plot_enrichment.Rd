@@ -17,9 +17,8 @@ plot_enrichment(
 \arguments{
 \item{x}{an \code{\link[DOSE]{enrichResult-class}} object.}
 
-\item{num.categories}{integer; the number of pathways or gene ontologies to
-plot. The default selects the 10 terms with the highest counts, including
-ties.}
+\item{num.categories}{integer; the number of terms to plot. The default
+selects the 10 terms with the highest counts, including ties.}
 
 \item{sentence.case}{logical; whether to capitalize the first letter of each
 term. Certain exceptions such as "mRNA" will not be capitalized.
@@ -44,9 +43,7 @@ from \code{\link[ReactomePA]{enrichPathway}},
 or \code{\link[clusterProfiler]{enrichKEGG}}.
 }
 \examples{
-# Load packages
 library(clusterProfiler)
-library(MSnSet.utils)
 
 # Data from clusterProfiler
 data(gcSample)
@@ -63,6 +60,6 @@ x <- enrichGO(gene = gcSample[[6]],
 # For the purposes of this example, the terms will not be
 # filtered based on their adjusted p-values.
 plot_enrichment(x, p.adjust.cutoff = 1,
-                num.categories = 6, label.wrap.chars = 40,
+                num.categories = 6, label.wrap.chars = 35,
                 low = "darkred", high = "grey85")
 }
