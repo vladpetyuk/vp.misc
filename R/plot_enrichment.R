@@ -6,9 +6,8 @@
 #' or \code{\link[clusterProfiler]{enrichKEGG}}.
 #'
 #' @param x an \code{\link[DOSE]{enrichResult-class}} object.
-#' @param num.categories integer; the number of pathways or gene ontologies to
-#'     plot. The default selects the 10 terms with the highest counts, including
-#'     ties.
+#' @param num.categories integer; the number of terms to plot. The default
+#' selects the 10 terms with the highest counts, including ties.
 #' @param sentence.case logical; whether to capitalize the first letter of each
 #'     term. Certain exceptions such as "mRNA" will not be capitalized.
 #'     Default is \code{TRUE}.
@@ -22,17 +21,17 @@
 #'     \code{\link[ggplot2]{scale_color_gradient}}.
 #'
 #' @importFrom dplyr %>% arrange slice_max mutate filter rename
-#' @importFrom scales label_wrap percent_format
+#' @importFrom scales label_wrap percent_format scientific pretty_breaks
+#'             trans_breaks
 #' @importFrom stringr str_to_sentence
 #' @importFrom ggplot2 ggplot aes geom_point scale_x_continuous
-#'             scale_y_discrete scale_color_gradient theme_minimal
+#'             scale_y_discrete scale_color_gradient theme_bw
+#'             theme element_line element_blank element_rect
 #'
 #' @export plot_enrichment
 #'
 #' @examples
-#' # Load packages
 #' library(clusterProfiler)
-#' library(MSnSet.utils)
 #'
 #' # Data from clusterProfiler
 #' data(gcSample)
@@ -49,7 +48,7 @@
 #' # For the purposes of this example, the terms will not be
 #' # filtered based on their adjusted p-values.
 #' plot_enrichment(x, p.adjust.cutoff = 1,
-#'                 num.categories = 6, label.wrap.chars = 40,
+#'                 num.categories = 6, label.wrap.chars = 35,
 #'                 low = "darkred", high = "grey85")
 
 
@@ -67,10 +66,10 @@ plot_enrichment <- function(x,
       "`", class(x), "`"
     ))
   }
-  
+
   # Get the results dataframe.
   x <- as.data.frame(x)
-  
+
   # Arrange in descending order by count.
   # Select the n descriptions with the highest counts (including ties).
   x <- x %>%
@@ -84,7 +83,7 @@ plot_enrichment <- function(x,
       GeneProp = TermGenes / TotalGenes,
       BgProp = BgTerm / BgTotal
     )
-  
+
   # Capitalize first letter of each term
   if (sentence.case) {
     # If a term begins with these exceptions, do not capitalize them.
@@ -98,18 +97,18 @@ plot_enrichment <- function(x,
         str_to_sentence(Description)
       ))
   }
-  
+
   # Convert Description to factor to preserve order when plotting
   x <- x %>%
     mutate(Description = factor(Description, levels = rev(Description)))
-  
+
   x_lims <- c(floor(min(x$GeneProp) * 100),
               ceiling(max(x$GeneProp) * 100)) / 100
-  
+
   # Determine whether the identity or log10 transformation should be used.
   # Also determine the gradient label breaks.
   # If the powers are the same, use the identity transformation
-  if (length(unique(gsub(".*e\\-(\\d{+})", 
+  if (length(unique(gsub(".*e\\-(\\d{+})",
                          "\\1", scientific(x$p.adjust)))) == 1) {
     gradient.trans <- "identity"
     gradient.breaks <- pretty_breaks(n = 4)
@@ -119,7 +118,7 @@ plot_enrichment <- function(x,
       trans_breaks("log10", function(x)
         10 ^ x, n = 4)
   }
-  
+
   # Plot
   p <- ggplot(x) +
     geom_point(aes(x = GeneProp, y = Description, color = p.adjust),
@@ -134,18 +133,12 @@ plot_enrichment <- function(x,
                          ...) +
     theme_bw() +
     theme(
-      axis.title.x = element_text(size = 10,
-                                  margin = margin(4, 0, 0, 0)),
       axis.title.y = element_blank(),
-      axis.ticks = element_line(size = 0.6),
-      plot.background = element_rect(color = NA),
       panel.border = element_rect(color = NA),
-      panel.background = element_rect(color = NA),
-      axis.line = element_line(color = "black"),
-      legend.margin = margin(0, 0, 0, -4, "pt")
+      axis.line = element_line(color = "black")
     )
-  
+
   return(p)
 }
 
-                   
+
