@@ -2,16 +2,19 @@
 % Please edit documentation in R/plot_sample_correlation_heatmap.R
 \name{plot_sample_correlation_heatmap}
 \alias{plot_sample_correlation_heatmap}
+\alias{plot_sample_correlation_pheatmap}
 \title{Heatmap for sample correlations}
 \usage{
 plot_sample_correlation_heatmap(m, phenotype, ...)
+
+plot_sample_correlation_pheatmap(m, phenotype, ...)
 }
 \arguments{
+\item{m}{(MSnSet)}
+
 \item{phenotype}{(character) name of the column to order by (usually plex)}
 
 \item{...}{additional params to the heatmap call}
-
-\item{msnset}{(MSnSet)}
 }
 \value{
 (list) plot object
@@ -21,6 +24,13 @@ Wrapper functions to generate correlation matrix plots
 for MSnSet objects. There is a parameter for the phenotype to
 order the columns (samples) by.
 }
+\section{Functions}{
+\itemize{
+\item \code{plot_sample_correlation_heatmap}: Using base heatmap
+
+\item \code{plot_sample_correlation_pheatmap}: Using the \code{pheatmap} package
+}}
+
 \examples{
 
 library(MSnSet.utils)
@@ -33,5 +43,4 @@ plot_sample_correlation_heatmap(m, "Batch")
 
 # Using `pheatmap` (pretty heatmap)
 plot_sample_correlation_pheatmap(m, "Batch")
-
 }
