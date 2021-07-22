@@ -11,7 +11,6 @@ plot_enrichment(
   p.adjust.cutoff = 0.05,
   label.wrap.chars = Inf,
   point.size = 4,
-  gradient.trans = "log10",
   ...
 )
 }
@@ -34,11 +33,6 @@ considered for plotting.}
 term.}
 
 \item{point.size}{the size of the plotted points. Default is 4.}
-
-\item{gradient.trans}{the name of a transformation object for the color
-gradient, or the object itself. Default is \code{"log10"}. See the
-\code{trans} argument in \code{\link[ggplot2]{continuous_scale}} for
-more details.}
 
 \item{...}{additional arguments passed to
 \code{\link[ggplot2]{scale_color_gradient}}.}
@@ -69,5 +63,6 @@ x <- enrichGO(gene = gcSample[[6]],
 # For the purposes of this example, the terms will not be
 # filtered based on their adjusted p-values.
 plot_enrichment(x, p.adjust.cutoff = 1,
-                num.categories = 6, label.wrap.chars = 40)
+                num.categories = 6, label.wrap.chars = 40,
+                low = "darkred", high = "grey85")
 }
