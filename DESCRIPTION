@@ -71,7 +71,8 @@ Imports:
     scales, 
     tibble, 
     tidyr, 
-    tidyselect
+    tidyselect,
+    pheatmap
 Suggests:
     knitr,
     rmarkdown,

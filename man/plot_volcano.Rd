@@ -15,8 +15,9 @@ plot_volcano(
   metadata = NULL,
   point_color = "grey",
   point_size = 3,
-  use_theme = theme_bw(),
+  plot_theme = theme_bw(),
   label_outside_sig_range = FALSE,
+  add_space_above = TRUE,
   ...
 )
 }
@@ -36,7 +37,9 @@ Default is \code{"red"}.}
 \item{features}{a character vector of feature names or \code{NULL} (default).}
 
 \item{top_n_features}{the number of top significant features to label on
-the plot if \code{features} is not \code{NULL}. Default is \code{5}.}
+the plot if \code{features} is not \code{NULL}. The default is \code{5},
+which will label the top 5 features with a negative log fold-change
+and the top 5 features with a positive log fold-change.}
 
 \item{feature_labels}{a character vector with the names of the features to
 be labeled. Any features that should not be labeled must be \code{NA}.}
@@ -49,12 +52,17 @@ Default is \code{"grey"}.}
 
 \item{point_size}{the size of the points. Default is \code{3}.}
 
-\item{use_theme}{the plot theme. Default is \code{theme_bw()}.}
+\item{plot_theme}{the plot theme. Default is \code{theme_bw()}.}
 
 \item{label_outside_sig_range}{If \code{sig_threshold} is provided, this
 determines whether labels can be plotted between \code{sig_threshold}
 and 1. Default is \code{FALSE}, so labels will only be plotted in
 the range of significant features.}
+
+\item{add_space_above}{if \code{TRUE} (default), additional space will
+be added above the most significant points on the plot. This is useful
+to prevent overcrowding of labels when \code{features} and
+\code{top_n_features} are supplied.}
 
 \item{...}{additional arguments passed to
 \code{\link[ggrepel]{geom_text_repel}}}
