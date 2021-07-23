@@ -107,16 +107,14 @@ plot_enrichment <- function(x,
 
   # Determine whether the identity or log10 transformation should be used.
   # Also determine the gradient label breaks.
-  # If the powers are the same, use the identity transformation
+  # If the powers are similar, use the identity transformation
   if (length(unique(gsub(".*e\\-(\\d{+})",
-                         "\\1", scientific(x$p.adjust)))) == 1) {
+                         "\\1", scientific(x$p.adjust)))) <= 2) {
     gradient.trans <- "identity"
     gradient.breaks <- pretty_breaks(n = 4)
   } else {
     gradient.trans <- "log10"
-    gradient.breaks <-
-      trans_breaks("log10", function(x)
-        10 ^ x, n = 4)
+    gradient.breaks <- trans_breaks("log10", function(x) 10 ^ x, n = 4)
   }
 
   # Plot
