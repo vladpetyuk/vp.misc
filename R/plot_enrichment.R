@@ -23,7 +23,6 @@
 #' @importFrom dplyr %>% arrange slice_max mutate filter rename
 #' @importFrom scales label_wrap percent_format scientific pretty_breaks
 #'             trans_breaks
-#' @importFrom stringr str_to_sentence
 #' @importFrom ggplot2 ggplot aes geom_point scale_x_continuous
 #'             scale_y_discrete scale_color_gradient theme_bw
 #'             theme element_line element_blank element_rect
@@ -59,6 +58,7 @@ plot_enrichment <- function(x,
                             label.wrap.chars = Inf,
                             point.size = 4,
                             ...) {
+
   # Check validity of x
   if (class(x) != "enrichResult") {
     stop(paste0(
@@ -94,7 +94,8 @@ plot_enrichment <- function(x,
       mutate(Description = ifelse(
         grepl(exceptions, Description),
         Description,
-        str_to_sentence(Description)
+        paste0(toupper(substr(Description, 1, 1)),
+               substr(Description, 2, nchar(Description)))
       ))
   }
 
@@ -102,8 +103,11 @@ plot_enrichment <- function(x,
   x <- x %>%
     mutate(Description = factor(Description, levels = rev(Description)))
 
-  x_lims <- c(floor(min(x$GeneProp) * 100),
-              ceiling(max(x$GeneProp) * 100)) / 100
+  # x-axis limits are the minimum gene proportion rounded down
+  # to the nearest 0.005 (0.5%) and the maximum gene proportion
+  # rounded up to the nearest 0.005 (0.5%).
+  x_lims <- round(c(floor(min(x$GeneProp) / 0.005),
+                    ceiling(max(x$GeneProp) / 0.005))) * 0.005
 
   # Determine whether the identity or log10 transformation should be used.
   # Also determine the gradient label breaks.
@@ -139,4 +143,8 @@ plot_enrichment <- function(x,
   return(p)
 }
 
+utils::globalVariables(c("p.adjust", "Count", "GeneRatio",
+                         "BgRatio", "Description", "TermGenes",
+                         "TotalGenes", "BgTerm", "BgTotal",
+                         "GeneProp"))
 
