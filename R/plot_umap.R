@@ -1,153 +1,156 @@
-#' UMAP Plot
+#' Create UMAP scatterplots of samples
 #'
-#' A convenience function for creating a UMAP scatter plot
-#' for samples in an ExpressionSet/MSnSet object.
+#' A convenience function for creating UMAP scatter plots of samples in an
+#' ExpressionSet/MSnSet object.
 #'
-#' @param eset eset (or most likely eset subclass) object
-#' @param phenotype character; one of the \code{colnames(pData(eset))}
-#' @param standardize logical; should the rows of the expression data be
-#'          standardized? (default: \code{FALSE})
-#' @param pca logical; whether PCA should be performed prior to UMAP
-#'          (default: \code{TRUE}).
-#' @param n_perm integer; if pca is \code{TRUE}, this is the number of times
-#'          that the expression matrix should be permuted (default: 10).
-#'          This is done to determine the optimal number of principal
-#'          components to use.
-#' @param n_neighbors integer; number of nearest neighbors to use for UMAP
-#'          (default: \eqn{\sqrt(n samples)}).
-#' @param n_epochs integer; number of iterations performed during layout
-#'          optimization.
+#' @param msnset an MSnSet object.
+#' @param phenotype character; one of the \code{colnames(pData(msnset))}.
+#' @param n_neighbors integer; number of nearest neighbors to use for UMAP.
+#'          If \code{NULL} (default) will use the closest integer to the
+#'          square root of the number of samples. If a vector of multiple
+#'          values are supplied, multiple plots will be generated and arranged
+#'          with \code{\link[ggplot2]{facet_wrap}}.
 #' @param min_dist numeric; determines how close points appear in the final
-#'          layout (default: 0.01).
-#' @param legend_title character; the title for the legend. If NULL, is set to
-#'          the wrapped up phenotype.
-#' @param legend_title_width integer; wrapping up too long legend titles.
-#'          Passed to \code{stringr::str_wrap()} as width argument
-#'          (default: 20).
-#' @param point_size numeric; size of the plotted points (default: 4).
-#' @param show_ellipse logical; whether to plot 50\% confidence ellipses.
-#' @param ellipse_type character; the type of ellipse. The default "norm"
+#'          layout (default: 0.1).
+#' @param n_epochs integer; number of iterations performed during layout
+#'          optimization (default: 1000).
+#' @param point_size numeric; size of the plotted points (default: 3).
+#' @param show_ellipse logical; whether to plot ellipses.
+#' @param ellipse_type character; the type of ellipse. "norm" (the default)
 #'          assumes a multivariate normal distribution, and "t" assumes a
 #'          multivariate t-distribution.
-#' @param show_na logical; should the data points for which phenotype is
-#'          unknown be shown? (default: \code{TRUE})
-#' @param ... Other arguments that can be passed to the UMAP configuration.
-#'          See \code{\link[umap]{umap.defaults}} for more details.
+#' @param ellipse_level numeric; if \code{ellipse_type="euclid"}, the radius
+#'          of the circle to be drawn; otherwise, the confidence level
+#'          (default: 0.5).
+#' @param show_na logical; whether points with missing phenotype labels
+#'          should be plotted (default: \code{TRUE}).
+#' @param ... Other arguments that can be passed to
+#'          \code{\link[umap]{umap.defaults}} or
+#'          \code{\link[ggplot2]{facet_wrap}}.
 #'
 #' @return A ggplot object
 #'
-#' @importFrom MSnbase exprs pData
-#' @import     umap
-#' @importFrom ggplot2 ggplot geom_point coord_fixed theme_bw
-#'                      guides guide_legend stat_ellipse aes
-#' @importFrom stringr str_wrap
-#'
-#' @examples
-#' data(srm_msnset)
-#' plot_umap(msnset,
-#'           phenotype = "subject.type",
-#'           show_ellipse = FALSE)
-#' plot_umap(msnset,
-#'           phenotype = "subject.type",
-#'           min_dist = 0.5,
-#'           show_ellipse = TRUE)
-#' plot_umap(msnset,
-#'           phenotype = "subject.type",
-#'           pca = FALSE,
-#'           show_ellipse = TRUE)
-#' plot_umap(msnset)
+#' @importFrom umap umap umap.defaults
+#' @importFrom MSnbase exprs pData sampleNames
+#' @importFrom ggplot2 ggplot geom_point theme_bw stat_ellipse aes
+#'             facet_wrap sym vars
+#' @importFrom data.table rbindlist
+#' @importFrom stats complete.cases
 #'
 #' @export plot_umap
+#'
+#' @examples
+#' # Load msnset
+#' data(srm_msnset)
+#' # Do not color by phenotype
+#' plot_umap(msnset)
+#' # Plots for several values of n_neighbors
+#' plot_umap(msnset, n_neighbors = c(6, 8, 10))
+#' # Points colored by subject.type
+#' plot_umap(msnset, phenotype = "subject.type",
+#'           show_ellipse = TRUE)
+#' # Plots for several values of n_neighbors with
+#' # points colored by subject.type
+#' plot_umap(msnset, phenotype = "subject.type",
+#'           n_neighbors = c(6, 8, 10),
+#'           min_dist = 0.01, show_ellipse = TRUE)
 
-plot_umap <- function(eset, phenotype = NULL, standardize = FALSE,
-                      pca = TRUE, n_perm = 10,
-                      n_neighbors = round(sqrt(length(sampleNames(eset)))),
-                      n_epochs = 1000, min_dist = 0.01,
-                      legend_title = NULL, legend_title_width = 20,
-                      point_size = 4,
-                      show_ellipse = TRUE, ellipse_type = "norm",
+
+plot_umap <- function(msnset,
+                      phenotype = NULL,
+                      n_neighbors = NULL,
+                      min_dist = 0.1,
+                      n_epochs = 1000,
+                      point_size = 3,
+                      show_ellipse = TRUE,
+                      ellipse_type = "norm",
+                      ellipse_level = 0.5,
                       show_na = TRUE,
                       ...) {
 
+  ## Check input
+  # Subset to complete cases
+  stopifnot(sum(complete.cases(exprs(msnset))) > 1)
+  if (min_dist == 0) {
+    stop("min_dist must be greater than 0.")
+  }
+
   if (!is.null(phenotype)) {
-    colorBy <- pData(eset)[[phenotype]]
+    colorBy <- pData(msnset)[[phenotype]]
     if (!show_na) {
       idx <- !is.na(colorBy)
-      eset <- eset[, idx]
+      msnset <- msnset[, idx]
       colorBy <- colorBy[idx]
     }
   } else {
     colorBy <- ""
-    phenotype <- ""
+    phenotype <- "none"
     show_ellipse <- FALSE
   }
-  stopifnot(sum(complete.cases(exprs(eset))) > 1)
-  eset <- eset[complete.cases(exprs(eset)), ]
 
-  z <- t(exprs(eset))
-  if (standardize) {
-    z <- sweep(z, 1, rowMeans(z), FUN = "-")
-    z <- sweep(z, 1, apply(z, 1, sd), FUN = "/")
+  # If the number of nearest neighbors is not specified,
+  # use the integer closest to the square root of the
+  # number of samples.
+  if (is.null(n_neighbors)) {
+    n_neighbors <- round(sqrt(length(sampleNames(msnset))))
   }
 
-  # PCA ---
-  if (pca) {
-    PC <- prcomp(z, scale. = F)
-    expl_var <- PC$sdev^2 / sum(PC$sdev^2)
+  msnset <- msnset[complete.cases(exprs(msnset)), ]
 
-    # Determine the optimal number of principal components
-    expl_var_perm <- matrix(NA, ncol = length(PC$sdev), nrow = n_perm)
-    for (k in 1:n_perm) {
-      expr_perm <- apply(exprs(eset), 2, sample)
-      z_perm <- t(expr_perm)
-      if (standardize) {
-        z_perm <- sweep(z_perm, 1, rowMeans(z_perm), FUN = "-")
-        z_perm <- sweep(z_perm, 1, apply(z_perm, 1, sd), FUN = "/")
-      }
-      PC_perm <- prcomp(z_perm, scale. = F)
-      expl_var_perm[k, ] <- PC_perm$sdev^2 / sum(PC_perm$sdev^2)
-    }
+  # Take the transpose so that features are columns
+  # and samples are rows.
+  z <- t(exprs(msnset))
 
-    pval <- apply(t(expl_var_perm) >= expl_var, 1, sum) / n_perm
-    optPC <- which(pval >= 0.05)[1] - 1
+  # Additional arguments
+  user_args <- list(...)
+  umap_args <- user_args[names(user_args) %in% names(umap.defaults)]
+  facet_args <- user_args[names(user_args) %in% names(formals(facet_wrap))]
 
-    z <- as.matrix(PC$x[, 1:optPC])
+  # If n_neighbors is a vector of multiple values, do this
+  umap_df <- lapply(n_neighbors, function(k) {
+    # UMAP
+    u <- do.call(umap, c(list(d = z, n_neighbors = k, n_epochs = n_epochs),
+                         umap_args))
+
+    # Data frame with columns UMAP1, UMAP2, n_neighbors, and colorBy
+    umap_df <- as.data.frame(u$layout)
+    colnames(umap_df) <- c("UMAP1", "UMAP2")
+    umap_df$n_neighbors <- k
+    umap_df$colorBy <- colorBy
+    umap_df
+  })
+  umap_df <- rbindlist(umap_df)
+
+  # Rename colorBy to the string stored as phenotype
+  colnames(umap_df)[4] <- phenotype
+
+  # Base plot
+  p <- ggplot(umap_df, aes(x = UMAP1, y = UMAP2)) + theme_bw()
+
+  if (show_ellipse) {
+    # Plot ellipses beneath points
+    p <- p +
+      stat_ellipse(aes(fill = !!sym(phenotype)),
+                   geom = "polygon", type = ellipse_type,
+                   level = ellipse_level, alpha = 0.15)
   }
 
-  # UMAP ---
-  res_umap <- umap(z,
-                   n_neighbors = n_neighbors,
-                   n_epochs = n_epochs,
-                   min_dist = min_dist,
-                   ...)
-
-  umap_df <- data.frame(UMAP1 = res_umap$layout[, 1],
-                        UMAP2 = res_umap$layout[, 2],
-                        colorBy = colorBy)
-
-  if (is.null(legend_title)) {
-    legend_title <- str_wrap(phenotype, legend_title_width)
-  }
-
-  if(show_ellipse) {
-    p <- ggplot(umap_df) +
-      # Plot ellipses behind points
-      stat_ellipse(aes(x = UMAP1, y = UMAP2, fill = colorBy),
-                   geom = "polygon", type = ellipse_type, level = 0.5,
-                   alpha = 0.15, show.legend = TRUE) +
-      geom_point(aes(x = UMAP1, y = UMAP2, color = colorBy),
-                 size = point_size, shape = 20, show.legend = TRUE) +
-      guides(color = guide_legend(legend_title),
-             fill = guide_legend(legend_title)) +
-      theme_bw()
+  # Add points
+  if (phenotype != "none") {
+    # color by phenotype
+    p <- p + geom_point(aes(color = !!sym(phenotype)), size = point_size)
   } else {
-    p <- ggplot(umap_df) +
-      geom_point(aes(x = UMAP1, y = UMAP2, color = colorBy),
-                 size = point_size, shape = 20, show.legend = TRUE) +
-      guides(color = guide_legend(legend_title)) +
-      theme_bw()
+    # Do NOT color by phenotype
+    p <- p + geom_point(size = point_size)
+  }
+
+  if (length(n_neighbors) > 1) {
+    p <- p +
+      do.call(facet_wrap, c(list(facets = vars(n_neighbors)), facet_args))
   }
 
   return(p)
 }
+
+utils::globalVariables(c("UMAP1", "UMAP2"))
 

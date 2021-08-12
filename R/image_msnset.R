@@ -20,8 +20,11 @@
 #' @importFrom scales rescale
 #' @importFrom gplots bluered
 #' @importFrom grid unit
-#' @export image_msnset
+#' @importFrom stats quantile reorder
 #'
+#' @export image_msnset
+
+
 image_msnset <- function(m, valueName="value",
                          facetBy=NULL,
                          sOrderBy=NULL,
@@ -86,7 +89,7 @@ image_msnset <- function(m, valueName="value",
     return(p)
 }
 
-
+utils::globalVariables(c("sample name", "feature id", "value"))
 
 
 
@@ -144,6 +147,9 @@ image_msnset_old <- function(m, valueName="value", facetBy=NULL,
         p <- p + facet_grid( . ~ facetBy, scales='free', space='free')
     invisible(p)
 }
+
+utils::globalVariables(c("sample name", "feature id", "value"))
+
 
 # further arguments to provide: x_orderBy, x_splitBy
 

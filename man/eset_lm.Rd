@@ -16,19 +16,19 @@ eset_lm(eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N = NULL)
 \item{facs}{data frame with the factors in its columns.
 If NULL, then pData(eset) will be used.}
 
-\item{norm.coef}{vector with sample-to-sample normalization 
+\item{norm.coef}{vector with sample-to-sample normalization
 coefficients in log2 scale.}
 
 \item{N}{number of shuffles for FDR estimation. Default is NULL, that is
 no shuffling-based FDR estimation. Warning! Will be N-times slower.
 This is critical for Windows, since paralellization is not impletemted.
-In case of enabling shuffling-based FDR estimation, 
+In case of enabling shuffling-based FDR estimation,
 the recommended value is at least N=1000.}
 }
 \value{
 data.frame
      \describe{
-         \item{\code{effect}}{either max contrast in case of factor 
+         \item{\code{effect}}{either max contrast in case of factor
                               or slope in case of continuous variable}
          \item{\code{F.stat}}{F statistic}
          \item{\code{p.value}}{p-value}

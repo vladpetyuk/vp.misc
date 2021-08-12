@@ -15,7 +15,9 @@
 #' @seealso \code{\link[sva]{ComBat}} \code{\link[WGCNA]{empiricalBayesLM}}
 #'
 #' @importFrom Biobase exprs pData
+#' @importFrom stats coefficients
 #' @importClassesFrom Matrix dgCMatrix
+#'
 #' @export remove_covariate
 #'
 #' @examples
@@ -114,8 +116,10 @@ remove_covariate <- function(x, cov_name){
 #' @importFrom dplyr select inner_join group_by_at summarize filter pull
 #' @importFrom tidyr gather
 #' @importFrom tibble rownames_to_column
-#' @importFrom Biobase exprs pData
+#' @importFrom Biobase exprs pData exprs<-
 #' @importFrom BiocParallel bpparam
+#' @importFrom stats model.matrix
+#'
 #' @export correct_batch_effect
 #'
 #' @param m an object of class Eset or MSnSet.
@@ -181,10 +185,8 @@ correct_batch_effect <- function(m, batch_name,
     return(m)
 }
 
-
-
-
-
+utils::globalVariables(c("sample_name", "abundance", "feature_name",
+                         "cnt", "min_cnt"))
 
 
 #' @describeIn remove_covariate A flexible batch correction function
@@ -242,13 +244,10 @@ remove_batch_effect <- function (x, batch_name, ref_level=NULL, subset_by=c(NULL
 
 
 
-
-
-
 #' @describeIn remove_covariate An empirical Bayesian approach to batch correction
 #'   with discrete or continuous covariates
 #' @importFrom WGCNA empiricalBayesLM
-#' @importFrom Biobase exprs pData
+#' @importFrom Biobase exprs pData exprs<-
 #' @export correct_batch_effect_empiricalBayesLM
 #'
 #' @param removed_cov_name covariate name to be removed. Must be in pData(x).

@@ -35,5 +35,4 @@ x <- tribble(
     "DDDDK", "P2",
     "AAAAK", "P3")
 protein_inference(x, Accession = "prot", PepSeq = "pep")
-
 }

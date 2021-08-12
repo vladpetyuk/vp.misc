@@ -26,9 +26,13 @@
 #'       to resolve ambiguity between two proteins matching one gene.
 #'
 #' @return \code{MSnSet} object
+#'
 #' @importFrom MSnbase MSnSet
 #' @importFrom plyr ddply
+#' @importFrom utils read.delim
+#'
 #' @export readMaxQuantProtGroups
+#'
 #' @examples
 #'
 #' # label-free data

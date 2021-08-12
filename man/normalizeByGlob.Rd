@@ -14,7 +14,7 @@ normalizeByGlob(m, method = c("medpolish", "once"))
 Note, doing it just "once" may de-center the features (rows).}
 }
 \description{
-Normalizes data based on assumption that on average peptide deviation 
+Normalizes data based on assumption that on average peptide deviation
 is zero.  The approach is typically used for global shotgun proteomics
 data. Converts one MSnSet to another MSnSet.
 }

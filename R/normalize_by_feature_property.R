@@ -1,26 +1,26 @@
-
-
-
 #' Normalization of LC-MS/MS Data
-#' 
-#' Fits a nonparametric trend into relative 
+#'
+#' Fits a nonparametric trend into relative
 #' abundance data. Any significant (at this point just any)
-#' trend is corrected. 
+#' trend is corrected.
 #' Converts one ExpressionSet/MSnSet to another ExpressionSet/MSnSet.
-#' 
+#'
 #' @param eset ExpressionSet/MSnSet object
 #' @param property character the column in the fData that the
 #'              relative intensities regress against.
 #' @param method character either "lowess" or "loess" at this point.
 #' @param ... passed to \code{lowess} or \code{loess}.
-#'              
-#' @note So far the only property I have in mind is elution time in 
+#'
+#' @note So far the only property I have in mind is elution time in
 #'      label-free LC-MS/MS data.
-#'          
-#' @importFrom Biobase exprs fData
+#'
+#' @importFrom Biobase exprs fData sampleNames exprs<-
+#' @importFrom stats lowess loess predict
+#'
 #' @export normalize_by_feature_property
 
-normalize_by_feature_property <- function(eset, property, 
+
+normalize_by_feature_property <- function(eset, property,
                                           method=c("lowess","loess"), ...){
     # elution time is a typical problem in a label-free LC-MS/MS
     method <- match.arg(method)

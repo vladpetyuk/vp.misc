@@ -27,6 +27,7 @@
 #' plot_feature(oca.set, "NP_001077422.1", color_by = "Batch", order_by = "iTRAQ_ID")
 #' plot_feature(oca.set, feature = "NP_001077422.1", feature_name_col = "RefSeq", color_by = "Batch")
 
+
 plot_feature <- function(m, feature, feature_name_col=NULL,
                          color_by=NULL, order_by=color_by){
 
@@ -63,3 +64,6 @@ plot_feature <- function(m, feature, feature_name_col=NULL,
         p <- p + aes_string(color = color_by)
     p
 }
+
+utils::globalVariables(c("sample name", "abundance", "."))
+

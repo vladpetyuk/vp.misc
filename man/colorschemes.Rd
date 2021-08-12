@@ -29,17 +29,17 @@ jet2.colors(n)
 Vector of colors as hex RGB strings
 }
 \description{
-Provides more colorscheme options in addition to basic ones: 
-heat.colors, rainbow and so on. Hot and jet colorschemes are 
-analagous to the MATLAB colorschemes with the same names. 
-Blue and dusk colorschemes correspond to RColorBrewer "Blues" 
+Provides more colorscheme options in addition to basic ones:
+heat.colors, rainbow and so on. Hot and jet colorschemes are
+analagous to the MATLAB colorschemes with the same names.
+Blue and dusk colorschemes correspond to RColorBrewer "Blues"
 and inverse "RdYlBu".
 }
 \section{Functions}{
 \itemize{
 \item \code{blue.colors}: based on RColorBrewer "Blues"
 
-\item \code{dusk.colors}: based on reverse of RColorBrewer "RdYlBu". 
+\item \code{dusk.colors}: based on reverse of RColorBrewer "RdYlBu".
 Looks like a dusk.
 
 \item \code{hot.colors}: based on Matlab's "hot"

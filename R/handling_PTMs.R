@@ -19,7 +19,7 @@
 #' @importFrom stringr str_detect str_replace_all str_locate_all str_length
 #'             str_sub
 #' @importFrom rlang !! parse_expr
-#' @importFrom purrr map map2
+#' @importFrom purrr map map_chr map2
 #'
 #' @export map_PTM_sites
 #'
@@ -38,6 +38,7 @@
 #'
 #' ids_with_sites <- map_PTM_sites(ids, fst, "UniProtAccFull", "Peptide", "*")
 #'
+
 
 map_PTM_sites <- function(ids, fasta, prot_id_col, peptide_col, mod_char){
 
@@ -133,6 +134,9 @@ map_PTM_sites <- function(ids, fasta, prot_id_col, peptide_col, mod_char){
 
 }
 
+utils::globalVariables(c(".", "AA_STANDARD", "TrimmedPeptide", "x",
+                         "ProtSeq", "CleanSeq", "PepLoc", "ModShift",
+                         "SiteLoc", "ModAAs", "Site", "SiteCollapsed"))
 
 
 
@@ -151,7 +155,8 @@ map_PTM_sites <- function(ids, fasta, prot_id_col, peptide_col, mod_char){
 #' @param isoform_len_col character. Name of the column with protein isoform
 #'        lengths.
 #'
-#' @importFrom dplyr mutate rename inner_join filter select row_number semi_join
+#' @importFrom dplyr mutate rename inner_join filter select row_number
+#'             semi_join distinct
 #' @importFrom tibble rownames_to_column
 #' @importFrom stringr str_detect str_replace_all str_locate_all str_length
 #'             str_sub

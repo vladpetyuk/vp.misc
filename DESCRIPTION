@@ -11,7 +11,7 @@ Description: A collection of customized functions used for
     MSnSet (or ExpressionSet) object as the key data container.
     The package contains customized heatmaps, colorschemes,
     convienient nested linear models, machine learning utilities, etc.
-License: GPL (>= 3)
+License: Artistic-2.0
 biocViews: Proteomics, MassSpectrometry
 Depends:
     R (>= 2.10),
@@ -49,7 +49,6 @@ Imports:
     biomaRt,
     GOstats,
     ReactomePA,
-    BiocStyle,
     WGCNA,
     gelnet,
     multcomp,
@@ -72,14 +71,18 @@ Imports:
     tibble, 
     tidyr, 
     tidyselect,
-    pheatmap
+    pheatmap,
+    utils,
+    DOSE
 Suggests:
     knitr,
     rmarkdown,
     ggforce,
     rvest,
     enrichplot,
-    ggnewscale
+    ggnewscale,
+    qpdf,
+    BiocStyle
 Remotes: cran/heatmap.plus
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1

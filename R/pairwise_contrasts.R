@@ -84,3 +84,5 @@ pairwise_contrasts <- function(x, fct, ref.str = NULL,
   return(contrasts)
 }
 
+utils::globalVariables(c(".", "Var1", "Var2"))
+

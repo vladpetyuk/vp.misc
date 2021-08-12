@@ -1,17 +1,21 @@
 #' Favorite Colorschemes
 #'
-#' Provides more colorscheme options in addition to basic ones: 
-#' heat.colors, rainbow and so on. Hot and jet colorschemes are 
-#' analagous to the MATLAB colorschemes with the same names. 
-#' Blue and dusk colorschemes correspond to RColorBrewer "Blues" 
+#' Provides more colorscheme options in addition to basic ones:
+#' heat.colors, rainbow and so on. Hot and jet colorschemes are
+#' analagous to the MATLAB colorschemes with the same names.
+#' Blue and dusk colorschemes correspond to RColorBrewer "Blues"
 #' and inverse "RdYlBu".
 #'
 #' @param n Number of different colors in the colorscheme
+#'
 #' @return Vector of colors as hex RGB strings
+#'
 #' @name colorschemes
-#' 
+#'
+#' @importFrom grDevices colorRampPalette rgb
+#'
 #' @examples
-#' 
+#'
 #' ## Linear
 #' image(as.matrix(1:100), col=blue.colors(100))
 #' image(as.matrix(1:100), col=dusk.colors(100))
@@ -30,7 +34,7 @@
 #' image(mat, col=hot2.colors(N^2))
 #' image(mat, col=jet.colors(N^2))
 #' image(mat, col=jet2.colors(N^2))
-#' 
+#'
 #' ## Airy pattern
 #' x <- seq(-1,+1,length=100)
 #' z <- outer(x,x,function(x,y){sin(10*sqrt(x^2+y^2))})
@@ -56,7 +60,7 @@ NULL
 
 # \description{
 #     Provides more colorscheme options in addition to basic ones: heat.colors,
-#     rainbow and so on. Hot and jet colorschemes are analagous to the MATLAB 
+#     rainbow and so on. Hot and jet colorschemes are analagous to the MATLAB
 #     colorschemes with the same names. Blue and dusk colorschemes correspond to
 #     RColorBrewer "Blues" and inverse "RdYlBu".
 # }
@@ -69,15 +73,15 @@ NULL
 #     blue.colors(n)
 #     dusk.colors(n)
 # }
-# 
+#
 # \arguments{
 #     \item{n}{Number of different colors in the colorscheme}
 # }
-# 
+#
 # \details{
 #     The intended use is exactly the same way as basic pallets (e.g. heat.colors).
 # }
-# 
+#
 # \value{
 #     Vector of colors in hex RGB strings.
 # }
@@ -87,17 +91,17 @@ NULL
 #     \cr
 #     \url{http://www.igorexchange.com/node/3817}
 # }
-# 
+#
 # \author{Vlad Petyuk
 #         \email{petyuk@gmail.com}
 # }
-# 
+#
 # \seealso{
 #     \code{\link{heat.colors}}
 #     \code{\link{RColorBrewer}}
 #     \code{\link{colorpanel}}
 # }
-# 
+#
 # \examples{
 #     ## The use is exactly the same as palettes from grDevices
 #     N <- 10
@@ -109,7 +113,7 @@ NULL
 #     image(mat, col=hot2.colors(N^2))
 #     image(mat, col=blue.colors(N^2))
 #     image(mat, col=dusk.colors(N^2))
-#     
+#
 #     ## Example 2. To be Airy pattern
 #     x <- seq(-1,+1,length=100)
 #     z <- outer(x,x,function(x,y){sin(10*sqrt(x^2+y^2))})
@@ -119,11 +123,11 @@ NULL
 #     image(z, col=hot2.colors(100))
 #     image(z, col=blue.colors(100))
 #     image(z, col=dusk.colors(100))
-#     
+#
 #     ## cycle through the color schemes
 #     demo(colorschemes)
 # }
-# 
+#
 # \keyword{color}
 
 
@@ -153,7 +157,7 @@ blue.colors <- function(n)
 
 
 #' @export
-#' @describeIn colorschemes based on reverse of RColorBrewer "RdYlBu". 
+#' @describeIn colorschemes based on reverse of RColorBrewer "RdYlBu".
 #'                          Looks like a dusk.
 dusk.colors <- function(n)
     # reverse RColorBrewer "RbYlBu"
@@ -260,50 +264,50 @@ jet2.colors <- function(n)
 }
 
 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # colorscheme("jet") returns function
 # colorscheme("jet")(n) returns n colors
 # colorscheme("jet")() returns base colors
 # # base.colors("jet") returns set of base colors
 # # the reason I wanted S4 is to use generics for plot/show
 # # otherwise I'll have to come up with special function
-# 
-# 
+#
+#
 # get.colorscheme("jet") returns function
 # get.colorscheme("jet")(n) returns n colors
 # get.colorscheme("jet")(NULL) returns base colors
 # show.colorsheme("jet") # 1) base colors 2) gradient 3) rgb lines
 # show.color(colorname or hex) # shows single color as rectangle
-# 
+#
 # # I want to get and set it as matrix
 # get.colorscheme.matrix("jet")
 # set.colorscheme.matrix("jet", matrix)
-# 
+#
 # # I want to get and set it as vector of colors
 # get.colorscheme.colors("jet")
 # set.colorscheme.colors("jet", matrix) # perhaps "[" generic
-# 
-# 
+#
+#
 # get.colorfunc(jet)
-# 
-# 
+#
+#
 # # what about S4 object?
 # obj <- ColorScheme("jet") # sure that that would be two lines
 # # well, may be S4 object can be called as function.
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#

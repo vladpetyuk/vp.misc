@@ -15,6 +15,8 @@
 #' @importFrom Biobase pData featureNames exprs
 #' @importFrom MSnbase MSnSet
 #'
+#' @importMethodsFrom MSnbase featureNames<-
+#'
 #' @export concatenate_by_features
 #'
 #' @examples
@@ -30,7 +32,8 @@
 #'                              tags=c("_ori","_zsc","_sgn"))
 #' dim(m)
 #' featureNames(m)
-#'
+
+
 concatenate_by_features <- function(..., tags=NULL){
     mL <- list(...)
     if(is.null(tags)) tags <- seq_along(mL)
@@ -48,5 +51,4 @@ concatenate_by_features <- function(..., tags=NULL){
     }, mL)
     return(m3)
 }
-
 
