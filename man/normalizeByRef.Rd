@@ -13,6 +13,6 @@ normalizeByRef(m, exprsn)
 It is evaluated and used as reference.}
 }
 \description{
-Subtracts expression data of one condition from another. 
+Subtracts expression data of one condition from another.
 Converts one MSnSet to another MSnSet.
 }

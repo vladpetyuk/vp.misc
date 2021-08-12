@@ -22,12 +22,12 @@ relative intensities regress against.}
 \item{...}{passed to \code{lowess} or \code{loess}.}
 }
 \description{
-Fits a nonparametric trend into relative 
+Fits a nonparametric trend into relative
 abundance data. Any significant (at this point just any)
-trend is corrected. 
+trend is corrected.
 Converts one ExpressionSet/MSnSet to another ExpressionSet/MSnSet.
 }
 \note{
-So far the only property I have in mind is elution time in 
+So far the only property I have in mind is elution time in
      label-free LC-MS/MS data.
 }

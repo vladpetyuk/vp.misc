@@ -41,6 +41,7 @@
 #' theme(text=element_text(size = 20))
 #' }
 
+
 plot_volcano_obsolete <- function(logFC,
                          significance,
                          feature_names=NULL,
@@ -132,4 +133,6 @@ plot_volcano_obsolete <- function(logFC,
   p
 
 }
+
+utils::globalVariables(c("x", "y", "xff", "yff", "lbl"))
 

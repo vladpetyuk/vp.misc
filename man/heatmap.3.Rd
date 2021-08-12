@@ -43,9 +43,9 @@ Customized Heatmap. TO FILL WHAT EXACTLY IS CUSTOM ABOUT IT.
 data(srm_msnset)
 set.seed(0)
 clrz <- sample(colors(), 17)
-heatmap.3(cor(exprs(msnset)), 
+heatmap.3(cor(exprs(msnset)),
           dist.fun="pearson",
-          linkage="average", 
+          linkage="average",
           nLabLim=50,
           ColSideColors=c('red3','yellow3','green3')[as.factor(pData(msnset)$subject.type)],
           RowSideColors=clrz[as.factor(pData(msnset)$match.group)])

@@ -14,6 +14,7 @@
 #' @importFrom MSnbase pData exprs
 #' @importFrom dplyr %>% select
 #' @importFrom pheatmap pheatmap
+#' @importFrom stats cor heatmap
 #'
 #' @examples
 #'

@@ -16,6 +16,8 @@
 #' @export plot_annHeatmap2
 #'
 
+
+#' @importFrom graphics par
 plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
 {
     doRClusLab = !is.null(x$cluster$Row$labels)
@@ -43,47 +45,47 @@ plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
     with(x$data, {
         par(mar = mmar)
         image(1:nc, 1:nr, t(x2), axes = FALSE,
-                xlim = c(0.5, nc + 0.5), ylim = c(0.5, nr + 0.5),
-                xlab = "", ylab = "",
-                col = col, breaks = breaks, ...)
+              xlim = c(0.5, nc + 0.5), ylim = c(0.5, nr + 0.5),
+              xlab = "", ylab = "",
+              col = col, breaks = breaks, ...)
         mmat <- ifelse(is.na(t(x2)), 1, NA)
         image(1:nc, 1:nr, mmat, axes = FALSE,
-                xlab = "", ylab = "",
-                col = na.color, add=TRUE)
+              xlab = "", ylab = "",
+              col = na.color, add=TRUE)
     })
     with(x$labels, {
         if (doRlab)
             axis(Row$side, 1:nr, las = 2, line = -0.5, tick = 0,
-                  labels = Row$labels, cex.axis = Row$cex)
+                 labels = Row$labels, cex.axis = Row$cex)
         if (doClab)
             axis(Col$side, 1:nc, las = 2, line = -0.5, tick = 0,
-                  labels = Col$labels, cex.axis = Col$cex)
+                 labels = Col$labels, cex.axis = Col$cex)
     })
     with(x$dendrogram$Col, if (status == "yes") {
         par(mar = c(0, mmar[2], 3, mmar[4]))
         Heatplus:::cutplot.dendrogram(dendro, h = x$cluster$Col$cuth, cluscol = x$cluster$Col$col,
-                                 horiz = FALSE, axes = FALSE, xaxs = "i", leaflab = "none",
-                                 lwd = x$dendrogram$Col$lwd)
+                                      horiz = FALSE, axes = FALSE, xaxs = "i", leaflab = "none",
+                                      lwd = x$dendrogram$Col$lwd)
     })
     with(x$dendrogram$Row, if (status == "yes") {
         par(mar = c(mmar[1], 3, mmar[3], 0))
         Heatplus:::cutplot.dendrogram(dendro, h = x$cluster$Row$cuth, cluscol = x$cluster$Row$col,
-                                 horiz = TRUE, axes = FALSE, yaxs = "i", leaflab = "none",
-                                 lwd = x$dendrogram$Row$lwd)
+                                      horiz = TRUE, axes = FALSE, yaxs = "i", leaflab = "none",
+                                      lwd = x$dendrogram$Row$lwd)
     })
     if (!is.null(x$annotation$Col$data)) {
         par(mar = c(1, mmar[2], 0, mmar[4]), xaxs = "i", yaxs = "i")
         picketPlot2(x$annotation$Col$data[x$data$colInd, , drop = FALSE],
-                      grp = x$cluster$Col$grp,
-                      grpcol = x$cluster$Col$col, control = x$annotation$Col$control,
-                      asIs = TRUE)
+                    grp = x$cluster$Col$grp,
+                    grpcol = x$cluster$Col$col, control = x$annotation$Col$control,
+                    asIs = TRUE)
     }
     if (!is.null(x$annotation$Row$data)) {
         par(mar = c(mmar[1], 0, mmar[3], 1), xaxs = "i", yaxs = "i")
         picketPlot2(x$annotation$Row$data[x$data$rowInd, , drop = FALSE],
-                      grp = x$cluster$Row$grp,
-                      grpcol = x$cluster$Row$col, control = x$annotation$Row$control,
-                      asIs = TRUE, horizontal = FALSE)
+                    grp = x$cluster$Row$grp,
+                    grpcol = x$cluster$Row$col, control = x$annotation$Row$control,
+                    asIs = TRUE, horizontal = FALSE)
     }
     if (x$legend) {
         if (x$layout$legend.side %in% c(1, 3)) {
@@ -99,13 +101,15 @@ plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
 
 
 
-
+#' @importFrom stats predict loess
+#' @importFrom graphics rect axis par
+#' @importFrom Heatplus picketPlotControl convAnnData RainbowPastel
 picketPlot2 <- function (x, grp = NULL, grpcol, grplabel = NULL,
                          horizontal = TRUE, asIs = FALSE, control = list())
 {
-    cc = Heatplus:::picketPlotControl()
+    cc = picketPlotControl()
     cc[names(control)] = control
-    x = Heatplus::convAnnData(x, asIs = asIs)
+    x = convAnnData(x, asIs = asIs)
     nsamp = nrow(x)
     npanel = ncol(x)
     bpanel = apply(x, 2, function(y) all(y[is.finite(y)] %in%
@@ -125,7 +129,7 @@ picketPlot2 <- function (x, grp = NULL, grpcol, grplabel = NULL,
         grp0 = cbind(grpcoord[1:gg], rep(0, gg))
         grp1 = cbind(grpcoord[2:(gg + 1)], rep(totalh, gg))
         if (missing(grpcol)) {
-            grpcol = Heatplus::RainbowPastel
+            grpcol = RainbowPastel
         }
         if (is.function(grpcol))
             grpcol = grpcol(gg)

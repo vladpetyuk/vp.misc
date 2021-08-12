@@ -17,6 +17,7 @@
 #'
 #' @importFrom Biobase exprs pData
 #' @importFrom limma lmFit topTable eBayes
+#' @importFrom stats model.matrix
 #'
 #' @export limma_a_b limma_gen limma_contrasts
 #'

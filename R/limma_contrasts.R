@@ -25,6 +25,8 @@
 #' @importFrom limma lmFit topTable eBayes contrasts.fit makeContrasts
 #' @importFrom dplyr mutate select %>%
 #' @importFrom tidyr everything
+#' @importFrom stats terms model.matrix
+#'
 #' @export limma_contrasts
 #'
 #' @examples
@@ -95,4 +97,6 @@ limma_contrasts <- function(eset, model.str, coef.str, contrasts,
         mutate(adj.P.Val = p.adjust(P.Value, method = adjust.method)) %>%
         select(feature, contrast, everything())
 }
+
+utils::globalVariables(c(".", "P.Value", "feature", "contrast"))
 

@@ -238,3 +238,5 @@ plot_volcano <- function(logFC,
   p
 }
 
+utils::globalVariables(c("logFC_sign"))
+

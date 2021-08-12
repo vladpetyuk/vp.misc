@@ -33,5 +33,4 @@ m <- concatenate_by_features(msnset, msnset2, msnset3,
                              tags=c("_ori","_zsc","_sgn"))
 dim(m)
 featureNames(m)
-
 }

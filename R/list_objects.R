@@ -1,5 +1,6 @@
 
 # improved list of objects
+
 .ls.objects <- function (pos = 1, pattern, order.by,
                          decreasing=FALSE, head=FALSE, n=5) {
     napply <- function(names, fn) sapply(names, function(x)
@@ -21,6 +22,9 @@
         out <- head(out, n)
     out
 }
+
+utils::globalVariables(c("object.size"))
+
 
 #' Improved list of objects
 #'

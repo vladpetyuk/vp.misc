@@ -1,5 +1,3 @@
-
-
 #' Reading MaxQuant Output
 #'
 #' Reads in "summary.txt" output.
@@ -8,7 +6,11 @@
 #'          It should be in "{raw files folder}/combined/txt"
 #'
 #' @return data.frame
+#'
 #' @export readMaxQuantSummary
+#'
+#' @importFrom utils read.delim
+#'
 #' @examples
 #'
 #' path <- system.file("extdata/MaxQuant", package="MSnSet.utils")

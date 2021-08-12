@@ -63,7 +63,9 @@
 #' @param ... additional arguments passed to \code{\link[graphics]{image}}.
 #'
 #'
-#' @importFrom graphics image
+#' @importFrom graphics image par layout axis mtext frame title
+#' @importFrom stats reorder hclust as.dendrogram order.dendrogram sd
+#'
 #'
 #' @export heatmap.plus.2
 #'

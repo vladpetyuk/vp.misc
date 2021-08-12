@@ -65,7 +65,7 @@ select_features_Boruta <- function(x, y, ...){
 }
 
 
-
+#' @importFrom utils head
 select_features_top <- function(x, y, ...){
     r <- randomForest(x, y, ntree=1000, ...)
     ordr <- order(importance(r), decreasing = TRUE)

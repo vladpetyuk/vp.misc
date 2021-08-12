@@ -30,7 +30,7 @@
 #'     "DDDDK", "P2",
 #'     "AAAAK", "P3")
 #' protein_inference(x, Accession = "prot", PepSeq = "pep")
-#'
+
 
 protein_inference <- function(x, Accession = "Accession", PepSeq = "PepSeq"){
 
@@ -71,5 +71,5 @@ protein_inference <- function(x, Accession = "Accession", PepSeq = "PepSeq"){
     return(x)
 }
 
-
+utils::globalVariables(c(".N", "N"))
 

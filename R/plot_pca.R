@@ -25,7 +25,10 @@
 #' @importFrom ade4 "dudi.pca"
 #' @importFrom ggplot2 ggplot geom_point coord_fixed theme_bw
 #'                      guides guide_legend stat_ellipse aes
+#'                      guide_colorbar
 #' @importFrom stringr str_wrap
+#' @importFrom stats complete.cases sd prcomp
+#'
 #' @import ggrepel
 #'
 #' @export plot_pca_v1
@@ -35,6 +38,7 @@
 #' plot_pca_v1(msnset, phenotype = "subject.type", show.ellipse = FALSE)
 #' plot_pca_v1(msnset, phenotype = "subject.type", show.ellipse = TRUE)
 #' plot_pca_v1(msnset)
+
 
 plot_pca_v1 <- function(eset, phenotype=NULL, show.ellipse=TRUE,
                         show.NA=TRUE, legend.title.width=20){
@@ -91,16 +95,22 @@ plot_pca_v1 <- function(eset, phenotype=NULL, show.ellipse=TRUE,
     return(p)
 }
 
+utils::globalVariables(c("PC1", "PC2"))
+
 
 #' @describeIn plot_pca_v1 Alternative PCA
 #' @importFrom pcaMethods pca
 #' @importFrom RColorBrewer "brewer.pal"
+#' @importFrom Biobase sampleNames
+#' @importFrom graphics legend text grid
+#'
 #' @export plot_pca_v2
 #'
 #' @examples
 #' data(srm_msnset)
 #' plot_pca_v2(msnset, phenotype = "subject.type")
 #' plot_pca_v2(msnset)
+
 
 plot_pca_v2 <- function(eset, phenotype=NULL, names=FALSE){
 
@@ -128,8 +138,7 @@ plot_pca_v2 <- function(eset, phenotype=NULL, names=FALSE){
     grid()
 }
 
-
-
+utils::globalVariables(c("PC1", "PC2"))
 
 
 #' @describeIn plot_pca_v1 Alternative PCA

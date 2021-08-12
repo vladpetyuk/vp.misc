@@ -1,31 +1,32 @@
 #' Presence/Absence Testing
-#' 
+#'
 #' A function for testing the significance in differences
-#' of presence/absence patterns. 
-#' 
-#' The recommended way of using the test is two-group comparison. 
+#' of presence/absence patterns.
+#'
+#' The recommended way of using the test is two-group comparison.
 #' All except "binom" options will work for larger number of groups.
-#' 
-#' 
+#'
+#'
 #' @param eset eset (or most likely eset subclass) object
 #' @param grouping character defining the column in phenoData
 #' @param test character: Fisher exact test, \eqn{\chi^{2}}{\chi^2}, G-test or binomial.
-#' @param ... other aruments to pass to the test functions 
+#' @param ... other aruments to pass to the test functions
 #'              (e.g. simulate.p.value = TRUE)
 #' @return data.frame
 #'      \describe{
 #'          \item{\code{p.value}}{p-value}
 #'          \item{\code{effect}}{difference between second and first group
-#'                              (according to the factor levels).  
-#'                              In case of larger number of levels, 
+#'                              (according to the factor levels).
+#'                              In case of larger number of levels,
 #'                              it is the absolute value of the max diffence}
-#'          \item{\code{...}}{proportions of present for each group. 
+#'          \item{\code{...}}{proportions of present for each group.
 #'                              Column names are level names.}
 #'      }
 #' @note see also \url{http://www.ncbi.nlm.nih.gov/pubmed/20831241}
 #' @importFrom Biobase exprs pData featureNames
+#' @importFrom stats fisher.test chisq.test binom.test
 #' @export eset_presence_absence
-#' 
+#'
 #' @examples
 #' library("MSnbase")
 #' Nsam = 20
@@ -38,10 +39,10 @@
 #' eset_presence_absence(x0, 'group', test='chisq', simulate.p.value=TRUE)
 #' eset_presence_absence(x0, 'group', test='g')
 #' eset_presence_absence(x0, 'group', test='binom')
-#' 
-eset_presence_absence <- function(eset, 
-                                  grouping, 
-                                  test=c('fisher','chisq','g','binom'), 
+#'
+eset_presence_absence <- function(eset,
+                                  grouping,
+                                  test=c('fisher','chisq','g','binom'),
                                   ...){
     test <- match.arg(test)
     if(is.character(grouping) & length(grouping) == 1)
@@ -52,9 +53,10 @@ eset_presence_absence <- function(eset,
     total.pc <- colSums(pc)
     N <- table(grouping)
     if(test != 'binom'){
-        TEST.FUN <- switch(test, 
+        TEST.FUN <- switch(test,
                            fisher = fisher.test,
                            chisq = chisq.test,
+                           # Biostrings::dinucleotideFrequencyTest may be better
                            g = Biostrings:::g.test)
         out <- apply(pc, 1, function(x){
             cm <- rbind(x, total.pc - x)
@@ -79,9 +81,4 @@ eset_presence_absence <- function(eset,
     rownames(out) <- featureNames(eset)
     return(out)
 }
-
-
-
-
-
 

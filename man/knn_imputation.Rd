@@ -11,22 +11,22 @@ knn_imputation(x, K = 10, show.diagnostics = F)
 
 \item{K}{number of nearest neighbors}
 
-\item{show.diagnostics}{logical indicating if to 
+\item{show.diagnostics}{logical indicating if to
 plot the results of imputation for each feature}
 }
 \description{
 K-NN imputation adopted to LC-MS proteomics data.
 The main reason for missing data in LC-MS datasets is
-low abundance of the protein/peptides. Therefore this 
+low abundance of the protein/peptides. Therefore this
 K-NN imputation algorithm explicitely relies on this
 assumption.
 }
 \details{
-The algorithm. For each row in the exprs matrix, 
+The algorithm. For each row in the exprs matrix,
 that contain missing values, perform the following steps:
 \enumerate{
  \item impute missing values with the lowest values in the row (feature)
- \item find K features (with no missing values) with 
+ \item find K features (with no missing values) with
          highest Spearman correlation
  \item scale the K-neighbors, so that median intensity ratio is 1
  \item impute missing values with mean value of scaled K-neighbors

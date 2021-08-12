@@ -18,9 +18,13 @@
 #'       the "peptides.txt" file.
 #'
 #' @return \code{MSnSet} object
+#'
 #' @importFrom MSnbase MSnSet
 #' @importFrom plyr ddply
+#' @importFrom utils read.delim
+#'
 #' @export readMaxQuantPeptides
+#'
 #' @examples
 #'
 #' # label-free data

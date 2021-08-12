@@ -1,32 +1,32 @@
 #' Nested Linear Model Analysis
-#' 
+#'
 #' A function for analysis of sigfinicance of factors (akin ANOVA)
 #' or continuous variable (regression) using nested linear models.
 #' Shuffling-based FDR estimation is available as an option.
-#' 
+#'
 #' @param eset eset (or most likely eset subclass) object
 #' @param form.alt character formulation of alternative model
 #' @param form.nul character formulation of NULL model
 #' @param facs data frame with the factors in its columns.
 #'          If NULL, then pData(eset) will be used.
-#' @param norm.coef vector with sample-to-sample normalization 
+#' @param norm.coef vector with sample-to-sample normalization
 #'          coefficients in log2 scale.
 #' @param N number of shuffles for FDR estimation. Default is NULL, that is
 #'          no shuffling-based FDR estimation. Warning! Will be N-times slower.
 #'          This is critical for Windows, since paralellization is not impletemted.
-#'          In case of enabling shuffling-based FDR estimation, 
+#'          In case of enabling shuffling-based FDR estimation,
 #'          the recommended value is at least N=1000.
-#' 
+#'
 #' @return data.frame
 #'      \describe{
-#'          \item{\code{effect}}{either max contrast in case of factor 
+#'          \item{\code{effect}}{either max contrast in case of factor
 #'                               or slope in case of continuous variable}
 #'          \item{\code{F.stat}}{F statistic}
 #'          \item{\code{p.value}}{p-value}
 #'      }
 #' @importFrom Biobase exprs pData featureNames
 #' @export eset_lm
-#' 
+#'
 #' @examples
 #' data(srm_msnset)
 #' head(varLabels(msnset))
@@ -38,7 +38,7 @@
 #' head(out[order(out$p.value),])
 
 
-eset_lm <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N=NULL) 
+eset_lm <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N=NULL)
 {
     if(is.null(N))
         return(eset_lm_one_pass(eset, form.alt, form.nul, facs, norm.coef))
@@ -49,21 +49,21 @@ eset_lm <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL, N=
 
 
 
-eset_lm_one_pass <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL) 
+eset_lm_one_pass <- function (eset, form.alt, form.nul, facs = NULL, norm.coef = NULL)
 {
     # Check models. They should be nested and differ only in one term.
     #stopifnot(length(setdiff(all.vars(as.formula(form.alt)),
     #                         all.vars(as.formula(form.nul)))) == 1)
-    
+
     #
     data <- exprs(eset)
-    if (is.null(facs)) 
+    if (is.null(facs))
         facs <- pData(eset)
-    if (is.null(norm.coef)) 
+    if (is.null(norm.coef))
         norm.coef <- rep(0, ncol(data)) # log2 scale
     Np <- nrow(data)
-    res <- data.frame(effect = numeric(Np), 
-                         F.stat = numeric(Np), 
+    res <- data.frame(effect = numeric(Np),
+                         F.stat = numeric(Np),
                          p.value = numeric(Np))
     # make parallel
     if(.Platform$OS.type == "unix")
@@ -71,15 +71,15 @@ eset_lm_one_pass <- function (eset, form.alt, form.nul, facs = NULL, norm.coef =
     else
         mc.cores <- 1
     res <- parallel::mclapply(seq_len(nrow(eset)), function(i){
-        lm_for_one(data[i,], form.alt, form.nul, 
-                   facs, norm.coef)}, 
+        lm_for_one(data[i,], form.alt, form.nul,
+                   facs, norm.coef)},
         mc.cores=mc.cores)
     res <- Reduce(rbind, res)
-    
-    #     for (i in seq_len(Np)) 
-    #         result[i, ] <- lm.for.one(data[i,], form.alt, form.nul, 
+
+    #     for (i in seq_len(Np))
+    #         result[i, ] <- lm.for.one(data[i,], form.alt, form.nul,
     #                                   facs, norm.coef)
-    
+
     rownames(res) <- rownames(data)
     res <- as.data.frame(res) # coerce to specific type in case of mat/df ambig
     res$fdr <- p.adjust(res$p.value, method="fdr")
@@ -88,13 +88,13 @@ eset_lm_one_pass <- function (eset, form.alt, form.nul, facs = NULL, norm.coef =
 
 
 
-eset_lm_shuffled <- function(eset, form.alt, form.nul, 
+eset_lm_shuffled <- function(eset, form.alt, form.nul,
                              facs = NULL, norm.coef = NULL, N=1000)
 {
     # Check models. They should be nested and differ only in one term.
     # stopifnot(length(setdiff(all.vars(as.formula(form.alt)),
     #                         all.vars(as.formula(form.nul)))) == 1)
-    
+
     #
     # normal test here
     res <- eset_lm(eset, form.alt, form.nul, facs, norm.coef)
@@ -118,7 +118,7 @@ eset_lm_shuffled <- function(eset, form.alt, form.nul,
 }
 
 
-
+#' @importFrom stats model.frame as.formula lm anova terms coef predict
 lm_for_one <- function(ints, form.alt, form.nul, facs, off) {
     #
     data <- data.frame(y = ints, facs, off)
@@ -130,26 +130,26 @@ lm_for_one <- function(ints, form.alt, form.nul, facs, off) {
     anstat  <- anova(mod.alt, mod.nul, test = "F")
     p.value <- anstat[2, 'Pr(>F)']
     F.stat <- anstat[2, 'F']
-    
+
     # extract the effect ---
     # get terms from models
     alt.terms <- attr(terms(as.formula(form.alt)), "term.labels")
     null.terms <- attr(terms(as.formula(form.nul)), "term.labels")
     dif.term <- setdiff(alt.terms, null.terms)
-    
+
     if(length(dif.term) != 1) {
         stop(c("form.alt should have exactly 1 more term than form.nul.",
                "\nNumber of different terms: ", length(dif.term)))
     }
-    
+
     if(length(grep(":", dif.term)) != 0) {
         stop("Interaction terms are not currently supported.")
     }
-    
+
     if(is.null(data[[dif.term]])) {
         stop(c(dif.term, " is not a variable in the eset object."))
     }
-    
+
     # determine if this is a multifactorial ANOVA
     if(is.factor(data[[dif.term]]) & nlevels(data[[dif.term]]) > 2){
         # basically I want to pull out maximum contrast

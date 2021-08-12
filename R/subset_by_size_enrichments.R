@@ -14,6 +14,7 @@
 #' @return filtered \code{enrichResults} instance
 #'
 #' @importFrom qvalue qvalue
+#' @importFrom DOSE geneInCategory
 #'
 #' @export subset_by_size
 #'
@@ -78,5 +79,6 @@ subset_by_size <- function(x, minObsSize=0, maxObsSize=Inf,
     return(x)
 }
 
+utils::globalVariables("Over")
 
 
