@@ -78,7 +78,8 @@ limma_contrasts <- function(eset, model.str, coef.str, contrasts,
                   function(contrast_i) {
                       topTable(fit.smooth,
                                coef = contrast_i,
-                               number = nrow(eset)) %>%
+                               number = nrow(eset),
+                               adjust.method = adjust.method) %>%
                           mutate(feature = rownames(.),
                                  contrast = contrast_i)
                   })
@@ -94,9 +95,11 @@ limma_contrasts <- function(eset, model.str, coef.str, contrasts,
 
     # Adjust p-value across all contrasts
     res <- res %>%
-        mutate(adj.P.Val = p.adjust(P.Value, method = adjust.method)) %>%
+        # mutate(adj.P.Val = p.adjust(P.Value, method = adjust.method)) %>%
         select(feature, contrast, everything())
+  
+  return(res)
 }
 
-utils::globalVariables(c(".", "P.Value", "feature", "contrast"))
+utils::globalVariables(c(".", "feature", "contrast"))
 
