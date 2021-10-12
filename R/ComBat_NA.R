@@ -50,7 +50,7 @@
 #' # reference-batch version, with covariates
 #' combat_edata3 = ComBat(dat=edata, batch=batch, mod=mod, par.prior=TRUE, ref.batch=3)
 #'
-#' @export
+#' @export ComBat.NA
 #'
 
 ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALSE,
