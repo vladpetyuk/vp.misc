@@ -327,14 +327,18 @@ correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained
 #' plot_pca_v3(oca.set.2, phenotype = 'Batch')
 #' }
 
-correct_batch_effect_NA <- function(m, batch_name, cov_name,
+correct_batch_effect_NA <- function(m, batch_name, cov_name = NULL,
                                  ...){
     batch <- pData(m)[, batch_name]
-    cov <- pData(m)[, cov_name] %>%
-        as.factor()
-    mod <- model.matrix(~cov)
+    if(!is.null(cov_name)) {
+        cov <- pData(m)[, cov_name] %>%
+            as.factor()
+        mod <- model.matrix(~cov)
+    } else {
+        mod = NULL
+    }
 
-    combat_edata <- ComBat.NA(exprs(m), batch, ...)[["corrected data"]]
+    combat_edata <- ComBat.NA(exprs(m), batch, mod = mod)[["corrected data"]]
     exprs(m) <- combat_edata
 
     return(m)

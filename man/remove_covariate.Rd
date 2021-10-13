@@ -28,7 +28,7 @@ correct_batch_effect_empiricalBayesLM(
   ...
 )
 
-correct_batch_effect_NA(m, batch_name, cov_name, ...)
+correct_batch_effect_NA(m, batch_name, cov_name = NULL, ...)
 }
 \arguments{
 \item{x}{MSnSet or ExpressionSet object}
