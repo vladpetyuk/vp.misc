@@ -33,38 +33,21 @@ ComBat.NA(
 data A probe x sample genomic measure matrix, adjusted for batch effects.
 }
 \description{
+Modified version of ComBat, the original ComBat is in the sva package.
+Credit goes to the authors of the sva package.
+}
+\details{
 This is a modified version of ComBat, which can handle when all values in a feature + batch
 combination are missing. It does this by ignoring missing values when calculating
 prior distributions for the batch effects, and adjusting the values that ARE there, while doing
 nothing to values that are missing. Particularly useful in data with many batches, as previously
 a feature with only one batch fully missing would have been thrown out before correction.
-}
-\details{
+
 Can also retain specific variable effects (use mod parameter for this), and estimate the final batch effects
-using parametric or non-parametric adjustments (paramtric is default).
+using parametric or non-parametric adjustments (parametric is default). Below is the original documentation from ComBat.
 
 ComBat allows users to adjust for batch effects in datasets where the batch covariate is known, using methodology
 described in Johnson et al. 2007. It uses either parametric or non-parametric empirical Bayes frameworks for adjusting data for
 batch effects.  Users are returned an expression matrix that has been corrected for batch effects. The input
 data are assumed to be cleaned and normalized before batch effect removal.
-}
-\examples{
-library(bladderbatch)
-data(bladderdata)
-dat <- bladderEset[1:50,]
-
-pheno = pData(dat)
-edata = exprs(dat)
-batch = pheno$batch
-mod = model.matrix(~as.factor(cancer), data=pheno)
-
-# parametric adjustment
-combat_edata1 = ComBat(dat=edata, batch=batch, mod=NULL, par.prior=TRUE, prior.plots=FALSE)
-
-# non-parametric adjustment, mean-only version
-combat_edata2 = ComBat(dat=edata, batch=batch, mod=NULL, par.prior=FALSE, mean.only=TRUE)
-
-# reference-batch version, with covariates
-combat_edata3 = ComBat(dat=edata, batch=batch, mod=mod, par.prior=TRUE, ref.batch=3)
-
 }

@@ -1,5 +1,7 @@
-
 #' Adjust for batch effects using an empirical Bayes framework
+#'
+#' Modified version of ComBat, the original ComBat is in the sva package.
+#' Credit goes to the authors of the sva package.
 #'
 #' This is a modified version of ComBat, which can handle when all values in a feature + batch
 #' combination are missing. It does this by ignoring missing values when calculating
@@ -8,7 +10,7 @@
 #' a feature with only one batch fully missing would have been thrown out before correction.
 #'
 #' Can also retain specific variable effects (use mod parameter for this), and estimate the final batch effects
-#' using parametric or non-parametric adjustments (paramtric is default).
+#' using parametric or non-parametric adjustments (parametric is default). Below is the original documentation from ComBat.
 #'
 #' ComBat allows users to adjust for batch effects in datasets where the batch covariate is known, using methodology
 #' described in Johnson et al. 2007. It uses either parametric or non-parametric empirical Bayes frameworks for adjusting data for
@@ -26,29 +28,11 @@
 #' @return data A probe x sample genomic measure matrix, adjusted for batch effects.
 #'
 #' @importFrom limma lmFit
+#' @importFrom invgamma dinvgamma
 #' @importFrom graphics lines par
 #' @importFrom genefilter rowVars
 #' @importFrom stats cor density dnorm model.matrix pf ppoints prcomp predict qgamma qnorm qqline qqnorm qqplot smooth.spline var
 #' @importFrom utils read.delim
-#'
-#' @examples
-#' library(bladderbatch)
-#' data(bladderdata)
-#' dat <- bladderEset[1:50,]
-#'
-#' pheno = pData(dat)
-#' edata = exprs(dat)
-#' batch = pheno$batch
-#' mod = model.matrix(~as.factor(cancer), data=pheno)
-#'
-#' # parametric adjustment
-#' combat_edata1 = ComBat(dat=edata, batch=batch, mod=NULL, par.prior=TRUE, prior.plots=FALSE)
-#'
-#' # non-parametric adjustment, mean-only version
-#' combat_edata2 = ComBat(dat=edata, batch=batch, mod=NULL, par.prior=FALSE, mean.only=TRUE)
-#'
-#' # reference-batch version, with covariates
-#' combat_edata3 = ComBat(dat=edata, batch=batch, mod=mod, par.prior=TRUE, ref.batch=3)
 #'
 #' @export ComBat.NA
 #'
@@ -259,18 +243,6 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
   # t2 <- rowVars(gamma.hat)
   t2 <- rowVars(gamma.hat, na.rm = TRUE)
 
-  aprior.na <- function(delta.hat) {
-    m <- mean(delta.hat, na.rm = T)
-    s2 <- var(delta.hat, na.rm= T)
-    (2 * s2 + m^2)/s2
-  }
-
-  bprior.na <- function(delta.hat) {
-    m <- mean(delta.hat, na.rm = T)
-    s2 <- var(delta.hat, na.rm= T)
-    (m * s2 + m^3)/s2
-  }
-
   # a.prior <- apply(delta.hat, 1, aprior) # FIXME
   # b.prior <- apply(delta.hat, 1, bprior) # FIXME
 
@@ -321,11 +293,11 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     message("Finding parametric adjustments")
     results <- lapply(1:n.batch, function(i) {
       if (mean.only) {
-        gamma.star <- sva:::postmean(gamma.hat[i,], gamma.bar[i], 1, 1, t2[i])
+        gamma.star <- postmean(gamma.hat[i,], gamma.bar[i], 1, 1, t2[i])
         delta.star <- rep(1, nrow(s.data))
       }
       else {
-        temp <- sva:::it.sol(s.data[, batches[[i]]], gamma.hat[i, ],
+        temp <- it.sol(s.data[, batches[[i]]], gamma.hat[i, ],
                              delta.hat[i, ], gamma.bar[i], t2[i], a.prior[i],
                              b.prior[i])
         gamma.star <- temp[1, ]
@@ -419,3 +391,70 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
                                                             "delta rate" = b.prior))
   return(out)
 }
+
+
+#' These are helper functions for ComBat.NA
+#' These functions compute the shape and rate parameters of the inverse gamma
+#' distribution based on the values delta.hat, which are the multiplicative batch effects.
+#'
+#' Credit goes to the original authors of the sva package
+#'
+#' @param delta.hat multiplicative batch effect
+#'
+aprior.na <- function(delta.hat) {
+  m <- mean(delta.hat, na.rm = T)
+  s2 <- var(delta.hat, na.rm= T)
+  return((2 * s2 + m^2)/s2)
+}
+
+#' @describeIn aprior.na
+#'
+#'
+bprior.na <- function(delta.hat) {
+  m <- mean(delta.hat, na.rm = T)
+  s2 <- var(delta.hat, na.rm= T)
+  return((m * s2 + m^3)/s2)
+}
+
+
+#' These are helper functions for ComBat.NA
+#' These functions perform the Bayesian adjustments to the batch effects
+#' They do this in a iterative way.
+#'
+#' Credit goes to the original authors of the sva package
+#'
+postmean <- function(g.hat,g.bar,n,d.star,t2){
+  return((t2*n*g.hat + d.star*g.bar) / (t2*n + d.star))
+}
+
+#' @describeIn postmean
+#'
+#'
+it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
+  n <- rowSums(!is.na(sdat))
+  g.old <- g.hat
+  d.old <- d.hat
+  change <- 1
+  count <- 0
+  while(change>conv){
+    g.new <- postmean(g.hat, g.bar, n, d.old, t2)
+    sum2 <- rowSums((sdat - g.new %*% t(rep(1,ncol(sdat))))^2, na.rm=TRUE)
+    d.new <- postvar(sum2, n, a, b)
+    change <- max(abs(g.new-g.old) / g.old, abs(d.new-d.old) / d.old)
+    g.old <- g.new
+    d.old <- d.new
+    count <- count+1
+  }
+  ## cat("This batch took", count, "iterations until convergence\n")
+  adjust <- rbind(g.new, d.new)
+  rownames(adjust) <- c("g.star","d.star")
+  return(adjust)
+}
+
+#' @describeIn postmean
+#'
+#'
+postvar <- function(sum2,n,a,b){
+  return((.5*sum2 + b) / (n/2 + a - 1))
+}
+

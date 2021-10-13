@@ -73,7 +73,9 @@ Imports:
     tidyselect,
     pheatmap,
     utils,
-    DOSE
+    DOSE,
+    genefilter,
+    invgamma
 Suggests:
     knitr,
     rmarkdown,
