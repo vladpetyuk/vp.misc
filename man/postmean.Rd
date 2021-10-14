@@ -14,6 +14,29 @@ it.sol(sdat, g.hat, d.hat, g.bar, t2, a, b, conv = 1e-04)
 
 postvar(sum2, n, a, b)
 }
+\arguments{
+\item{g.hat}{additive batch effect}
+
+\item{g.bar}{additive batch effect mean}
+
+\item{n}{number of samples in batch}
+
+\item{d.star}{bayes adjusted multiplicative effect}
+
+\item{t2}{additive batch effect variance}
+
+\item{sdat}{standardized data}
+
+\item{d.hat}{multiplicative batch effect}
+
+\item{a}{shape parameter}
+
+\item{b}{rate parameter}
+
+\item{conv}{relative change threshold, determines when to stop iteration}
+
+\item{sum2}{internal variable, used in Bayesian estimation of batch effects}
+}
 \description{
 Credit goes to the original authors of the sva package
 }

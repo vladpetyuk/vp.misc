@@ -423,6 +423,17 @@ bprior.na <- function(delta.hat) {
 #'
 #' Credit goes to the original authors of the sva package
 #'
+#' @param t2 additive batch effect variance
+#' @param n number of samples in batch
+#' @param g.hat additive batch effect
+#' @param d.star bayes adjusted multiplicative effect
+#' @param g.bar additive batch effect mean
+#' @param sdat standardized data
+#' @param d.hat multiplicative batch effect
+#' @param a shape parameter
+#' @param b rate parameter
+#' @param conv relative change threshold, determines when to stop iteration
+#' @param sum2 internal variable, used in Bayesian estimation of batch effects
 postmean <- function(g.hat,g.bar,n,d.star,t2){
   return((t2*n*g.hat + d.star*g.bar) / (t2*n + d.star))
 }
