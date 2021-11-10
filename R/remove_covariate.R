@@ -299,3 +299,48 @@ correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained
 }
 
 
+#' @describeIn remove_covariate wrapper around ComBat.NA
+#' @importFrom magrittr "%>%"
+#' @importFrom dplyr select inner_join group_by_at summarize filter pull
+#' @importFrom tidyr gather
+#' @importFrom tibble rownames_to_column
+#' @importFrom Biobase exprs pData exprs<-
+#' @importFrom BiocParallel bpparam
+#' @importFrom stats model.matrix
+#'
+#' @export correct_batch_effect_NA
+#'
+#' @param m an object of class Eset or MSnSet.
+#' @param batch_name same thing as covariate name. Using "batch" instead of
+#' "covariate" to keep it consistent with `ComBat`. Must be in pData(x).
+#' At this point it can be only one name.
+#' @param ... other arguments for \code{\link[sva]{ComBat}}
+#'
+#' @examples
+#'
+#' # Example for correct_batch_effect
+#' # Not run
+#' \dontrun{
+#' data("cptac_oca") # oca.set object
+#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
+#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+#' }
+
+correct_batch_effect_NA <- function(m, batch_name, cov_name = NULL,
+                                 ...){
+    batch <- pData(m)[, batch_name]
+    if(!is.null(cov_name)) {
+        cov <- pData(m)[, cov_name] %>%
+            as.factor()
+        mod <- model.matrix(~cov)
+    } else {
+        mod = NULL
+    }
+
+    combat_edata <- ComBat.NA(exprs(m), batch, mod = mod)[["corrected data"]]
+    exprs(m) <- combat_edata
+
+    return(m)
+}
+

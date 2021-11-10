@@ -73,7 +73,9 @@ Imports:
     tidyselect,
     pheatmap,
     utils,
-    DOSE
+    DOSE,
+    genefilter,
+    invgamma
 Suggests:
     knitr,
     rmarkdown,
@@ -85,4 +87,4 @@ Suggests:
     BiocStyle
 Remotes: cran/heatmap.plus
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
