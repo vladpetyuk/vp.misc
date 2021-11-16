@@ -66,7 +66,7 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
         }
       })))
     }else{
-      return(which(rep(1,3)==2))
+      return(integer(0))
     }
   })
   zero.rows <- Reduce(union, zero.rows.lst)
@@ -311,50 +311,53 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     }
   } else {
     message("Finding nonparametric adjustments")
-    results <- lapply(1:n.batch, function(i) {
-      if (mean.only) {
-        delta.hat[i, ] = 1
-      }
-      # temp <- int.eprior(as.matrix(s.data[, batches[[i]]]),
-      #                    gamma.hat[i, ], delta.hat[i, ])
 
-      sdat <- as.matrix(s.data[, batches[[i]]])
-      g.cle <- gamma.hat
-      g.cle[na.terms] <- NaN
-      g.hat <- g.cle[i, ]
-
-      d.cle <- delta.hat
-      d.cle[na.terms] <- NaN
-      d.hat <- d.cle[i, ]
-
-      g.star <- d.star <- NULL
-      r <- nrow(sdat)
-      for (j in 1:r) {
-        g <- g.hat[-j]
-        d <- d.hat[-j]
-        x <- sdat[j, !is.na(sdat[j, ])]
-        n <- length(x)
-        q <- numeric(n) + 1
-        dat <- matrix(as.numeric(x), length(g), n, byrow = TRUE)
-        resid2 <- (dat - g)^2
-        sum2 <- resid2 %*% q
-        LH <- 1/(2 * pi * d)^(n/2) * exp(-sum2/(2 * d))
-        LH[LH == "NaN"] <- 0
-        g[g == "NaN"] <- 0
-        d[d == "NaN"] <- 0
-        g.star <- c(g.star, sum(g * LH)/sum(LH))
-        d.star <- c(d.star, sum(d * LH)/sum(LH))
-      }
-
-      temp <- rbind(g.star, d.star)
-      rownames(temp) <- c("g.star", "d.star")
-
-      list(gamma.star=temp[1,], delta.star=temp[2,])
-    })
-    for (i in 1:n.batch) {
-      gamma.star[i,] <- results[[i]]$gamma.star
-      delta.star[i,] <- results[[i]]$delta.star
+    if (mean.only) {
+      delta.hat[1:n.batch, ] = 1
     }
+
+    sdat <- as.matrix(s.data)
+    idx.na <- apply(!is.na(sdat), 2, as.numeric)
+    counts <- idx.na %*% design
+
+    na.terms.large <- apply(na.terms, 2, as.numeric) %>%
+      t(.) %*% t(design) %>%
+      apply(., 2, as.logical)
+
+    g.hat <- t(gamma.hat) %*% t(design)
+    g.hat[na.terms.large] <- NaN
+
+    d.cle <- delta.hat
+    d.cle[na.terms] <- NaN
+    d.hat <- t(d.cle)
+
+    empirical.estimates <- function(j) {
+      data.pts <- sdat[j, ]
+      n <- counts[j, ] %>%
+        matrix(., byrow = TRUE, nrow = nrow(g.hat),
+               ncol = n.batch)
+      xx <- matrix(data.pts, byrow = TRUE, nrow = nrow(g.hat),
+                   ncol = length(data.pts))
+      xx <- (xx - g.hat)^2
+      xx[is.na(xx)] <- 0
+      xx <- xx %*% design
+      LH <- 1/(2 * pi * d.hat)^(n/2) * exp(-xx/(2 * d.hat))
+      LH[j, ] <- 0
+      LH[is.na(LH)] <- 0
+      q <- numeric(nrow(g.hat)) + 1
+      norm <- q %*% LH
+      out1 <- diag(gamma.hat %*% LH)/norm
+      out2 <- diag(delta.hat %*% LH)/norm
+      return(list("Gamma" = out1, "Delta" = out2))
+    }
+
+    results <- lapply(1:nrow(sdat), empirical.estimates) %>%
+      unlist() %>%
+      matrix(., byrow = TRUE, ncol = (2*n.batch), nrow = nrow(sdat))
+
+    ## First half of columns are gamma star, second half are delta star.
+    gamma.star <- results[, 1:n.batch] %>% t()
+    delta.star <- results[, (n.batch + 1):(2*n.batch)] %>% t()
   }
 
   if(!is.null(ref.batch)){
