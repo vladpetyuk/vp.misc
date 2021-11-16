@@ -342,7 +342,9 @@ correct_batch_effect_NA <- function(m, batch_name, cov_name = NULL,
         mod = NULL
     }
 
-    combat_edata <- ComBat.NA(exprs(m), batch, mod = mod, ...)[["corrected data"]]
+    combat_edata <- ComBat.NA(exprs(m), batch, mod = mod,
+                              par.prior=par.prior, prior.plots=prior.plots,
+                              ...)[["corrected data"]]
     exprs(m) <- combat_edata
 
     return(m)
