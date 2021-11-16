@@ -2,12 +2,31 @@
 % Please edit documentation in R/normalize_by_feature_property.R
 \name{normalize_by_feature_property}
 \alias{normalize_by_feature_property}
+\alias{normalize_by_feature_property_partitioned}
+\alias{evaluate_parameter_effect}
 \title{Normalization of LC-MS/MS Data}
 \usage{
 normalize_by_feature_property(
   eset,
   property,
   method = c("lowess", "loess"),
+  ...
+)
+
+normalize_by_feature_property_partitioned(
+  eset,
+  property,
+  partition_by,
+  method = c("lowess", "loess"),
+  ...
+)
+
+evaluate_parameter_effect(
+  eset,
+  sample,
+  property,
+  partition_by,
+  partition_value,
   ...
 )
 }
@@ -17,9 +36,14 @@ normalize_by_feature_property(
 \item{property}{character the column in the fData that the
 relative intensities regress against.}
 
-\item{method}{character either "lowess" or "loess" at this point.}
+\item{method}{character. either "lowess" or "loess" at this point.}
 
-\item{...}{passed to \code{lowess} or \code{loess}.}
+\item{...}{passed to \code{lowess} or \code{loess}. We suggest to use span = 0.5 with loess.}
+
+\item{partition_by}{character. Column name in \code{fData}, according to
+which features will be partitioned. This is
+when, for example, normalizing by LC
+and there are multiple fractions per sample.}
 }
 \description{
 Fits a nonparametric trend into relative

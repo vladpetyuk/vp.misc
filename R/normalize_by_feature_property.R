@@ -8,8 +8,12 @@
 #' @param eset ExpressionSet/MSnSet object
 #' @param property character the column in the fData that the
 #'              relative intensities regress against.
-#' @param method character either "lowess" or "loess" at this point.
-#' @param ... passed to \code{lowess} or \code{loess}.
+#' @param method character. either "lowess" or "loess" at this point.
+#' @param partition_by character. Column name in \code{fData}, according to
+#'                                which features will be partitioned. This is
+#'                                when, for example, normalizing by LC
+#'                                and there are multiple fractions per sample.
+#' @param ... passed to \code{lowess} or \code{loess}. We suggest to use span = 0.5 with loess.
 #'
 #' @note So far the only property I have in mind is elution time in
 #'      label-free LC-MS/MS data.
@@ -18,10 +22,15 @@
 #' @importFrom stats lowess loess predict
 #'
 #' @export normalize_by_feature_property
+#' @export normalize_by_feature_property_partitioned
+#' @export evaluate_parameter_effect
+#'
 
 
-normalize_by_feature_property <- function(eset, property,
-                                          method=c("lowess","loess"), ...){
+normalize_by_feature_property <- function(eset,
+                                          property,
+                                          method=c("lowess","loess"),
+                                          ...){
     # elution time is a typical problem in a label-free LC-MS/MS
     method <- match.arg(method)
     o <- order(fData(eset)[[property]])
@@ -43,3 +52,71 @@ normalize_by_feature_property <- function(eset, property,
     }
     return(eset)
 }
+
+
+#' @rdname normalize_by_feature_property
+normalize_by_feature_property_partitioned <- function(eset,
+                                                      property,
+                                                      partition_by,
+                                                      method=c("lowess","loess"),
+                                                      ...){
+  partition_vec <- fData(eset)[[partition_by]]
+  for(part_i in unique(partition_vec)){
+    # subset the object
+    idx <- partition_vec == part_i
+    eset_part_i <- eset[idx,]
+    # correct the ESI effect
+    eset_part_i <- normalize_by_feature_property(eset_part_i,
+                                                 property,
+                                                 method,
+                                                 ...)
+    # update the main object
+    exprs(eset)[idx,] <- exprs(eset_part_i)
+  }
+  return(eset)
+}
+
+
+
+#' @rdname normalize_by_feature_property
+evaluate_parameter_effect <- function(eset,
+                                      sample,
+                                      property,
+                                      partition_by,
+                                      partition_value,
+                                      ...){
+  #
+  eset <- eset[fData(eset)[[partition_by]] == partition_value,]
+  model_i <- loess(exprs(eset)[,sample] ~ fData(eset)[[property]],
+                   # span = 0.5, # hardcoded so far
+                   ...,
+                   control=loess.control(surface="direct"))
+  bias_i <- predict(model_i, fData(eset)[[property]])
+  plot(fData(eset)[[property]], exprs(eset)[,sample])
+  grid()
+  points(fData(eset)[[property]], bias_i, col="red")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
