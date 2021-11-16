@@ -314,6 +314,8 @@ correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained
 #' @param batch_name same thing as covariate name. Using "batch" instead of
 #' "covariate" to keep it consistent with `ComBat`. Must be in pData(x).
 #' At this point it can be only one name.
+#' @param par.prior argument from \code{\link[sva]{ComBat}}. By default we recommend non-parametric.
+#' @param prior.plots argument from \code{\link[sva]{ComBat}}. No plots by default.
 #' @param ... other arguments for \code{\link[sva]{ComBat}}
 #'
 #' @examples
@@ -328,7 +330,9 @@ correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained
 #' }
 
 correct_batch_effect_NA <- function(m, batch_name, cov_name = NULL,
-                                 ...){
+                                    par.prior=FALSE,
+                                    prior.plots=FALSE,
+                                    ...){
     batch <- pData(m)[, batch_name]
     if(!is.null(cov_name)) {
         cov <- pData(m)[, cov_name] %>%
@@ -338,7 +342,7 @@ correct_batch_effect_NA <- function(m, batch_name, cov_name = NULL,
         mod = NULL
     }
 
-    combat_edata <- ComBat.NA(exprs(m), batch, mod = mod)[["corrected data"]]
+    combat_edata <- ComBat.NA(exprs(m), batch, mod = mod, ...)[["corrected data"]]
     exprs(m) <- combat_edata
 
     return(m)

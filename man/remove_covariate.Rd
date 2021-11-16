@@ -28,7 +28,14 @@ correct_batch_effect_empiricalBayesLM(
   ...
 )
 
-correct_batch_effect_NA(m, batch_name, cov_name = NULL, ...)
+correct_batch_effect_NA(
+  m,
+  batch_name,
+  cov_name = NULL,
+  par.prior = FALSE,
+  prior.plots = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{MSnSet or ExpressionSet object}
@@ -66,6 +73,10 @@ not removed. Must be in pData(x).}
 
 \item{least_proportion_threshold}{minimum proportion of feature observations
 required for the whole dataset. The default value is 50\%.}
+
+\item{par.prior}{argument from \code{\link[sva]{ComBat}}. By default we recommend non-parametric.}
+
+\item{prior.plots}{argument from \code{\link[sva]{ComBat}}. No plots by default.}
 }
 \description{
 The main purpose of this function is to remove batch effect from the data.
