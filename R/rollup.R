@@ -28,6 +28,7 @@ rrollup <- function(msnset, rollBy, rollFun, verbose=TRUE){
     summarisedFeatures <- list()
     unique_rollBy <- unique(fData(msnset)[[rollBy]])
     for (i in 1:length(unique_rollBy)) {
+      print(i)
         # Subset msnset to each rollBy group
         msnset_sub <- msnset[fData(msnset)[[rollBy]] == unique_rollBy[i], ,
                              drop = FALSE]
@@ -97,6 +98,7 @@ rrollup_a_feature_set <- function(mat, rollBy, rollFun, verbose){
         maxVals[is.infinite(maxVals)] <- NA
 
         if(nrow(mat) > 2){
+            maxVals <- maxVals + rnorm(length(maxVals), 0, 10*.Machine$double.eps)
             while(grubbs.test(maxVals)$p.value < 0.05 &
                   sum(!is.na(maxVals)) > 2){
                 i <- which(maxVals == outliers::outlier(maxVals))
