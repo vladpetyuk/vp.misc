@@ -28,7 +28,6 @@ rrollup <- function(msnset, rollBy, rollFun, verbose=TRUE){
     summarisedFeatures <- list()
     unique_rollBy <- unique(fData(msnset)[[rollBy]])
     for (i in 1:length(unique_rollBy)) {
-      print(i)
         # Subset msnset to each rollBy group
         msnset_sub <- msnset[fData(msnset)[[rollBy]] == unique_rollBy[i], ,
                              drop = FALSE]
