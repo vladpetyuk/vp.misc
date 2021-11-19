@@ -171,6 +171,10 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     grand.mean <- t(B.hat[ref, ])
   } else {
     ## Computes the mean of the batch means. This is similar (but not EXACTLY equal) to the overall mean
+    ## since not all values may be present in every batch + feature.
+    ## ****NOTE: THIS CAUSES A SMALL CHANGE VS COMBAT IN GENERAL ****
+    ## This change was placed here because the original combat paper standardizes with the row mean
+    ## not the batch means
     # grand.mean <- crossprod(n.batches/n.array, B.hat[1:n.batch,])
 
     # Adapted for NA values
@@ -318,10 +322,13 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
 
     sdat <- as.matrix(s.data)
     idx.na <- apply(!is.na(sdat), 2, as.numeric)
+    idx.na.logical <- is.na(sdat)
     counts <- idx.na %*% design
 
-    na.terms.large <- apply(na.terms, 2, as.numeric) %>%
-      t(.) %*% t(design) %>%
+    plex.na.terms.large <- apply(na.terms, 2, as.numeric) %>%
+      t(.) %*% t(design)
+
+    na.terms.large <- plex.na.terms.large %>%
       apply(., 2, as.logical)
 
     g.hat <- t(gamma.hat) %*% t(design)
@@ -331,24 +338,31 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     d.cle[na.terms] <- NaN
     d.hat <- t(d.cle)
 
+    na.terms <- t(na.terms)
+    colnames(na.terms) <- NULL
+
     empirical.estimates <- function(j) {
       data.pts <- sdat[j, ]
-      n <- counts[j, ] %>%
-        matrix(., byrow = TRUE, nrow = nrow(g.hat),
-               ncol = n.batch)
+      n <- counts[j, ] %>% matrix(., byrow = TRUE, nrow = nrow(g.hat),
+                                  ncol = n.batch)
+      na.idx.mat <- idx.na.logical[j, ] %>%
+        matrix(., byrow = TRUE, nrow = nrow(g.hat), ncol = ncol(sdat))
+      to.zero <- na.idx.mat | na.terms.large
       xx <- matrix(data.pts, byrow = TRUE, nrow = nrow(g.hat),
                    ncol = length(data.pts))
       xx <- (xx - g.hat)^2
-      xx[is.na(xx)] <- 0
+      rownames(to.zero) <- rownames(xx)
+      xx[to.zero] <- 0
       xx <- xx %*% design
       LH <- 1/(2 * pi * d.hat)^(n/2) * exp(-xx/(2 * d.hat))
+      LH[na.terms] <- 0
       LH[j, ] <- 0
-      LH[is.na(LH)] <- 0
+      LH[, na.terms[j, ]] <- 0
       q <- numeric(nrow(g.hat)) + 1
       norm <- q %*% LH
       out1 <- diag(gamma.hat %*% LH)/norm
       out2 <- diag(delta.hat %*% LH)/norm
-      return(list("Gamma" = out1, "Delta" = out2))
+      return(list(Gamma = out1, Delta = out2))
     }
 
     results <- lapply(1:nrow(sdat), empirical.estimates) %>%
