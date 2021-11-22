@@ -24,7 +24,7 @@
 #' @param prior.plots (Optional) TRUE give prior plots with black as a kernel estimate of the empirical batch effect density and red as the parametric
 #' @param mean.only (Optional) FALSE If TRUE ComBat only corrects the mean of the batch effect (no scale adjustment)
 #' @param ref.batch (Optional) NULL If given, will use the selected batch as a reference for batch adjustment.
-#' @param clust (Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of clust. Recommended when the number of features is over 30000.
+#' @param clust (Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of clust. Recommended when the number of features is over 4000. Note this multicore is not implemented for parametric priors, as these adjustments are extremely fast by comparison.
 #'
 #' @return data A probe x sample genomic measure matrix, adjusted for batch effects.
 #'
