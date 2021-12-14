@@ -5,3 +5,6 @@ vp.misc.Rproj
 .DS_Store
 *purgatory*
 .Rproj.user
+
+# misc files
+Misc/
