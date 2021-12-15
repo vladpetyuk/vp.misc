@@ -75,7 +75,8 @@ Imports:
     utils,
     DOSE,
     genefilter,
-    invgamma
+    invgamma,
+    statmod
 Suggests:
     knitr,
     rmarkdown,
