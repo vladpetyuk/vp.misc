@@ -15,6 +15,7 @@
 #' @return MSnSet object
 #' @importFrom Biobase exprs fData
 #' @importFrom outliers grubbs.test outlier
+#' @importFrom stats rnorm
 #' @export rrollup
 #'
 #' @examples

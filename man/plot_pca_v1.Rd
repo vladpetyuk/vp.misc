@@ -15,7 +15,7 @@ plot_pca_v1(
   legend.title.width = 20
 )
 
-plot_pca_v2(eset, phenotype = NULL, names = FALSE)
+plot_pca_v2(eset, phenotype = NULL, label = NULL)
 
 plot_pca_v3(
   eset,
@@ -54,9 +54,9 @@ unknown be shown. Default is \code{TRUE}.}
 \item{legend.title.width}{integer Wrapping up too long legend titles.
 Passed to stringr::str_wrap as width argument. Default is 20.}
 
-\item{names}{this parameter is specified, but not actually used.}
-
-\item{label}{character vector of point labels.}
+\item{label}{character string; the name of a column in \code{pData(eset)}
+used to label the samples. The default (\code{NULL}) will use
+\code{sampleNames(eset)}.}
 
 \item{point_size}{numeric; the size of the plotted points.}
 
@@ -88,8 +88,9 @@ plot_pca_v1(msnset, phenotype = "subject.type", show.ellipse = FALSE)
 plot_pca_v1(msnset, phenotype = "subject.type", show.ellipse = TRUE)
 plot_pca_v1(msnset)
 data(srm_msnset)
-plot_pca_v2(msnset, phenotype = "subject.type")
 plot_pca_v2(msnset)
+plot_pca_v2(msnset, phenotype = "subject.type")
+plot_pca_v2(msnset, phenotype = "subject.type", label = "match.group")
 data(srm_msnset)
 plot_pca_v3(msnset, phenotype = "subject.type")
 plot_pca_v3(msnset, phenotype = "subject.type", label = "sample.id")
