@@ -40,7 +40,7 @@ equally.}
 
 \item{plot}{logical; whether to generate diagnostic plots. The default
 (\code{TRUE}) generates a PCA plot using
-\code{\link[MSnSet.utils]{plot_pca_v2}}, a barplot of weights applied to
+\code{\link[MSnSet.utils]{plot_pca}}, a barplot of weights applied to
 each sample, and a plot of the mean-variance trend.}
 
 \item{label.by}{\code{NULL} or a string; the column in \code{pData(eset)}

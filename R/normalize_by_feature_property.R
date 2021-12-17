@@ -20,7 +20,7 @@
 #'
 #' @importFrom Biobase exprs fData sampleNames exprs<-
 #' @importFrom stats lowess loess predict loess.control
-#' @importFrom graphics points
+#' @importFrom graphics points grid
 #'
 #' @export normalize_by_feature_property
 #' @export normalize_by_feature_property_partitioned
