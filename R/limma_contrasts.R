@@ -19,7 +19,7 @@
 #'     equally.
 #' @param plot logical; whether to generate diagnostic plots. The default
 #'     (\code{TRUE}) generates a PCA plot using
-#'     \code{\link[MSnSet.utils]{plot_pca_v2}}, a barplot of weights applied to
+#'     \code{\link[MSnSet.utils]{plot_pca}}, a barplot of weights applied to
 #'     each sample, and a plot of the mean-variance trend.
 #' @param label.by \code{NULL} or a string; the column in \code{pData(eset)}
 #'     used to label the samples in the PCA plot. If \code{NULL} (default),
@@ -179,7 +179,7 @@ limma_contrasts <- function(eset, model.str, coef.str, contrasts,
     if (plot) {
 
         # Sample PCA plot
-        plot_pca_v2(eset, phenotype = color.by, label = label.by)
+        plot_pca(eset, phenotype = color.by, label = label.by)
 
         # Barplot of sample weights
         barplot(weights, space = 0,
