@@ -140,9 +140,9 @@ remove_covariate <- function(x, cov_name){
 #' # Not run
 #' \dontrun{
 #' data("cptac_oca") # oca.set object
-#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' plot_pca(oca.set, phenotype = 'Batch')
 #' oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
-#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+#' plot_pca(oca.set.2, phenotype = 'Batch')
 #' }
 
 correct_batch_effect <- function(m, batch_name,
@@ -201,11 +201,11 @@ utils::globalVariables(c("sample_name", "abundance", "feature_name",
 #' @examples
 #'
 #' data("cptac_oca") # oca.set object
-#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' plot_pca(oca.set, phenotype = 'Batch')
 #' oca.set.2 <- remove_batch_effect(oca.set,
 #'                                  batch_name = "Batch", ref_level="X14",
 #'                                  subset_by=c("tumor_stage","IIIC"))
-#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+#' plot_pca(oca.set.2, phenotype = 'Batch')
 
 remove_batch_effect <- function (x, batch_name, ref_level=NULL, subset_by=c(NULL,NULL)) {
 
@@ -260,14 +260,14 @@ remove_batch_effect <- function (x, batch_name, ref_level=NULL, subset_by=c(NULL
 #'
 #' # Example for correct_batch_effect_empiricalBayesLM
 #' data("cptac_oca") # oca.set object
-#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' plot_pca(oca.set, phenotype = 'Batch')
 #'
 #' # Not run
 #' \dontrun{
 #' oca.set.2 <- correct_batch_effect_empiricalBayesLM(oca.set,
 #'                                  removed_cov_name = "Batch",
 #'                                  retained_cov_name = "tumor_stage")
-#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+#' plot_pca(oca.set.2, phenotype = 'Batch')
 #' }
 
 correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained_cov_name=NULL, least_proportion_threshold=0.5,
@@ -324,9 +324,9 @@ correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained
 #' # Not run
 #' \dontrun{
 #' data("cptac_oca") # oca.set object
-#' plot_pca_v3(oca.set, phenotype = 'Batch')
+#' plot_pca(oca.set, phenotype = 'Batch')
 #' oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
-#' plot_pca_v3(oca.set.2, phenotype = 'Batch')
+#' plot_pca(oca.set.2, phenotype = 'Batch')
 #' }
 
 correct_batch_effect_NA <- function(m, batch_name, cov_name = NULL,

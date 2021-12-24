@@ -9,8 +9,8 @@ Maintainer: Vladislav Petyuk <petyuk@gmail.com>
 Description: A collection of customized functions used for
     proteomics dataset analysis. The functions are geared towards using
     MSnSet (or ExpressionSet) object as the key data container.
-    The package contains customized heatmaps, colorschemes,
-    convienient nested linear models, machine learning utilities, etc.
+    The package contains customized heatmaps, color schemes,
+    convenient nested linear models, machine learning utilities, etc.
 License: Artistic-2.0
 biocViews: Proteomics, MassSpectrometry
 Depends:
@@ -62,7 +62,6 @@ Imports:
     gtools, 
     limma,
     magrittr, 
-    pcaMethods, 
     purrr, 
     qvalue, 
     reshape2, 
@@ -75,7 +74,8 @@ Imports:
     utils,
     DOSE,
     genefilter,
-    invgamma
+    invgamma,
+    statmod
 Suggests:
     knitr,
     rmarkdown,

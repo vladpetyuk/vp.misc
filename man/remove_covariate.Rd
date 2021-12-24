@@ -157,37 +157,37 @@ image_msnset(oca.fixed, facetBy="iTRAQ_Batch")
 # Not run
 \dontrun{
 data("cptac_oca") # oca.set object
-plot_pca_v3(oca.set, phenotype = 'Batch')
+plot_pca(oca.set, phenotype = 'Batch')
 oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
-plot_pca_v3(oca.set.2, phenotype = 'Batch')
+plot_pca(oca.set.2, phenotype = 'Batch')
 }
 
 data("cptac_oca") # oca.set object
-plot_pca_v3(oca.set, phenotype = 'Batch')
+plot_pca(oca.set, phenotype = 'Batch')
 oca.set.2 <- remove_batch_effect(oca.set,
                                  batch_name = "Batch", ref_level="X14",
                                  subset_by=c("tumor_stage","IIIC"))
-plot_pca_v3(oca.set.2, phenotype = 'Batch')
+plot_pca(oca.set.2, phenotype = 'Batch')
 
 # Example for correct_batch_effect_empiricalBayesLM
 data("cptac_oca") # oca.set object
-plot_pca_v3(oca.set, phenotype = 'Batch')
+plot_pca(oca.set, phenotype = 'Batch')
 
 # Not run
 \dontrun{
 oca.set.2 <- correct_batch_effect_empiricalBayesLM(oca.set,
                                  removed_cov_name = "Batch",
                                  retained_cov_name = "tumor_stage")
-plot_pca_v3(oca.set.2, phenotype = 'Batch')
+plot_pca(oca.set.2, phenotype = 'Batch')
 }
 
 # Example for correct_batch_effect
 # Not run
 \dontrun{
 data("cptac_oca") # oca.set object
-plot_pca_v3(oca.set, phenotype = 'Batch')
+plot_pca(oca.set, phenotype = 'Batch')
 oca.set.2 <- correct_batch_effect(oca.set, batch_name = "Batch")
-plot_pca_v3(oca.set.2, phenotype = 'Batch')
+plot_pca(oca.set.2, phenotype = 'Batch')
 }
 }
 \seealso{
