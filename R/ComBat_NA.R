@@ -24,6 +24,7 @@
 #' @param prior.plots (Optional) TRUE give prior plots with black as a kernel estimate of the empirical batch effect density and red as the parametric
 #' @param mean.only (Optional) FALSE If TRUE ComBat only corrects the mean of the batch effect (no scale adjustment)
 #' @param ref.batch (Optional) NULL If given, will use the selected batch as a reference for batch adjustment.
+#' @param clust (Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of clust. Recommended when the number of features is over 4000. Note this multicore is not implemented for parametric priors, as these adjustments are extremely fast by comparison.
 #'
 #' @return data A probe x sample genomic measure matrix, adjusted for batch effects.
 #'
@@ -33,12 +34,13 @@
 #' @importFrom genefilter rowVars
 #' @importFrom stats cor density dnorm model.matrix pf ppoints prcomp predict qgamma qnorm qqline qqnorm qqplot smooth.spline var
 #' @importFrom utils read.delim
+#' @importFrom parallel clusterApply
 #'
 #' @export ComBat.NA
 #'
 
 ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALSE,
-                      prior.plots = FALSE, ref.batch = NULL) {
+                      prior.plots = FALSE, ref.batch = NULL, cluster = clust) {
 
   if(length(dim(batch))>1){
     stop("This version of ComBat only allows one batch variable")
@@ -171,6 +173,10 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     grand.mean <- t(B.hat[ref, ])
   } else {
     ## Computes the mean of the batch means. This is similar (but not EXACTLY equal) to the overall mean
+    ## since not all values may be present in every batch + feature.
+    ## ****NOTE: THIS CAUSES A SMALL CHANGE VS COMBAT IN GENERAL ****
+    ## This change was placed here because the original combat paper standardizes with the row mean
+    ## not the batch means
     # grand.mean <- crossprod(n.batches/n.array, B.hat[1:n.batch,])
 
     # Adapted for NA values
@@ -318,10 +324,13 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
 
     sdat <- as.matrix(s.data)
     idx.na <- apply(!is.na(sdat), 2, as.numeric)
+    idx.na.logical <- is.na(sdat)
     counts <- idx.na %*% design
 
-    na.terms.large <- apply(na.terms, 2, as.numeric) %>%
-      t(.) %*% t(design) %>%
+    plex.na.terms.large <- apply(na.terms, 2, as.numeric) %>%
+      t(.) %*% t(design)
+
+    na.terms.large <- plex.na.terms.large %>%
       apply(., 2, as.logical)
 
     g.hat <- t(gamma.hat) %*% t(design)
@@ -331,6 +340,12 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     d.cle[na.terms] <- NaN
     d.hat <- t(d.cle)
 
+    na.terms <- t(na.terms)
+    colnames(na.terms) <- NULL
+
+    ### If all data in a feature + batch is missing, the estimates computed
+    ### here are meaningless. However, they are used to adjust the data
+    ### that doesn't exist (All NA values in that feature + batch).
     empirical.estimates <- function(j) {
       data.pts <- sdat[j, ]
       n <- counts[j, ] %>%
@@ -351,9 +366,56 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
       return(list("Gamma" = out1, "Delta" = out2))
     }
 
-    results <- lapply(1:nrow(sdat), empirical.estimates) %>%
-      unlist() %>%
-      matrix(., byrow = TRUE, ncol = (2*n.batch), nrow = nrow(sdat))
+    ## Slightly different handling of the data. May be slightly faster in extreme
+    ## cases (100000 phosphosites say), but not confirmed... Tracks NA values differently.
+    # empirical.estimates <- function(j) {
+    #   data.pts <- sdat[j, ]
+    #   n <- counts[j, ] %>% matrix(., byrow = TRUE, nrow = nrow(g.hat),
+    #                               ncol = n.batch)
+    #   na.idx.mat <- idx.na.logical[j, ] %>%
+    #     matrix(., byrow = TRUE, nrow = nrow(g.hat), ncol = ncol(sdat))
+    #   to.zero <- na.idx.mat | na.terms.large
+    #   xx <- matrix(data.pts, byrow = TRUE, nrow = nrow(g.hat),
+    #                ncol = length(data.pts))
+    #   xx <- (xx - g.hat)^2
+    #   rownames(to.zero) <- rownames(xx)
+    #   xx[to.zero] <- 0
+    #   xx <- xx %*% design
+    #   LH <- 1/(2 * pi * d.hat)^(n/2) * exp(-xx/(2 * d.hat))
+    #   LH[na.terms] <- 0
+    #   LH[j, ] <- 0
+    #   LH[, na.terms[j, ]] <- 0
+    #   q <- numeric(nrow(g.hat)) + 1
+    #   norm <- q %*% LH
+    #   out1 <- diag(gamma.hat %*% LH)/norm
+    #   out2 <- diag(delta.hat %*% LH)/norm
+    #   return(list(Gamma = out1, Delta = out2))
+    # }
+
+
+    ### Doing either single core or multicore correction.
+    if(is.null(cluster)){
+      results <- lapply(1:nrow(sdat), empirical.estimates) %>%
+        unlist() %>%
+        matrix(., byrow = TRUE, ncol = (2*n.batch), nrow = nrow(sdat))
+    } else {
+      message("Using Biocparallel")
+      clusterExport(clust, c("sdat", "counts", "g.hat", "design", "d.hat"),
+                    envir = environment())
+      Features <- data.frame(row = 1:nrow(sdat))
+      Features$group <- cut(Features$row, length(clust))
+      cores <- unique(Features$group)
+      empirical.estimates.par <- function(core){
+        rows <- Features %>%
+          filter(group == core)
+        rows <- rows$row
+        results <- lapply(rows, empirical.estimates) %>%
+          unlist() %>%
+          matrix(., byrow = TRUE, ncol = (2*n.batch), nrow = length(rows))
+      }
+      results <- clusterApply(clust, cores, empirical.estimates.par) %>%
+        do.call(rbind, .)
+    }
 
     ## First half of columns are gamma star, second half are delta star.
     gamma.star <- results[, 1:n.batch] %>% t()

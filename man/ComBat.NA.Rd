@@ -11,7 +11,8 @@ ComBat.NA(
   par.prior = TRUE,
   mean.only = FALSE,
   prior.plots = FALSE,
-  ref.batch = NULL
+  ref.batch = NULL,
+  cluster = clust
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ ComBat.NA(
 \item{prior.plots}{(Optional) TRUE give prior plots with black as a kernel estimate of the empirical batch effect density and red as the parametric}
 
 \item{ref.batch}{(Optional) NULL If given, will use the selected batch as a reference for batch adjustment.}
+
+\item{clust}{(Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of clust. Recommended when the number of features is over 30000.}
 }
 \value{
 data A probe x sample genomic measure matrix, adjusted for batch effects.
