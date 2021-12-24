@@ -24,7 +24,7 @@
 #' @param prior.plots (Optional) TRUE give prior plots with black as a kernel estimate of the empirical batch effect density and red as the parametric
 #' @param mean.only (Optional) FALSE If TRUE ComBat only corrects the mean of the batch effect (no scale adjustment)
 #' @param ref.batch (Optional) NULL If given, will use the selected batch as a reference for batch adjustment.
-#' @param clust (Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of clust. Recommended when the number of features is over 4000. Note this multicore is not implemented for parametric priors, as these adjustments are extremely fast by comparison.
+#' @param cluster (Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of cluster. Recommended when the number of features is over 4000. Note this multicore is not implemented for parametric priors, as these adjustments are extremely fast by comparison.
 #'
 #' @return data A probe x sample genomic measure matrix, adjusted for batch effects.
 #'
@@ -40,7 +40,7 @@
 #'
 
 ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALSE,
-                      prior.plots = FALSE, ref.batch = NULL, cluster = clust) {
+                      prior.plots = FALSE, ref.batch = NULL, cluster = NULL) {
 
   if(length(dim(batch))>1){
     stop("This version of ComBat only allows one batch variable")
@@ -400,10 +400,10 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
         matrix(., byrow = TRUE, ncol = (2*n.batch), nrow = nrow(sdat))
     } else {
       message("Using Biocparallel")
-      clusterExport(clust, c("sdat", "counts", "g.hat", "design", "d.hat"),
+      clusterExport(cluster, c("sdat", "counts", "g.hat", "design", "d.hat"),
                     envir = environment())
       Features <- data.frame(row = 1:nrow(sdat))
-      Features$group <- cut(Features$row, length(clust))
+      Features$group <- cut(Features$row, length(cluster))
       cores <- unique(Features$group)
       empirical.estimates.par <- function(core){
         rows <- Features %>%
@@ -413,7 +413,7 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
           unlist() %>%
           matrix(., byrow = TRUE, ncol = (2*n.batch), nrow = length(rows))
       }
-      results <- clusterApply(clust, cores, empirical.estimates.par) %>%
+      results <- clusterApply(cluster, cores, empirical.estimates.par) %>%
         do.call(rbind, .)
     }
 

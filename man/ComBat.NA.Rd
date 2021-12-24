@@ -12,7 +12,7 @@ ComBat.NA(
   mean.only = FALSE,
   prior.plots = FALSE,
   ref.batch = NULL,
-  cluster = clust
+  cluster = NULL
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ ComBat.NA(
 
 \item{ref.batch}{(Optional) NULL If given, will use the selected batch as a reference for batch adjustment.}
 
-\item{clust}{(Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of clust. Recommended when the number of features is over 30000.}
+\item{cluster}{(Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of cluster. Recommended when the number of features is over 4000. Note this multicore is not implemented for parametric priors, as these adjustments are extremely fast by comparison.}
 }
 \value{
 data A probe x sample genomic measure matrix, adjusted for batch effects.
