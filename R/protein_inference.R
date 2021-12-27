@@ -13,8 +13,7 @@
 #'          \item{\code{JustifiedAccession}}{TRUE if protein has any unique peptide that justify its presence}
 #'      }
 #' @importFrom data.table setDT rbindlist
-#' @importFrom dplyr rename full_join mutate case_when
-#' @importFrom magrittr %>%
+#' @importFrom dplyr rename full_join mutate case_when %>%
 #' @importFrom rlang !! :=
 #'
 #' @export protein_inference

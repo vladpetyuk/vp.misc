@@ -63,7 +63,7 @@
 #'
 #' @importFrom MSnbase exprs pData
 #' @importFrom dplyr mutate select %>% everything
-#' @importFrom stats terms model.matrix
+#' @importFrom stats terms model.matrix p.adjust
 #' @importFrom data.table rbindlist
 #' @importFrom graphics barplot
 #' @import limma

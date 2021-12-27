@@ -14,10 +14,10 @@
 #' @param ... additional arguments passed to \code{\link[graphics]{image}}.
 #'
 #' @export plot_annHeatmap2
-#'
 
 
 #' @importFrom graphics par
+#' @importFrom Heatplus doLegend
 plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
 {
     doRClusLab = !is.null(x$cluster$Row$labels)
@@ -63,13 +63,13 @@ plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
     })
     with(x$dendrogram$Col, if (status == "yes") {
         par(mar = c(0, mmar[2], 3, mmar[4]))
-        Heatplus:::cutplot.dendrogram(dendro, h = x$cluster$Col$cuth, cluscol = x$cluster$Col$col,
+        cutplot.dendrogram(dendro, h = x$cluster$Col$cuth, cluscol = x$cluster$Col$col,
                                       horiz = FALSE, axes = FALSE, xaxs = "i", leaflab = "none",
                                       lwd = x$dendrogram$Col$lwd)
     })
     with(x$dendrogram$Row, if (status == "yes") {
         par(mar = c(mmar[1], 3, mmar[3], 0))
-        Heatplus:::cutplot.dendrogram(dendro, h = x$cluster$Row$cuth, cluscol = x$cluster$Row$col,
+        cutplot.dendrogram(dendro, h = x$cluster$Row$cuth, cluscol = x$cluster$Row$col,
                                       horiz = TRUE, axes = FALSE, yaxs = "i", leaflab = "none",
                                       lwd = x$dendrogram$Row$lwd)
     })
@@ -94,7 +94,7 @@ plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
         else {
             par(mar = c(mmar[1] + 2, 2, mmar[3] + 2, 2))
         }
-        Heatplus::doLegend(x$data$breaks, col = x$data$col, x$layout$legend.side)
+        doLegend(x$data$breaks, col = x$data$col, x$layout$legend.side)
     }
     invisible(x)
 }
@@ -103,7 +103,7 @@ plot_annHeatmap2 <- function (x, na.color='lightgrey', widths, heights, ...)
 
 #' @importFrom stats predict loess
 #' @importFrom graphics rect axis par
-#' @importFrom Heatplus picketPlotControl convAnnData RainbowPastel
+#' @importFrom Heatplus convAnnData RainbowPastel
 picketPlot2 <- function (x, grp = NULL, grpcol, grplabel = NULL,
                          horizontal = TRUE, asIs = FALSE, control = list())
 {
@@ -247,4 +247,10 @@ picketPlot2 <- function (x, grp = NULL, grpcol, grplabel = NULL,
     }
     invisible(panels)
 }
+
+# This function is not exported by Heatplus:
+cutplot.dendrogram <- utils::getFromNamespace("cutplot.dendrogram", "Heatplus")
+
+# In newer versions of Heatplus, this function is not exported:
+picketPlotControl <- utils::getFromNamespace("picketPlotControl", "Heatplus")
 
