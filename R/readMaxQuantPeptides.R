@@ -1,5 +1,3 @@
-
-
 #' Reading MaxQuant Output
 #'
 #' Reads in "peptides.txt" output (or its compressed version) as MSnSet.
@@ -20,7 +18,6 @@
 #' @return \code{MSnSet} object
 #'
 #' @importFrom MSnbase MSnSet
-#' @importFrom plyr ddply
 #' @importFrom utils read.delim
 #'
 #' @export readMaxQuantPeptides
@@ -33,7 +30,8 @@
 #' exprs(m) <- log2(exprs(m))
 #' exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
 #' image_msnset(m)
-#'
+
+
 readMaxQuantPeptides <- function (path=".",
                                   msms_id_only = FALSE,
                                   verbose = 1){
@@ -92,7 +90,7 @@ readMaxQuantPeptides <- function (path=".",
     x.fdata <- x[,id.cols]
 
     rownames(x.fdata) <- x$feature.name
-    ans <- MSnbase::MSnSet(exprs = x.exprs, fData = x.fdata,
+    ans <- MSnSet(exprs = x.exprs, fData = x.fdata,
                            pData = x.pdata)
     return(ans)
 }

@@ -37,5 +37,4 @@ m <- readMaxQuantPeptides(system.file("extdata/MaxQuantPep",
 exprs(m) <- log2(exprs(m))
 exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
 image_msnset(m)
-
 }

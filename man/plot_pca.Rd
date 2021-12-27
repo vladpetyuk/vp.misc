@@ -13,10 +13,12 @@ plot_pca(
   components = 1:2,
   biplot = FALSE,
   biplot_labels = NULL,
-  biplot_label_color = "blue",
-  num_features = 5,
+  standardize = TRUE,
+  num_features = 6L,
   show_NA = TRUE,
   legend_title = phenotype,
+  arrow_args = list(),
+  label_args = list(),
   ...
 )
 }
@@ -47,17 +49,26 @@ x-axis and PC2 on the y-axis. Order matters.}
 \code{fData(eset)} used to label the biplot features. If \code{NULL}
 (default), \code{featureNames(eset)} is used.}
 
-\item{biplot_label_color}{string; the color of the feature labels. Default is
-\code{"blue"}.}
+\item{standardize}{logical; if \code{TRUE} (default), the feature loadings
+and scores are scaled in opposite directions by the standard deviations
+of the principal components. This will produce a biplot similar to
+\code{\link[stats]{biplot.prcomp}}. If \code{FALSE}, the result will
+be similar to \code{\link[stats]{biplot.default}}.}
 
 \item{num_features}{numeric; the number of most influential features from
-each principal component to label. Default is \code{5}.}
+each principal component to label. Default is \code{6}.}
 
 \item{show_NA}{logical; whether to include samples with missing
 phenotype information. Default is \code{TRUE}.}
 
 \item{legend_title}{string; title of the plot legend. Defaults to
 \code{phenodata}.}
+
+\item{arrow_args}{a list of arguments passed to
+\code{\link[ggplot2]{geom_segment}} to modify the biplot arrows.}
+
+\item{label_args}{a list of arguments passed to
+\code{\link[ggrepel]{geom_label_repel}} to modify the biplot labels.}
 
 \item{...}{additional arguments passed to \code{\link[ggplot2]{geom_point}}
 or \code{\link[ggplot2]{geom_text}}, such as \code{size} and \code{pch}.}
@@ -68,7 +79,7 @@ A ggplot object
 \description{
 A convenience function for plotting PCA scatter plot
 for samples in ExpressionSet/MSnSet object. The biplot is essentially the
-ggplot version of \code{\link[stats]{biplot.default}}
+ggplot version of \code{\link[stats]{biplot.prcomp}}.
 }
 \examples{
 library(MSnSet.utils)

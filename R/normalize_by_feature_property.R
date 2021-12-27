@@ -1,18 +1,20 @@
 #' Normalization of LC-MS/MS Data
 #'
-#' Fits a nonparametric trend into relative
-#' abundance data. Any significant (at this point just any)
-#' trend is corrected.
-#' Converts one ExpressionSet/MSnSet to another ExpressionSet/MSnSet.
+#' Fits a nonparametric trend into relative abundance data. Any significant
+#' (at this point just any) trend is corrected. Converts one
+#' ExpressionSet/MSnSet to another ExpressionSet/MSnSet.
 #'
 #' @param eset ExpressionSet/MSnSet object
-#' @param property character the column in the fData that the
-#'              relative intensities regress against.
-#' @param method character. either "lowess" or "loess" at this point.
-#' @param partition_by character. Column name in \code{fData}, according to
-#'                                which features will be partitioned. This is
-#'                                when, for example, normalizing by LC
-#'                                and there are multiple fractions per sample.
+#' @param property character; the column in the fData that the relative
+#'     intensities regress against.
+#' @param method character; either \code{"lowess"} or \code{"loess"}
+#'     at this point.
+#' @param partition_by character; column name in \code{fData}, according to
+#'     which features will be partitioned. This is when, for example,
+#'     normalizing by LC and there are multiple fractions per sample.
+#' @param partition_value one of the values in the \code{partition_by} column
+#'     used to subset `eset`.
+#' @param sample indices of rows used to fit the trend
 #' @param ... passed to \code{lowess} or \code{loess}. We suggest to use span = 0.5 with loess.
 #'
 #' @note So far the only property I have in mind is elution time in
@@ -25,33 +27,32 @@
 #' @export normalize_by_feature_property
 #' @export normalize_by_feature_property_partitioned
 #' @export evaluate_parameter_effect
-#'
 
 
 normalize_by_feature_property <- function(eset,
                                           property,
                                           method=c("lowess","loess"),
                                           ...){
-    # elution time is a typical problem in a label-free LC-MS/MS
-    method <- match.arg(method)
-    o <- order(fData(eset)[[property]])
-    if(method == "lowess"){
-        for(sample in sampleNames(eset)){
-            m <- lowess(fData(eset)[[property]], exprs(eset)[,sample], ...)
-            exprs(eset)[,sample] <- exprs(eset)[,sample] - m$y[order(o)]
-        }
-    }else if(method == "loess"){
-        x <- cbind(fData(eset)[,property,drop=F], exprs(eset))
-        for(sample in sampleNames(eset)){
-            xx <- x[,c(property,sample)]
-            colnames(xx) <- c('x','y')
-            m <- loess(y ~ x, data=xx, ...)
-            exprs(eset)[,sample] <- exprs(eset)[,sample] - predict(m, xx)
-        }
-    }else{
-        warning("method is not defined")
+  # elution time is a typical problem in a label-free LC-MS/MS
+  method <- match.arg(method)
+  o <- order(fData(eset)[[property]])
+  if(method == "lowess"){
+    for(sample in sampleNames(eset)){
+      m <- lowess(fData(eset)[[property]], exprs(eset)[,sample], ...)
+      exprs(eset)[,sample] <- exprs(eset)[,sample] - m$y[order(o)]
     }
-    return(eset)
+  }else if(method == "loess"){
+    x <- cbind(fData(eset)[,property,drop=F], exprs(eset))
+    for(sample in sampleNames(eset)){
+      xx <- x[,c(property,sample)]
+      colnames(xx) <- c('x','y')
+      m <- loess(y ~ x, data=xx, ...)
+      exprs(eset)[,sample] <- exprs(eset)[,sample] - predict(m, xx)
+    }
+  }else{
+    warning("method is not defined")
+  }
+  return(eset)
 }
 
 
@@ -97,27 +98,6 @@ evaluate_parameter_effect <- function(eset,
   grid()
   points(fData(eset)[[property]], bias_i, col="red")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

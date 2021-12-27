@@ -15,6 +15,7 @@
 #'
 #' @importFrom qvalue qvalue
 #' @importFrom DOSE geneInCategory
+#' @importFrom stats p.adjust
 #'
 #' @export subset_by_size
 #'

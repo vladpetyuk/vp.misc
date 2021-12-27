@@ -1,6 +1,6 @@
 
 
-#' @import varSelRF
+#' @importFrom varSelRF varSelRF
 select_features_varSelRF <- function(x, y, ...){
     rfvs <- varSelRF(xdata = x, Class = y,
                      verbose=FALSE,
@@ -31,7 +31,7 @@ select_features_varSelRF <- function(x, y, ...){
 }
 
 
-#' @import Boruta
+#' @importFrom Boruta Boruta getSelectedAttributes
 select_features_Boruta <- function(x, y, ...){
 
 #     # .. add on ..
@@ -66,6 +66,7 @@ select_features_Boruta <- function(x, y, ...){
 
 
 #' @importFrom utils head
+#' @importFrom randomForest importance
 select_features_top <- function(x, y, ...){
     r <- randomForest(x, y, ntree=1000, ...)
     ordr <- order(importance(r), decreasing = TRUE)
@@ -120,9 +121,12 @@ train_model_rf <- function(x, y, ...){
 #'          \item{\code{pred}}{prediction perfomance obtained by
 #'                  \code{ROCR::prediction}}
 #'      }
-#' @import randomForest
+#'
+#' @importFrom randomForest randomForest
 #' @importFrom ROCR prediction performance
 #' @importFrom parallel mclapply detectCores
+#' @importFrom stats predict
+#'
 #' @export rf_modeling
 #'
 #' @examples

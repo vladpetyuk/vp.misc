@@ -48,13 +48,14 @@ see also \url{http://www.ncbi.nlm.nih.gov/pubmed/20831241}
 library("MSnbase")
 Nsam = 20
 Npep = 5
-M <- matrix(rbinom(Nsam*Npep, 1, 0.5), ncol=Nsam)
+set.seed(99)
+M <- matrix(rbinom(Nsam * Npep, 1, 0.5), ncol = Nsam)
 pd <- data.frame(group = gl(2, Nsam/2))
 fd <- data.frame(otherfdata = letters[1:Npep])
 x0 <- MSnSet(M, fd, pd)
-eset_presence_absence(x0, 'group', test='fisher')
-eset_presence_absence(x0, 'group', test='chisq', simulate.p.value=TRUE)
-eset_presence_absence(x0, 'group', test='g')
-eset_presence_absence(x0, 'group', test='binom')
 
+eset_presence_absence(x0, 'group', test = 'fisher')
+eset_presence_absence(x0, 'group', test = 'chisq', simulate.p.value = TRUE)
+eset_presence_absence(x0, 'group', test = 'g')
+eset_presence_absence(x0, 'group', test = 'binom')
 }
