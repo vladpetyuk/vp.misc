@@ -112,8 +112,7 @@ remove_covariate <- function(x, cov_name){
 
 #' @describeIn remove_covariate wrapper around sva::ComBat
 #' @importFrom sva ComBat
-#' @importFrom magrittr "%>%"
-#' @importFrom dplyr select inner_join group_by_at summarize filter pull
+#' @importFrom dplyr select inner_join group_by_at summarize filter pull %>%
 #' @importFrom tidyr gather
 #' @importFrom tibble rownames_to_column
 #' @importFrom Biobase exprs pData exprs<-
@@ -300,8 +299,7 @@ correct_batch_effect_empiricalBayesLM <- function (x, removed_cov_name, retained
 
 
 #' @describeIn remove_covariate wrapper around ComBat.NA
-#' @importFrom magrittr "%>%"
-#' @importFrom dplyr select inner_join group_by_at summarize filter pull
+#' @importFrom dplyr select inner_join group_by_at summarize filter pull %>%
 #' @importFrom tidyr gather
 #' @importFrom tibble rownames_to_column
 #' @importFrom Biobase exprs pData exprs<-
