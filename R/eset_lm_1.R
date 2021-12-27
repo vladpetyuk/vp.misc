@@ -25,6 +25,7 @@
 #'          \item{\code{p.value}}{p-value}
 #'      }
 #' @importFrom Biobase exprs pData featureNames
+#' @importFrom stats p.adjust
 #' @export eset_lm
 #'
 #' @examples
