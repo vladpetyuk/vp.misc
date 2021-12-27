@@ -28,7 +28,7 @@
 #' @return \code{MSnSet} object
 #'
 #' @importFrom MSnbase MSnSet
-#' @importFrom plyr ddply
+#' @importFrom dplyr %>% group_by slice_max ungroup
 #' @importFrom utils read.delim
 #'
 #' @export readMaxQuantProtGroups
@@ -50,8 +50,8 @@
 #' exprs(m) <- log2(exprs(m))
 #' exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
 #' image_msnset(m)
-#'
-#'
+
+
 readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     # no options in the current version
     # use genes for IDs
@@ -107,11 +107,11 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     ibaq.col <- NULL
     if("iBAQ" %in% colnames(x)){
         ibaq.col <- "iBAQ"  # to resolve gene ambiguity in situations when
-                            # we need to select one gene per protein id.
-                            # Since they'll be resolved by iBAQ intensity.
-                            # That ".+" is pretty much a hack to ensure that
-                            # I do not read in columns that have nothing to do
-                            # with samples.
+        # we need to select one gene per protein id.
+        # Since they'll be resolved by iBAQ intensity.
+        # That ".+" is pretty much a hack to ensure that
+        # I do not read in columns that have nothing to do
+        # with samples.
         x <- x[,c(id.cols, ibaq.col, quant.cols)]
     }else{
         msg <- paste("iBAQ setting was not enabled in MaxQuant!","\n",
@@ -144,8 +144,14 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
         gns <- sapply(strsplit(x$`Gene names`, split = ';'), '[', 1)
         x$feature.name <- gns
         # retain genes with higher iBAQ
-        x <- plyr::ddply(.data = x, .variables = ~ feature.name,
-                         .fun = function(d){d[which.max(d$iBAQ),]})
+        # x <- plyr::ddply(.data = x, .variables = ~ feature.name,
+        #                  .fun = function(d){d[which.max(d$iBAQ),]})
+        x <- x %>%
+            group_by(feature.name) %>%
+            slice_max(order_by = iBAQ, n = 1, with_ties = TRUE) %>%
+            ungroup() %>%
+            as.data.frame()
+
     }else{
         # stick with Majority protein IDs (universal)
         mpids <- sapply(strsplit(x$`Majority protein IDs`, split = ';'), '[', 1)
@@ -173,10 +179,12 @@ readMaxQuantProtGroups <- function(path, quantType, verbose=1){
     else
         x.fdata <- x[,id.cols]
     rownames(x.fdata) <- x$feature.name
-    ans <- MSnbase::MSnSet(exprs = x.exprs,
-                           fData = x.fdata,
-                           pData = x.pdata)
+    ans <- MSnSet(exprs = x.exprs,
+                  fData = x.fdata,
+                  pData = x.pdata)
     if (validObject(ans))
         return(ans)
 }
 
+
+utils::globalVariables(c("feature.name", "iBAQ"))
