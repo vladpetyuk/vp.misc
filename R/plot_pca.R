@@ -2,7 +2,7 @@
 #'
 #' A convenience function for plotting PCA scatter plot
 #' for samples in ExpressionSet/MSnSet object. The biplot is essentially the
-#' ggplot version of \code{\link[stats]{biplot.default}}
+#' ggplot version of \code{\link[stats]{biplot.prcomp}}.
 #'
 #' @param eset eset (or most likely eset subclass) object.
 #' @param phenotype \code{NULL} or string; one of \code{colnames(pData(eset))}.
@@ -13,6 +13,11 @@
 #'     If a string is provided, labels will be used instead of points.
 #' @param z_score logical; whether to convert values to Z-Scores by sample.
 #'     Default is \code{TRUE}.
+#' @param standardize logical; if \code{TRUE} (default), the feature loadings
+#'     and scores are scaled in opposite directions by the standard deviations
+#'     of the principal components. This will produce a biplot similar to
+#'     \code{\link[stats]{biplot.prcomp}}. If \code{FALSE}, the result will
+#'     be similar to \code{\link[stats]{biplot.default}}.
 #' @param show_ellipse logical; whether to show the confidence ellipses if
 #'     \code{phenotype} is not \code{NULL}.
 #' @param components numeric; a vector of length two specifying the principal
@@ -22,27 +27,26 @@
 #' @param biplot_labels \code{NULL} or string; the name of a column in
 #'     \code{fData(eset)} used to label the biplot features. If \code{NULL}
 #'     (default), \code{featureNames(eset)} is used.
-#' @param biplot_label_color string; the color of the feature labels. Default is
-#'     \code{"blue"}.
 #' @param num_features numeric; the number of most influential features from
-#'     each principal component to label. Default is \code{5}.
+#'     each principal component to label. Default is \code{6}.
 #' @param show_NA logical; whether to include samples with missing
 #'     phenotype information. Default is \code{TRUE}.
 #' @param legend_title string; title of the plot legend. Defaults to
 #'     \code{phenodata}.
+#' @param arrow_args a list of arguments passed to
+#'     \code{\link[ggplot2]{geom_segment}} to modify the biplot arrows.
+#' @param label_args a list of arguments passed to
+#'     \code{\link[ggrepel]{geom_label_repel}} to modify the biplot labels.
 #' @param ... additional arguments passed to \code{\link[ggplot2]{geom_point}}
 #'     or \code{\link[ggplot2]{geom_text}}, such as \code{size} and \code{pch}.
 #'
 #' @return A ggplot object
 #'
 #'
+#' @import ggplot2
 #' @importFrom Biobase exprs pData fData
-#' @importFrom ggplot2 ggplot aes geom_point geom_text geom_hline geom_vline
-#'     labs scale_x_continuous scale_y_continuous coord_fixed theme_bw arrow
-#'     stat_ellipse guides guide_legend guide_colorbar geom_segment sec_axis
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom stats complete.cases prcomp
-#' @importFrom grid unit
 #'
 #' @export plot_pca
 #'
@@ -65,9 +69,10 @@
 
 plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
                      show_ellipse = TRUE, components = 1:2, biplot = FALSE,
-                     biplot_labels = NULL, biplot_label_color = "blue",
-                     num_features = 5, show_NA = TRUE,
-                     legend_title = phenotype, ...) {
+                     biplot_labels = NULL, standardize = TRUE,
+                     num_features = 6L, show_NA = TRUE,
+                     legend_title = phenotype,
+                     arrow_args = list(), label_args = list(), ...) {
 
   # Handling coloring by phenotype. Do this first, in case
   # rows are removed when show_NA = FALSE
@@ -119,24 +124,26 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
   pca_res <- prcomp(z)
 
   u <- pca_res$x # Scores
-  df.u <- as.data.frame(u[, components])
+  v <- pca_res$rotation # Eigenvectors
 
+  if (standardize) {
+    n <- nrow(u)
+    lam <- pca_res$sdev * sqrt(n)
 
-  # Feature loadings for biplot
-  v <- pca_res$rotation
-
-  # Determine ratio between scale of v and u
-  unsigned.range <- function(x) {
-    c(-1, +1) * abs(range(x, na.rm = TRUE))
+    # Scale u down and v up. Product is still the same
+    u <- t(t(u) / lam)
+    v <- t(t(v) * lam)
   }
 
-  u_range <- apply(u[, components], 2, unsigned.range)
-  v_range <- apply(v[, components], 2, unsigned.range)
+  # Determine ratio between scale of v and u
+  u_range <- apply(u[, components], 2, function(x) abs(range(x)))
+  v_range <- apply(v[, components], 2, function(x) abs(range(x)))
 
   ratio <- max(v_range / u_range) # ratio for scaling v and secondary axes
   v <- v / ratio # scale v
 
-
+  # Data frames for plotting
+  df.u <- as.data.frame(u[, components])
   df.v <- as.data.frame(v[, components])
 
   # Percent of variance explained by each PC
@@ -158,8 +165,8 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
     geom_hline(yintercept = 0, lty = "longdash", color = "darkgrey") +
     geom_vline(xintercept = 0, lty = "longdash", color = "darkgrey") +
     labs(x = axis_labs[1], y = axis_labs[2]) +
-    coord_fixed() +
-    theme_bw()
+    theme_bw() +
+    theme(aspect.ratio = 1)
 
   # 50% confidence ellipse layer first so they are
   # beneath the layer of points or labels.
@@ -213,21 +220,36 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
       df.v$labels <- fData(eset)[top_features, biplot_labels]
     }
 
+    scale_args <- list(expand = expansion(mult = rep(0.1, 2)),
+                       sec.axis = sec_axis(~ . * ratio))
+
+    # Arguments for geom_segment
+    arrow_args <- list(aes(x = x, y = y, xend = xend, yend = yend),
+                       arrow = arrow(length = unit(0.5, "line")),
+                       data = df.v, color = "red3") %>%
+      # Allow user-supplied args to overwrite defaults
+      {c(.[!(names(.) %in% names(arrow_args))], arrow_args)}
+
+    # Arguments for geom_label_repel
+    label_args <- list(mapping = aes(x = xend, y = yend, label = labels),
+                       data = df.v,
+                       max.overlaps = Inf,
+                       min.segment.length = 0,
+                       fill = alpha("white", 0.5)) %>%
+      # Allow user-supplied args to overwrite defaults
+      {c(.[!(names(.) %in% names(label_args))], label_args)}
+
     # Add segments with arrows and text labels
     p <- p +
       # Add extra padding around plot area and secondary axes for v units
-      scale_x_continuous(expand = expansion(mult = rep(0.1, 2)),
-                         sec.axis = sec_axis(~ . * ratio)) +
-      scale_y_continuous(expand = expansion(mult = rep(0.1, 2)),
-                         sec.axis = sec_axis(~ . * ratio)) +
-      geom_segment(aes(x = x, y = y, xend = xend, yend = yend),
-                   arrow = arrow(length = unit(0.5, "line")),
-                   data = df.v, color = "black") +
-      geom_label_repel(aes(x = xend, y = yend, label = labels),
-                       data = df.v, color = biplot_label_color,
-                       size = 3, max.overlaps = Inf,
-                       min.segment.length = unit(0, "pt"),
-                       fill = alpha("white", 0.65))
+      do.call(scale_x_continuous, scale_args) +
+      do.call(scale_y_continuous, scale_args) +
+      do.call(geom_segment, arrow_args) +
+      do.call(geom_label_repel, label_args) +
+      theme(axis.text.y.right = element_text(color = arrow_args[["color"]]),
+            axis.text.x.top = element_text(color = arrow_args[["color"]]),
+            axis.ticks.y.right = element_line(color = arrow_args[["color"]]),
+            axis.ticks.x.top = element_line(color = arrow_args[["color"]]))
   }
 
   return(p)
