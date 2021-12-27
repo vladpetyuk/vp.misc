@@ -1,242 +1,226 @@
-#' Volcano Plot
+#' @title Volcano Plot
 #'
-#' A convenience function for creating a volcano plot.
+#' @description A convenience function for creating a volcano plot.
 #'
-#' @param logFC a numeric vector of the log2 fold-change for each feature.
-#' @param significance a numeric vector of significance values
-#'        (p-value, q-value or adjusted p-value).
-#' @param sig_threshold a numeric value specifying the significance threshold.
-#'        A dashed horizontal line will be drawn at this value. The default
-#'        is \code{NULL}.
-#' @param threshold_line_color the color of the \code{sig_threshold} line.
-#'        Default is \code{"red"}.
-#' @param features a character vector of feature names or \code{NULL} (default).
-#' @param top_n_features the number of top significant features to label on
-#'        the plot if \code{features} is not \code{NULL}. The default is \code{5},
-#'        which will label the top 5 features with a negative log fold-change
-#'        and the top 5 features with a positive log fold-change.
-#' @param feature_labels a character vector with the names of the features to
-#'        be labeled. Any features that should not be labeled must be \code{NA}.
-#' @param metadata a data frame containing information that should be
-#'        accessible by additional layers. Useful for faceting.
-#' @param point_color a color or a vector used to color the points.
-#'        Default is \code{"grey"}.
-#' @param point_size the size of the points. Default is \code{3}.
-#' @param plot_theme the plot theme. Default is \code{theme_bw()}.
-#' @param label_outside_sig_range If \code{sig_threshold} is provided, this
-#'        determines whether labels can be plotted between \code{sig_threshold}
-#'        and 1. Default is \code{FALSE}, so labels will only be plotted in
-#'        the range of significant features.
-#' @param add_space_above if \code{TRUE} (default), additional space will
-#'        be added above the most significant points on the plot. This is useful
-#'        to prevent overcrowding of labels when \code{features} and
-#'        \code{top_n_features} are supplied.
-#' @param ... additional arguments passed to
-#'          \code{\link[ggrepel]{geom_text_repel}}
 #'
-#' @return A ggplot object.
+#' @param df \code{data.frame} or object that can be coerced to a
+#'     \code{data.frame}
+#' @param logFC character; the name of the column in \code{df} containing log2
+#'     fold-changes.
+#' @param pvals character; the name of the column in \code{df} containing
+#'     p-values (adjusted or not).
+#' @param sig_threshold \code{NULL} (default) or numeric between 0 and 1;
+#'     the threshold indicating statistical significance. Creates a dashed
+#'     horizontal line at that value. Any points above this line in the graph
+#'     are statistically significant.
+#' @param label \code{NULL} or character; the name of the column in \code{df}
+#'     used to label the top most significant features. See details for more.
+#' @param num_features numeric; the number of most significant features to
+#'     label. Default is 8.
+#' @param point_args a list of arguments passed to
+#'     \code{\link[ggplot2]{geom_point}}.
+#' @param label_args a list of arguments passed to
+#'     \code{\link[ggrepel]{geom_label_repel}}.
 #'
-#' @importFrom scales trans_new log_breaks pretty_breaks alpha
-#' @importFrom ggplot2 ggplot geom_point aes scale_y_continuous
-#'             theme theme_bw xlim geom_hline expansion
-#' @importFrom ggrepel geom_label_repel
-#' @importFrom dplyr arrange slice_min %>% mutate group_by filter left_join
 #'
-#' @export plot_volcano
+#' @details
+#' \code{sig_threshold} will create a secondary axis if the threshold is not
+#' one of the existing y-axis breaks.
+#'
+#' To label specific features (not top \code{num_features}), \code{label}
+#' needs to be the name of a column where all but the features that will be
+#' labeled are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
+#'
+#'
+#' @return
+#' A ggplot object.
 #'
 #' @examples
+#' library(ggplot2) # for labs
 #' library(MSnSet.utils)
 #' data("cptac_oca")
 #'
-#' res <- limma_a_b(oca.set,
-#'                  model.str = "~ PLATINUM.STATUS + AGE",
-#'                  coef.str = "PLATINUM.STATUS")
+#' # Differential analysis
+#' df <- limma_a_b(oca.set,
+#'                 model.str = "~ PLATINUM.STATUS + AGE",
+#'                 coef.str = "PLATINUM.STATUS")
+#' df$features <- rownames(df) # Add feature names column
 #'
 #' # Base plot
-#' plot_volcano(logFC = res$logFC,
-#'              significance = res$P.Value)
+#' p <- plot_volcano(df, logFC = "logFC", pvals = "P.Value")
+#' p
 #'
-#' # Label top 10 most significant features
-#' plot_volcano(logFC = res$logFC,
-#'              significance = res$P.Value,
-#'              sig_threshold = 0.05,
-#'              features = rownames(res),
-#'              top_n_features = 10)
+#' # Change y-axis title
+#' p + labs(y = "Unadjusted p-value")
 #'
-#' # Label top 5 most significant features and
-#' # color by the sign of the average expression.
-#' plot_volcano(logFC = res$logFC,
-#'              significance = res$P.Value,
-#'              sig_threshold = 0.05,
-#'              features = rownames(res),
-#'              point_color = factor(sign(res$AveExpr)))
+#' # Add dashed line at y = 0.05
+#' plot_volcano(df, logFC = "logFC", pvals = "P.Value",
+#'              sig_threshold = 0.05)
+#'
+#' # Label top 8 most significant features
+#' plot_volcano(df, logFC = "logFC", pvals = "P.Value",
+#'              label = "features")
+#'
+#' # Change point opacity, point size, and color of labels
+#' plot_volcano(df, logFC = "logFC", pvals = "P.Value",
+#'              label = "features",
+#'              point_args = list(alpha = 0.3, size = 3),
+#'              label_args = list(color = "royalblue"))
+#'
+#' @importFrom dplyr %>% rename sym arrange select mutate slice_min left_join
+#' @importFrom ggplot2 ggplot aes labs theme_bw expansion sec_axis
+#'     scale_y_continuous geom_hline
+#' @importFrom ggrepel geom_label_repel
+#' @importFrom scales pretty_breaks alpha trans_new log_breaks
+#'
+#' @export plot_volcano
 
 
-plot_volcano <- function(logFC,
-                         significance,
-                         sig_threshold = NULL,
-                         threshold_line_color = "red",
-                         features = NULL,
-                         top_n_features = 5,
-                         feature_labels = NULL,
-                         metadata = NULL,
-                         point_color = "grey",
-                         point_size = 3,
-                         plot_theme = theme_bw(),
-                         label_outside_sig_range = FALSE,
-                         add_space_above = TRUE,
-                         ...) {
+plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
+                         label = NULL, num_features = 8L,
+                         point_args = list(), label_args = list()) {
 
-  # Check input
-  if (!is.null(features) & !is.null(feature_labels)) {
-    stop("Can not provide both features and feature_labels.")
+  # Check that logFC and pvals are valid
+  if (any(sapply(c(logFC, pvals), is.null))) {
+    stop("logFC and pvals must be strings")
   }
 
-  res <- data.frame(logFC, significance)
-
-  # Add extra columns if they are provided
-  if (!is.null(feature_labels)) {
-    res <- cbind(res, feature_labels)
-  }
-  if (!is.null(features)) {
-    res <- cbind(res, features)
-  }
-  if (!is.null(metadata)) {
-    res <- cbind(res, metadata)
-  }
-  if (!is.null(point_color)) {
-    res <- cbind(res, point_color)
+  # Check that all columns are present in df
+  if (!all(c(logFC, pvals, label) %in% colnames(df))) {
+    stop("One or more column names provided is not present in df")
   }
 
-  # Once ggplot() is called, the data can not be changed
-  # as new layers are added. This sorting is required by the
-  # top n features block.
-  res <- arrange(res, significance)
-
-  y_min = min(significance, na.rm = T)
-  if (add_space_above) {
-    y_min <- ifelse(y_min > 1e-3, 1e-3, y_min)
-    scale_coef <- 2.15
-  } else {
-    scale_coef <- 2
-  }
-  breaks <- signif(10^(pretty_breaks()(0:floor(log10(y_min) * scale_coef))
-                       / 2), 1)
-  x_extreme <- max(abs(range(logFC))) * 1.1
-
-  # Base layer
-  p <- ggplot(data = res)
-
-  # Use horizontal lines instead of grid lines so that
-  # the cutoff can be included in the y-axis
-  if (!is.null(plot_theme$panel.grid$colour)) {
-    for (i in 1:length(breaks)) {
-      p <- p + geom_hline(yintercept = breaks[i],
-                          color = plot_theme$panel.grid$colour,
-                          size = plot_theme$line$size)
-    }
+  # Check that num_features is valid
+  if (!(num_features %in% 1:nrow(df))) {
+    stop("num_features must be an integer between 1 and nrow(df)")
   }
 
-  # Add sig_threshold to breaks, if provided
+  # Check that sig_threshold is valid --- this could be improved
   if (!is.null(sig_threshold)) {
-    breaks <- c(signif(sig_threshold, 1), breaks)
+    if (!is.numeric(sig_threshold) |
+        !(0 < sig_threshold & sig_threshold < 1)) {
+      stop("sig_threshold must be NULL or a value between 0 and 1")
+    }
   }
 
-  # Scatterplot layer
-  if (length(point_color) == 1) {
-    p <- p + geom_point(aes(x = logFC, y = significance),
-                        size = point_size, color = point_color, alpha = 0.5)
-  } else {
-    p <- p + geom_point(aes(x = logFC, y = significance, color = point_color),
-                        size = point_size, alpha = 0.5)
+  # Check that point_args and label_args are valid
+  if (!is.list(point_args) | !is.list(label_args)) {
+    stop("point_args and label_args must be lists. See ?list for help")
   }
 
-  # Format axes
-  log10_rev_trans <- trans_new("log10_rev",
-                               function(x) -log10(x),
-                               function(x) 10^(-x),
-                               breaks = function(x) {
-                                 y <- log_breaks(10)(x)
-                                 rev(y)
-                               },
-                               domain = c(1e-100, Inf))
+  # Rename columns and sort by significance
+  df <- as.data.frame(df) %>%
+    dplyr::rename(logFC = !!sym(logFC),
+                  pvals = !!sym(pvals)) %>%
+    arrange(pvals)
 
+  ## y-axis breaks
+  # log10 transform the minimum value, multiply by 2.16,
+  # and floor it to extend the lower bound. Divide the
+  # sequence from 0 to this value by 2 to partially undo
+  # the 2.16 scaling. Create pretty breaks, undo log10
+  # transform, and round to 1 significant digit. Use curly
+  # braces to prevent piping to first argument.
+  breaks <- min(df$pvals, na.rm = TRUE) %>%
+    ifelse(. > 1e-3, 1e-3, .) %>%
+    {signif(10 ^ (pretty_breaks()(0 : floor(log10(.) * 2.16)) / 2), 1)}
+
+  # y-axis labels
+  labels <- ifelse(breaks > 1e-3,
+                   format(breaks, scientific = FALSE, drop0trailing = TRUE),
+                   format(breaks))
+
+  # Arguments for geom_point
+  point_args <- list(na.rm = TRUE) %>%
+    # Allow user-supplied args to overwrite defaults
+    {c(.[!(names(.) %in% names(point_args))], point_args)}
+
+  # Base plot
+  p <- ggplot(data = df, mapping = aes(x = logFC, y = pvals)) +
+    do.call(what = geom_point, args = point_args) +
+    labs(x = expression(paste("log"[2], "(Fold-Change)")),
+         y = pvals) +
+    theme_bw()
+
+  # Arguments for y-axis/axes
+  scale_args <- list(trans = log10_rev_trans,
+                     breaks = breaks,
+                     labels = labels,
+                     expand = expansion(mult = c(0, 0.05)),
+                     limits = c(1, min(breaks)))
+
+  # If sig_threshold is outside plotting window, set to NULL
+  if (!is.null(sig_threshold)) {
+    if (sig_threshold < min(breaks)) {
+      message("sig_threshold is outside the y-axis range. Setting to NULL")
+      sig_threshold <- NULL
+    }
+  }
+
+  # If significance threshold is not already in breaks, create a
+  # secondary axis. If we were to forcibly include it in the
+  # existing breaks, they would be unevenly spaced and the
+  # horizontal grid lines would look bad.
+  if (!is.null(sig_threshold)) {
+    if (!(sig_threshold %in% breaks)) {
+      # Create a secondary axis
+      scale_args <- c(
+        scale_args,
+        # Identity transform and break at sig_threshold
+        list(sec.axis = sec_axis(trans = ~ .,
+                                 breaks = sig_threshold)
+        )
+      )
+    }
+  }
+
+  # Modify y axis
   p <- p +
-    scale_y_continuous(trans = log10_rev_trans,
-                       breaks = breaks,
-                       limits = c(1, min(breaks)),
-                       expand = expansion(mult = c(0, 0.05))) +
-    xlim(x_extreme*c(-1, +1)) +
-    plot_theme +
-    theme(panel.grid.major.y = element_blank(),
-          panel.grid.minor.y = element_blank())
+    do.call(what = scale_y_continuous, args = scale_args) +
+    # Dashed line indicating significance cutoff.
+    # If NULL, no line is plotted.
+    geom_hline(yintercept = sig_threshold,
+               lty = "longdash")
 
-  # Add dashed line for significance cutoff
-  if(!is.null(sig_threshold)) {
+  # Label the top n_features
+  if (!is.null(label)) {
+
+    # Select top most significant rows to label
+    label_df <- df %>%
+      select(pvals, !!sym(label)) %>%
+      mutate(feature_labels = !!sym(label)) %>%
+      slice_min(order_by = pvals, n = num_features)
+
+    suppressMessages(
+      p$data <- left_join(df, label_df) # update plot data
+    )
+
+    # Arguments for geom_label_repel
+    label_args <- list(
+      mapping = aes(label = feature_labels),
+      fill = alpha(colour = "white", alpha = 0.5), # translucent background
+      min.segment.length = 0,
+      max.overlaps = Inf,
+      na.rm = TRUE
+    ) %>%
+      # Allow user-supplied args to overwrite defaults
+      {c(.[!(names(.) %in% names(label_args))], label_args)}
+
+    # Add labels
     p <- p +
-      geom_hline(yintercept = sig_threshold,
-                 color = threshold_line_color,
-                 lty = "longdash")
+      do.call(what = geom_label_repel, args = label_args)
   }
 
-  # Label top n features or features provided by user
-  if (!is.null(features)) {
-    if(top_n_features < 1) {
-      stop("If features is provided, top_n_features must be at least 1.")
-    } else {
-      # Get top n features
-      # res$features[which(!is.na(res$features))[
-      #   top_n_features + 1:nrow(res)]] <- NA
-      top_feature_labels <- res %>%
-        mutate(logFC_sign = sign(logFC), feature_labels = features) %>%
-        group_by(logFC_sign) %>%
-        slice_min(order_by = significance, n = top_n_features)
-      if (!is.null(sig_threshold)) {
-        top_feature_labels <- top_feature_labels %>%
-          filter(significance < sig_threshold)
-      }
-      res <- left_join(res, top_feature_labels)
-      feature_labels <- res$feature_labels
-    }
-  }
-
-  # Label top n features or user-provided features
-  if (!is.null(feature_labels)) {
-
-    if (!(label_outside_sig_range & is.null(sig_threshold))) {
-      # Only plot labels within range of significant values
-      ylim <- c(-log10(min(sig_threshold, 1)), NA)
-    } else {
-      ylim <- c(NA, NA)
-    }
-
-    p <- p +
-      # Labels with positive logFC plotted to right of x = 0
-      geom_label_repel(aes(x = logFC, y = significance,
-                          label = ifelse(logFC >= 0, feature_labels, NA)),
-                      min.segment.length = 0,
-                      na.rm = TRUE, # silently remove missing values
-                      xlim = c(0, NA),
-                      ylim = ylim,
-                      # Make label box partially transparent
-                      fill = alpha("white", 0.5),
-                      # Remove label box outline
-                      label.size = NA,
-                      ...) +
-      # Labels with negative logFC plotted to left of x = 0
-      geom_label_repel(aes(x = logFC, y = significance,
-                           label = ifelse(logFC < 0, feature_labels, NA)),
-                       min.segment.length = 0,
-                       na.rm = TRUE, # silently remove missing values
-                       xlim = c(NA, 0),
-                       ylim = ylim,
-                       fill = alpha("white", 0.5),
-                       label.size = NA,
-                       ...)
-  }
-
-  p
+  return(p)
 }
 
-utils::globalVariables(c("logFC_sign"))
+
+utils::globalVariables(c(".", "feature_labels"))
+
+
+# More intuitive axis for p-values
+log10_rev_trans <- trans_new("log10_rev",
+                             transform = function(x) -log10(x),
+                             inverse = function(x) 10 ^ (-x),
+                             breaks = function(x) rev(log_breaks(10)(x)))
 

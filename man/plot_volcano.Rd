@@ -5,67 +5,42 @@
 \title{Volcano Plot}
 \usage{
 plot_volcano(
+  df,
   logFC,
-  significance,
+  pvals,
   sig_threshold = NULL,
-  threshold_line_color = "red",
-  features = NULL,
-  top_n_features = 5,
-  feature_labels = NULL,
-  metadata = NULL,
-  point_color = "grey",
-  point_size = 3,
-  plot_theme = theme_bw(),
-  label_outside_sig_range = FALSE,
-  add_space_above = TRUE,
-  ...
+  label = NULL,
+  num_features = 8L,
+  point_args = list(),
+  label_args = list()
 )
 }
 \arguments{
-\item{logFC}{a numeric vector of the log2 fold-change for each feature.}
+\item{df}{\code{data.frame} or object that can be coerced to a
+\code{data.frame}}
 
-\item{significance}{a numeric vector of significance values
-(p-value, q-value or adjusted p-value).}
+\item{logFC}{character; the name of the column in \code{df} containing log2
+fold-changes.}
 
-\item{sig_threshold}{a numeric value specifying the significance threshold.
-A dashed horizontal line will be drawn at this value. The default
-is \code{NULL}.}
+\item{pvals}{character; the name of the column in \code{df} containing
+p-values (adjusted or not).}
 
-\item{threshold_line_color}{the color of the \code{sig_threshold} line.
-Default is \code{"red"}.}
+\item{sig_threshold}{\code{NULL} (default) or numeric between 0 and 1;
+the threshold indicating statistical significance. Creates a dashed
+horizontal line at that value. Any points above this line in the graph
+are statistically significant.}
 
-\item{features}{a character vector of feature names or \code{NULL} (default).}
+\item{label}{\code{NULL} or character; the name of the column in \code{df}
+used to label the top most significant features. See details for more.}
 
-\item{top_n_features}{the number of top significant features to label on
-the plot if \code{features} is not \code{NULL}. The default is \code{5},
-which will label the top 5 features with a negative log fold-change
-and the top 5 features with a positive log fold-change.}
+\item{num_features}{numeric; the number of most significant features to
+label. Default is 8.}
 
-\item{feature_labels}{a character vector with the names of the features to
-be labeled. Any features that should not be labeled must be \code{NA}.}
+\item{point_args}{a list of arguments passed to
+\code{\link[ggplot2]{geom_point}}.}
 
-\item{metadata}{a data frame containing information that should be
-accessible by additional layers. Useful for faceting.}
-
-\item{point_color}{a color or a vector used to color the points.
-Default is \code{"grey"}.}
-
-\item{point_size}{the size of the points. Default is \code{3}.}
-
-\item{plot_theme}{the plot theme. Default is \code{theme_bw()}.}
-
-\item{label_outside_sig_range}{If \code{sig_threshold} is provided, this
-determines whether labels can be plotted between \code{sig_threshold}
-and 1. Default is \code{FALSE}, so labels will only be plotted in
-the range of significant features.}
-
-\item{add_space_above}{if \code{TRUE} (default), additional space will
-be added above the most significant points on the plot. This is useful
-to prevent overcrowding of labels when \code{features} and
-\code{top_n_features} are supplied.}
-
-\item{...}{additional arguments passed to
-\code{\link[ggrepel]{geom_text_repel}}}
+\item{label_args}{a list of arguments passed to
+\code{\link[ggrepel]{geom_label_repel}}.}
 }
 \value{
 A ggplot object.
@@ -73,30 +48,44 @@ A ggplot object.
 \description{
 A convenience function for creating a volcano plot.
 }
+\details{
+\code{sig_threshold} will create a secondary axis if the threshold is not
+one of the existing y-axis breaks.
+
+To label specific features (not top \code{num_features}), \code{label}
+needs to be the name of a column where all but the features that will be
+labeled are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
+}
 \examples{
+library(ggplot2) # for labs
 library(MSnSet.utils)
 data("cptac_oca")
 
-res <- limma_a_b(oca.set,
-                 model.str = "~ PLATINUM.STATUS + AGE",
-                 coef.str = "PLATINUM.STATUS")
+# Differential analysis
+df <- limma_a_b(oca.set,
+                model.str = "~ PLATINUM.STATUS + AGE",
+                coef.str = "PLATINUM.STATUS")
+df$features <- rownames(df) # Add feature names column
 
 # Base plot
-plot_volcano(logFC = res$logFC,
-             significance = res$P.Value)
+p <- plot_volcano(df, logFC = "logFC", pvals = "P.Value")
+p
 
-# Label top 10 most significant features
-plot_volcano(logFC = res$logFC,
-             significance = res$P.Value,
-             sig_threshold = 0.05,
-             features = rownames(res),
-             top_n_features = 10)
+# Change y-axis title
+p + labs(y = "Unadjusted p-value")
 
-# Label top 5 most significant features and
-# color by the sign of the average expression.
-plot_volcano(logFC = res$logFC,
-             significance = res$P.Value,
-             sig_threshold = 0.05,
-             features = rownames(res),
-             point_color = factor(sign(res$AveExpr)))
+# Add dashed line at y = 0.05
+plot_volcano(df, logFC = "logFC", pvals = "P.Value",
+             sig_threshold = 0.05)
+
+# Label top 8 most significant features
+plot_volcano(df, logFC = "logFC", pvals = "P.Value",
+             label = "features")
+
+# Change point opacity, point size, and color of labels
+plot_volcano(df, logFC = "logFC", pvals = "P.Value",
+             label = "features",
+             point_args = list(alpha = 0.3, size = 3),
+             label_args = list(color = "royalblue"))
+
 }
