@@ -33,23 +33,27 @@ evaluate_parameter_effect(
 \arguments{
 \item{eset}{ExpressionSet/MSnSet object}
 
-\item{property}{character the column in the fData that the
-relative intensities regress against.}
+\item{property}{character; the column in the fData that the relative
+intensities regress against.}
 
-\item{method}{character. either "lowess" or "loess" at this point.}
+\item{method}{character; either \code{"lowess"} or \code{"loess"}
+at this point.}
 
 \item{...}{passed to \code{lowess} or \code{loess}. We suggest to use span = 0.5 with loess.}
 
-\item{partition_by}{character. Column name in \code{fData}, according to
-which features will be partitioned. This is
-when, for example, normalizing by LC
-and there are multiple fractions per sample.}
+\item{partition_by}{character; column name in \code{fData}, according to
+which features will be partitioned. This is when, for example,
+normalizing by LC and there are multiple fractions per sample.}
+
+\item{sample}{indices of rows used to fit the trend}
+
+\item{partition_value}{one of the values in the \code{partition_by} column
+used to subset `eset`.}
 }
 \description{
-Fits a nonparametric trend into relative
-abundance data. Any significant (at this point just any)
-trend is corrected.
-Converts one ExpressionSet/MSnSet to another ExpressionSet/MSnSet.
+Fits a nonparametric trend into relative abundance data. Any significant
+(at this point just any) trend is corrected. Converts one
+ExpressionSet/MSnSet to another ExpressionSet/MSnSet.
 }
 \note{
 So far the only property I have in mind is elution time in
