@@ -2,7 +2,9 @@
 ^\.Rproj\.user*$
 ^\.git$
 \.DS_Store
-README.md
+^README.md
 \.gitignore
 ^\.Rproj\.user$
 ^\.github$
+^TODO.md
+^sandbox
