@@ -18,14 +18,12 @@
 #'      }
 #' @importFrom lme4 lmer
 #' @importFrom tibble rownames_to_column
-#' @importFrom magrittr "%>%"
 #' @importFrom dplyr inner_join do select summarize mutate
-#'                   arrange matches group_by
+#'                   arrange matches group_by %>%
 #' @importFrom tidyr gather
 #' @importFrom Biobase exprs pData featureNames
-#' @importFrom Biobase exprs pData featureNames
 #' @importFrom qvalue qvalue
-#' @importFrom stats as.formula anova
+#' @importFrom stats as.formula anova p.adjust
 #'
 #' @export mixed_effects_anova
 #'
