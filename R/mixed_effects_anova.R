@@ -1,6 +1,6 @@
 #' Mixed Effects ANOVA
 #'
-#' A wrapper around lme4::lmer functionality.
+#' A wrapper around \code{\link[lme4]{lmer}} functionality.
 #'
 #' @param m ExpressionSet or MSnSet object
 #' @param alt_model character formulation of alternative model

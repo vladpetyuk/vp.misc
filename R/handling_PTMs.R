@@ -1,19 +1,25 @@
-
 #' PTM Mapping Utilities
 #'
-#' Mapping of PTM location from peptide to fasta file.
+#' Map PTM locations from peptide to protein. Creates new columns that describe
+#' which amino acids are modified and where the modifications occur in the
+#' protein sequences.
 #'
-#' @param ids data.frame object. Must have column containing protein IDs that
-#'            match names in the provided FASTA file. The other column is
-#'            peptide IDs containing flanking AAs in the form \code{X.X...X.X}
-#' @param fasta AAStringSet object. Names must match protein IDs in the
-#'            corresponding column of the `ids` object
+#' @param ids \code{data.frame} object. Must have column containing protein IDs
+#'            that match names in the provided FASTA file. The other column is
+#'            peptide IDs containing flanking AAs in the form \code{X.X...X.X}.
+#' @param fasta \code{\link[Biostrings]{AAStringSet}} object.
+#'        \code{names(fasta)} must match protein IDs in the corresponding column
+#'        of the `ids` object.
 #' @param prot_id_col character. Name of the column with protein IDs in the
 #'        `ids` object.
 #' @param peptide_col character. Name of the column with peptides in the `ids`
 #'        object.
 #' @param mod_char character. Character denoting mapped PTM in peptides.
-#'        Typically "*".
+#'        Typically \code{"*"}.
+#'
+#' @return
+#' \code{data.frame}
+#'
 #' @importFrom dplyr mutate rename inner_join filter select row_number
 #' @importFrom tibble rownames_to_column
 #' @importFrom stringr str_detect str_replace_all str_locate_all str_length
@@ -24,19 +30,25 @@
 #' @export map_PTM_sites
 #'
 #' @examples
+#' # Path to FASTA file
 #' fasta_file_name <- system.file("extdata/FASTAs",
 #'                                "rattus_norvegics_uniprot_2018_09.fasta.gz",
 #'                                package = "MSnSet.utils")
 #' library(Biostrings)
-#' # FASTA
+#' # Create AAStringSet object from FASTA file
 #' fst <- readAAStringSet(fasta_file_name, format="fasta",
 #'                        nrec=-1L, skip=0L, use.names=TRUE)
-#' # extracting UniProt Accessions
+#'
+#' # Extract UniProt Accessions
 #' names(fst) <- sub("^.*\\|(.*)\\|.*$","\\1",names(fst))
 #'
+#' # PTM data
 #' data(phospho_identifications_rat)
 #'
-#' ids_with_sites <- map_PTM_sites(ids, fst, "UniProtAccFull", "Peptide", "*")
+#' # Get protein PTM locations
+#' ids_with_sites <- map_PTM_sites(ids = ids, fasta = fst,
+#'                                 prot_id_col = "UniProtAccFull",
+#'                                 peptide_col = "Peptide", mod_char = "*")
 #'
 
 
@@ -142,60 +154,75 @@ utils::globalVariables(c(".", "AA_STANDARD", "TrimmedPeptide", "x",
 
 #' Resolving ambiguity in PTM mapping.
 #'
-#' Typically the downstream use of data is based on gene symbols. One gene
+#' Typically, the downstream use of data is based on gene symbols. One gene
 #' symbol may map to multiple UniProt or RefSeq IDs corresponding to different
 #' isoforms.
-#' This utility simply retains only the longest isoform per gene.
+#' This utility simply retains the longest isoform per gene.
 #'
-#' @param ids data.frame object. Must contain 3 columns described below.
+#' @param ids \code{data.frame} object. Must contain 3 columns described below.
 #' @param gene_id_col character. Name of the column with gene IDs in the `ids`
 #'        object.
 #' @param isoform_id_col character. Name of the column with protein isoform IDs
 #'        in the `ids` object.
 #' @param isoform_len_col character. Name of the column with protein isoform
-#'        lengths.
+#'        lengths in the `ids` object.
+#'
+#' @return
+#' \code{data.frame}
 #'
 #' @importFrom dplyr mutate rename inner_join filter select row_number
-#'             semi_join distinct
+#'             semi_join distinct one_of
 #' @importFrom tibble rownames_to_column
 #' @importFrom stringr str_detect str_replace_all str_locate_all str_length
 #'             str_sub
 #' @importFrom rlang !! parse_expr
 #' @importFrom purrr map map2
-#' @importFrom tidyselect one_of
 #'
 #' @export keep_longest_isoform_per_gene
 #'
 #' @examples
-#' # Not run
-#' \dontrun{
+#' # Path to FASTA file
 #' fasta_file_name <- system.file("extdata/FASTAs",
 #'                                "rattus_norvegics_uniprot_2018_09.fasta.gz",
 #'                                package = "MSnSet.utils")
+#'
+#' # Create AAStringSet object from FASTA file
 #' library(Biostrings)
-#' # FASTA
 #' fst <- readAAStringSet(fasta_file_name, format="fasta",
 #'                        nrec=-1L, skip=0L, use.names=TRUE)
-#' # extracting UniProt Accessions
-#' names(fst) <- sub("^.*\\|(.*)\\|.*$","\\1",names(fst))
 #'
+#' # Extract UniProt Accessions
+#' names(fst) <- sub("^.*\\|(.*)\\|.*$", "\\1", names(fst))
+#'
+#' # PTM data
 #' data(phospho_identifications_rat)
 #'
-#' ids_with_sites <- map_PTM_sites(ids, fst, "UniProtAccFull", "Peptide", "*")
+#' # Get protein PTM locations
+#' ids_with_sites <- map_PTM_sites(ids = ids, fasta = fst,
+#'                                 prot_id_col = "UniProtAccFull",
+#'                                 peptide_col = "Peptide", mod_char = "*")
 #'
-#' # Adding gene annotation. Note, this is rat data searched against UniProt.
-#' library(dplyr)
+#' # Adding gene annotation. Note: this is rat data searched against UniProt.
 #' # 10116 is rat taxonomy ID
 #' URL <- "http://www.uniprot.org/uniprot/?query=organism:10116&columns=id,genes(PREFERRED)&format=tab"
+#'
+#' library(dplyr)
+#'
+#' # Add GeneMain column
 #' ids_with_sites <- read.delim(URL, check.names = FALSE, stringsAsFactors = FALSE) %>%
 #'    rename(GeneMain = `Gene names  (primary )`,
 #'           UniProtAcc = `Entry`) %>%
 #'    inner_join(ids_with_sites, ., by = "UniProtAcc")
-#' nrow(ids_with_sites)
-#' ids_with_sites <- keep_longest_isoform_per_gene(ids_with_sites,
-#'      "GeneMain", "UniProtAccFull", "ProtLength")
-#' nrow(ids_with_sites)
-#'}
+#' nrow(ids_with_sites) # before
+#'
+#' # Resolve PTM mapping abiguity
+#' ids_with_sites <- keep_longest_isoform_per_gene(
+#'   ids = ids_with_sites, gene_id_col = "GeneMain",
+#'   isoform_id_col = "UniProtAccFull", isoform_len_col = "ProtLength"
+#' )
+#' nrow(ids_with_sites) # after
+#'
+#' @md
 
 keep_longest_isoform_per_gene <- function(ids, gene_id_col, isoform_id_col, isoform_len_col){
 

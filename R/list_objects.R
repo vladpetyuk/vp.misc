@@ -1,5 +1,28 @@
+#' Improved list of objects
+#'
+#' Create a \code{data.frame} containing information about objects in the global
+#' environment.
+#'
+#' @return
+#' \code{data.frame}
+#' \describe{
+#'   \item{\code{Type}}{the object class}
+#'   \item{\code{Size}}{the object size (in bytes)}
+#'   \item{\code{Rows}}{the number of rows, if applicable}
+#'   \item{\code{Columns}}{the number of columns, if applicable}
+#' }
+#'
+#' @param n maximum number of rows to output. Default is 10.
+#' @param ... arguments passed to \code{.ls.objects}.
+#'
+#' @export lsos
+#'
 
-# improved list of objects
+
+lsos <- function(..., n=10) {
+    .ls.objects(..., order.by="Size", decreasing=TRUE, head=TRUE, n=n)
+}
+
 
 .ls.objects <- function (pos = 1, pattern, order.by,
                          decreasing=FALSE, head=FALSE, n=5) {
@@ -24,16 +47,4 @@
 }
 
 utils::globalVariables(c("object.size"))
-
-
-#' Improved list of objects
-#'
-#' Description goes here.
-#'
-#' @param n number of rows to output
-#' @param ... arguments passed to \code{.ls.objects}.
-#' @export lsos
-lsos <- function(..., n=10) {
-    .ls.objects(..., order.by="Size", decreasing=TRUE, head=TRUE, n=n)
-}
 

@@ -3,51 +3,85 @@
 \name{limma_a_b}
 \alias{limma_a_b}
 \alias{limma_gen}
-\title{Wrapper for Limma}
+\title{Wrapper for LIMMA}
 \usage{
 limma_a_b(eset, model.str, coef.str, ...)
 
 limma_gen(eset, model.str, coef.str, ...)
 }
 \arguments{
-\item{eset}{eset (or most likely eset subclass) object}
+\item{eset}{\code{eSet} (or most likely eset subclass) object}
 
-\item{model.str}{character formulation of the model (e.g. "~ a + b")}
+\item{model.str}{character; formulation of the model (e.g. \code{"~ a + b"})}
 
-\item{coef.str}{character coefficient of interest. E.g. "a".
-Either numeric or factor with 2 levels.}
+\item{coef.str}{character; coefficient of interest. One of
+ \code{colnames(pData(eset))}. E.g. \code{"a"}.
+For \code{limma_a_b}, this must be a character or factor with 2 levels
+or a numeric vector. For \code{limma_gen}, this can be a character or
+factor with at least 2 levels or a numeric vector.}
 
-\item{...}{arguments for \code{\link[limma]{lmFit}}}
+\item{...}{arguments passed to \code{\link[limma]{lmFit}}}
 }
 \value{
-data.frame. Basically output of
-     \code{\link[limma]{topTable}} function.
+\code{data.frame}.
+Basically output of the \code{\link[limma]{topTable}} function.
 }
 \description{
-A convenience wrapper for limma
+Convenience wrappers for differential analysis with LIMMA.
+}
+\details{
+\code{limma_a_b} is for either 2-factor ANOVA or linear regression.
+\code{limma_gen} is a more generic version and will return results
+for all the coefficients that match \code{coef.str} pattern. It also
+works the same as \code{limma_a_b} for linear regression.
+
+If performing linear regression, the \code{logFC} column contains the slopes
+of the regression lines and the \code{AveExpr} column contains the
+y-intercepts.
+
+\code{limma_a_b} outputs moderated t-statistics and associated p-values.
+\code{limma_gen} outputs moderated F-statistics and associated p-values
+for a set of contrasts. Also, the columns that begin with the
+\code{coef.str} report the log2 fold-changes. Contrasts are always relative
+to a reference level (if \code{coef.str} is a factor) or the first unique
+entry of \code{coef.str} in terms of alphanumeric order.
+
+\code{\link[MSnSet.utils]{limma_contrasts}} is another LIMMA wrapper for
+testing custom contrasts. It has a separate documentation page.
 }
 \section{Functions}{
 \itemize{
-\item \code{limma_gen}: More generalized approach. The tested variable doesn't
-have to be a factor with 2 levels like in limma_a_b.
+\item \code{limma_gen}: More generalized approach. The tested variable can have
+more than 2 groups, unlike \code{limma_a_b}.
 }}
 
-\note{
-limma_a_b is for either 2-factor ANOVA or linear regression.
-      limma_gen is a more generic version and will return results
-      for all the coefficients that match \code{coef.str} pattern.
-}
 \examples{
 library("MSnSet.utils")
 data("cptac_oca")
-library("limma")
-ee <- oca.set
-ee <- ee[rowSums(!is.na(exprs(ee))) >= 30,]
-model.string <- "~ PLATINUM.STATUS + AGE" # model with covariates
-coef.string <- "PLATINUM.STATUS" # note, only two levels allowed here
 
-res <- limma_a_b(oca.set,
-                 model.str = "~ PLATINUM.STATUS + AGE",
-                 coef.str = "PLATINUM.STATUS")
-head(res)
+# Filter to features detected in at least 30 samples
+ee <- oca.set
+ee <- ee[rowSums(!is.na(exprs(ee))) >= 30, ]
+
+# Note: only two levels are allowed in this case
+res1 <- limma_a_b(ee,
+                  model.str = "~ PLATINUM.STATUS + AGE",
+                  coef.str = "PLATINUM.STATUS")
+head(res1)
+
+# Linear regression
+res2 <- limma_a_b(ee, model.str = "~ AGE", coef.str = "AGE")
+head(res2)
+
+# Multiple levels - "Immunoreactive" is used as the reference level
+res3 <- limma_gen(ee,
+                  model.str = "~ SUBTYPE",
+                  coef.str = "SUBTYPE")
+head(res3)
+
+}
+\seealso{
+\code{\link{limma_contrasts}},
+\code{\link[limma]{topTable}},
+\code{\link[limma]{lmFit}}
 }

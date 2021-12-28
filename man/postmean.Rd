@@ -4,9 +4,7 @@
 \alias{postmean}
 \alias{it.sol}
 \alias{postvar}
-\title{These are helper functions for ComBat.NA
-These functions perform the Bayesian adjustments to the batch effects
-They do this in a iterative way.}
+\title{Helper functions for ComBat.NA}
 \usage{
 postmean(g.hat, g.bar, n, d.star, t2)
 
@@ -38,7 +36,10 @@ postvar(sum2, n, a, b)
 \item{sum2}{internal variable, used in Bayesian estimation of batch effects}
 }
 \description{
-Credit goes to the original authors of the sva package
+These functions perform the Bayesian adjustments to the batch effects
+They do this in a iterative way.
+
+Credit goes to the original authors of the sva package.
 }
 \section{Functions}{
 \itemize{

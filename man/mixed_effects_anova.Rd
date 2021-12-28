@@ -27,7 +27,7 @@ data.frame
      }
 }
 \description{
-A wrapper around lme4::lmer functionality.
+A wrapper around \code{\link[lme4]{lmer}} functionality.
 }
 \examples{
 data(srm_msnset)
