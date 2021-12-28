@@ -34,7 +34,6 @@ library(GOstats)
 library(ReactomePA)
 library(org.Hs.eg.db)
 library(enrichplot)
-library(rvest) # Webscraping
 ```
 
 ```{r init2}
@@ -226,19 +225,6 @@ p <- new("PFAMHyperGParams",
 xpfam <- hyperGTest(p)
 res <- head(summary(xpfam)) # Top 6
 
-# Use rvest package to obtain descriptions for the PFAM terms
-pfam_descr <- lapply(res$Term, 
-                     function(term_i) {
-                       read_html(paste0("https://pfam.xfam.org/family/", 
-                                        term_i)) %>%
-                         html_nodes("h1") %>% 
-                         html_text() %>%
-                         .[grepl("Summary: ", .)]
-                     }) %>% 
-  unlist() %>% 
-  gsub("Summary: (.*)", "\\1", .)
-
-res <- cbind(res, Description = pfam_descr)
 kable(res)
 ```
 

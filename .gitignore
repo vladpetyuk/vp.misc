@@ -1,10 +1,12 @@
 .Rproj.user*
 .Rhistory
 .RData
-vp.misc.Rproj
+MSnSet.utils.Rproj
 .DS_Store
 *purgatory*
 .Rproj.user
 
 # misc files
 Misc/
+/doc/
+/Meta/
