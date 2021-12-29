@@ -1,7 +1,6 @@
 #' Old Volcano Plot
 #'
-#' A convenience function for creating volcano plot. This function is obsolete.
-#' Please use \code{\link[MSnSet.utils]{plot_volcano}} instead.
+#' This function is deprecated. Please use \code{\link{plot_volcano}} instead.
 #'
 #' @param logFC a numeric vector of log2 of fold change for each feature
 #' @param significance a numeric vector of significance values
@@ -50,17 +49,6 @@ plot_volcano_obsolete <- function(logFC,
                          scale_xy = 1,
                          ...
 ){
-
-  # for y scale transform
-  log10_rev_trans <- trans_new(
-    "log10_rev",
-    function(x) -log10(x),
-    function(x) 10^(-x),
-    breaks = function(x) {
-      y <- log_breaks(10)(x)
-      rev(y)},
-    domain = c(1e-100, Inf)
-  )
 
   res <- data.frame(logFC, significance)
   p <- ggplot(res, aes(x=logFC, y=significance)) +

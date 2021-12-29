@@ -3,41 +3,57 @@
 #' Modified version of ComBat, the original ComBat is in the sva package.
 #' Credit goes to the authors of the sva package.
 #'
-#' This is a modified version of ComBat, which can handle when all values in a feature + batch
-#' combination are missing. It does this by ignoring missing values when calculating
-#' prior distributions for the batch effects, and adjusting the values that ARE there, while doing
-#' nothing to values that are missing. Particularly useful in data with many batches, as previously
-#' a feature with only one batch fully missing would have been thrown out before correction.
+#' This is a modified version of ComBat, which can handle when all values in a
+#' feature + batch combination are missing. It does this by ignoring missing
+#' values when calculating prior distributions for the batch effects, and
+#' adjusting the values that ARE there, while doing nothing to values that are
+#' missing. Particularly useful in data with many batches, as previously a
+#' feature with only one batch fully missing would have been thrown out before
+#' correction.
 #'
-#' Can also retain specific variable effects (use mod parameter for this), and estimate the final batch effects
-#' using parametric or non-parametric adjustments (parametric is default). Below is the original documentation from ComBat.
+#' Can also retain specific variable effects (use mod parameter for this), and
+#' estimate the final batch effects using parametric or non-parametric
+#' adjustments (parametric is default). Below is the original documentation
+#' from ComBat.
 #'
-#' ComBat allows users to adjust for batch effects in datasets where the batch covariate is known, using methodology
-#' described in Johnson et al. 2007. It uses either parametric or non-parametric empirical Bayes frameworks for adjusting data for
-#' batch effects.  Users are returned an expression matrix that has been corrected for batch effects. The input
-#' data are assumed to be cleaned and normalized before batch effect removal.
+#' ComBat allows users to adjust for batch effects in datasets where the batch
+#' covariate is known, using methodology described in Johnson et al. 2007. It
+#' uses either parametric or non-parametric empirical Bayes frameworks for
+#' adjusting data for batch effects. Users are returned an expression matrix
+#' that has been corrected for batch effects. The input data are assumed to be
+#' cleaned and normalized before batch effect removal.
 #'
-#' @param dat Genomic measure matrix (dimensions probe x sample) - for example, expression matrix
+#' @param dat Genomic measure matrix (dimensions probe x sample) - for example,
+#'     expression matrix
 #' @param batch {Batch covariate (only one batch allowed)}
-#' @param mod Model matrix for outcome of interest and other covariates besides batch
-#' @param par.prior (Optional) TRUE indicates parametric adjustments will be used, FALSE indicates non-parametric adjustments will be used
-#' @param prior.plots (Optional) TRUE give prior plots with black as a kernel estimate of the empirical batch effect density and red as the parametric
-#' @param mean.only (Optional) FALSE If TRUE ComBat only corrects the mean of the batch effect (no scale adjustment)
-#' @param ref.batch (Optional) NULL If given, will use the selected batch as a reference for batch adjustment.
-#' @param cluster (Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of cluster. Recommended when the number of features is over 4000. Note this multicore is not implemented for parametric priors, as these adjustments are extremely fast by comparison.
+#' @param mod Model matrix for outcome of interest and other covariates besides
+#'     batch
+#' @param par.prior (Optional) TRUE indicates parametric adjustments will be
+#'     used, FALSE indicates non-parametric adjustments will be used
+#' @param prior.plots (Optional) TRUE give prior plots with black as a kernel
+#'     estimate of the empirical batch effect density and red as the parametric
+#' @param mean.only (Optional) FALSE If TRUE ComBat only corrects the mean of
+#'     the batch effect (no scale adjustment)
+#' @param ref.batch (Optional) NULL If given, will use the selected batch as a
+#'     reference for batch adjustment.
+#' @param cluster (Optional) Cluster made using makeCluster. If provided, any
+#'     empirical estimates are computed using the cores of cluster. Recommended
+#'     when the number of features is over 4000. Note this multicore is not
+#'     implemented for parametric priors, as these adjustments are extremely
+#'     fast by comparison.
 #'
-#' @return data A probe x sample genomic measure matrix, adjusted for batch effects.
+#' @return A probe x sample genomic measure matrix, adjusted for batch effects.
 #'
 #' @importFrom limma lmFit
 #' @importFrom invgamma dinvgamma
 #' @importFrom graphics lines par
-#' @importFrom genefilter rowVars
-#' @importFrom stats cor density dnorm model.matrix pf ppoints prcomp predict qgamma qnorm qqline qqnorm qqplot smooth.spline var
+#' @importFrom stats cor density dnorm model.matrix pf ppoints prcomp predict
+#'             qgamma qnorm qqline qqnorm qqplot smooth.spline var
 #' @importFrom utils read.delim
-#' @importFrom parallel clusterApply
+#' @importFrom parallel clusterApply clusterExport
 #'
 #' @export ComBat.NA
-#'
+
 
 ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALSE,
                       prior.plots = FALSE, ref.batch = NULL, cluster = NULL) {
@@ -199,12 +215,14 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
   } else {
     if(!is.null(ref.batch)) {
       ref.dat <- dat[, batches[[ref]]]
-      var.pooled <- rowVars(ref.dat-t(design[batches[[ref]], ]%*%B.hat), na.rm=TRUE)
+      var.pooled <- apply(ref.dat - t(design[batches[[ref]], ] %*% B.hat),
+                          1, var, na.rm = TRUE)
     } else {
       # var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)
 
       # Adapted for NA values
-      var.pooled <- rowVars(dat - t(design %*% B.hat.0), na.rm = TRUE)
+      var.pooled <- apply(dat - t(design %*% B.hat.0),
+                          1, var, na.rm = TRUE)
     }
   }
 
@@ -239,7 +257,7 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     if(mean.only==TRUE) {
       delta.hat <- rbind(delta.hat,rep(1,nrow(s.data)))
     } else {
-      delta.hat <- rbind(delta.hat, rowVars(s.data[,i], na.rm=TRUE))
+      delta.hat <- rbind(delta.hat, apply(s.data[,i], 1, var, na.rm=TRUE))
     }
   }
 
@@ -247,7 +265,7 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
   # gamma.bar <- rowMeans(gamma.hat)
   gamma.bar <- rowMeans(gamma.hat, na.rm = TRUE)
   # t2 <- rowVars(gamma.hat)
-  t2 <- rowVars(gamma.hat, na.rm = TRUE)
+  t2 <- apply(gamma.hat, 1, var, na.rm = TRUE)
 
   # a.prior <- apply(delta.hat, 1, aprior) # FIXME
   # b.prior <- apply(delta.hat, 1, bprior) # FIXME
@@ -457,12 +475,16 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
   return(out)
 }
 
+utils::globalVariables("group")
 
-#' These are helper functions for ComBat.NA
+
+#' @title Helper Functions for ComBat.NA
+#'
+#' @description
 #' These functions compute the shape and rate parameters of the inverse gamma
 #' distribution based on the values delta.hat, which are the multiplicative batch effects.
 #'
-#' Credit goes to the original authors of the sva package
+#' Credit goes to the original authors of the sva package.
 #'
 #' @param delta.hat multiplicative batch effect
 #'
@@ -482,11 +504,13 @@ bprior.na <- function(delta.hat) {
 }
 
 
-#' These are helper functions for ComBat.NA
+#' @title Helper functions for ComBat.NA
+#'
+#' @description
 #' These functions perform the Bayesian adjustments to the batch effects
 #' They do this in a iterative way.
 #'
-#' Credit goes to the original authors of the sva package
+#' Credit goes to the original authors of the sva package.
 #'
 #' @param t2 additive batch effect variance
 #' @param n number of samples in batch
@@ -499,9 +523,11 @@ bprior.na <- function(delta.hat) {
 #' @param b rate parameter
 #' @param conv relative change threshold, determines when to stop iteration
 #' @param sum2 internal variable, used in Bayesian estimation of batch effects
+#'
 postmean <- function(g.hat,g.bar,n,d.star,t2){
   return((t2*n*g.hat + d.star*g.bar) / (t2*n + d.star))
 }
+
 
 #' @describeIn postmean
 #'
@@ -526,6 +552,7 @@ it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
   rownames(adjust) <- c("g.star","d.star")
   return(adjust)
 }
+
 
 #' @describeIn postmean
 #'

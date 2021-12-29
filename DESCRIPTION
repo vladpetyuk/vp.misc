@@ -2,7 +2,7 @@ Package: MSnSet.utils
 Type: Package
 Title: Miscellaneous Functions for Proteomics Data Analysis
 Version: 0.1
-Date: 2015-03-24
+Date: 2021-12-28
 Encoding: UTF-8
 Author: Vladislav Petyuk
 Maintainer: Vladislav Petyuk <petyuk@gmail.com>
@@ -19,8 +19,6 @@ Depends:
 Imports:
     Biobase,
     BiocParallel,
-    Biostrings,
-    bnlearn,
     Boruta,
     data.table, 
     doParallel,
@@ -28,26 +26,22 @@ Imports:
     dplyr,
     FField,
     foreach,
-    genefilter,
     ggplot2,
     ggrepel, 
     glmnet,
     gplots,
-    gtools, 
     Heatplus,
     invgamma,
     iterators,
     limma,
     lme4,
     Matrix, 
-    multcomp,
     outliers,
     parallel,
     pheatmap,
     purrr, 
     qvalue, 
     randomForest,
-    RColorBrewer, 
     reshape2, 
     rlang,
     ROCR,
@@ -58,7 +52,6 @@ Imports:
     sva,
     tibble, 
     tidyr, 
-    tidyselect,
     umap, 
     utils,
     varSelRF,
@@ -67,6 +60,7 @@ Imports:
 Suggests:
     BiocStyle,
     biomaRt,
+    Biostrings,
     clusterProfiler,
     e1071,
     enrichplot,
@@ -76,9 +70,9 @@ Suggests:
     knitr,
     org.Hs.eg.db,
     qpdf,
+    RColorBrewer, 
     ReactomePA,
     rmarkdown,
-    rvest,
     UniProt.ws
 Remotes: cran/heatmap.plus
 VignetteBuilder: knitr

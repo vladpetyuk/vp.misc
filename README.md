@@ -2,8 +2,8 @@ MSnSet.utils
 ======
 
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/workflows/R-CMD-check/badge.svg)](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions)
-  <!-- badges: end -->
+  [![R-CMD-check](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 ## Installation
 Make sure package `devtools` is installed.
@@ -18,7 +18,8 @@ devtools::install_github("PNNL-Comp-Mass-Spec/MSnSet.utils", build_vignettes = T
 ```
 
 ## Description
-This is a collection of misc custom functions.  They are primarily geared towards proteomics/perhaps-other-omics data analysis using `MSnSet` or `ExpressionSet` as data containers.  
+This is a collection of misc custom functions.  They are primarily geared towards proteomics/perhaps-other-omics data analysis using `MSnSet` or `ExpressionSet` as data containers.
+
 * heatmaps
 * colorschemes
 * nested linear models
@@ -26,6 +27,9 @@ This is a collection of misc custom functions.  They are primarily geared toward
 * custom imputation
 * reading of MaxQuant and SkyLine data
 * handling PTM mapping
+* PCA plots
+* volcano plots
+* wrappers for LIMMA differential analysis pipelines
 
 
 Original Location

@@ -37,8 +37,7 @@ to show the names (default 5)}
 plot
 }
 \description{
-A convenience function for creating volcano plot. This function is obsolete.
-Please use \code{\link[MSnSet.utils]{plot_volcano}} instead.
+This function is deprecated. Please use \code{\link{plot_volcano}} instead.
 }
 \examples{
 # Not run

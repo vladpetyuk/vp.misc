@@ -7,12 +7,13 @@
 map_PTM_sites(ids, fasta, prot_id_col, peptide_col, mod_char)
 }
 \arguments{
-\item{ids}{data.frame object. Must have column containing protein IDs that
-match names in the provided FASTA file. The other column is
-peptide IDs containing flanking AAs in the form \code{X.X...X.X}}
+\item{ids}{\code{data.frame} object. Must have column containing protein IDs
+that match names in the provided FASTA file. The other column is
+peptide IDs containing flanking AAs in the form \code{X.X...X.X}.}
 
-\item{fasta}{AAStringSet object. Names must match protein IDs in the
-corresponding column of the `ids` object}
+\item{fasta}{\code{\link[Biostrings]{AAStringSet}} object.
+\code{names(fasta)} must match protein IDs in the corresponding column
+of the `ids` object.}
 
 \item{prot_id_col}{character. Name of the column with protein IDs in the
 `ids` object.}
@@ -21,24 +22,35 @@ corresponding column of the `ids` object}
 object.}
 
 \item{mod_char}{character. Character denoting mapped PTM in peptides.
-Typically "*".}
+Typically \code{"*"}.}
+}
+\value{
+\code{data.frame}
 }
 \description{
-Mapping of PTM location from peptide to fasta file.
+Map PTM locations from peptide to protein. Creates new columns that describe
+which amino acids are modified and where the modifications occur in the
+protein sequences.
 }
 \examples{
+# Path to FASTA file
 fasta_file_name <- system.file("extdata/FASTAs",
                                "rattus_norvegics_uniprot_2018_09.fasta.gz",
                                package = "MSnSet.utils")
 library(Biostrings)
-# FASTA
+# Create AAStringSet object from FASTA file
 fst <- readAAStringSet(fasta_file_name, format="fasta",
                        nrec=-1L, skip=0L, use.names=TRUE)
-# extracting UniProt Accessions
+
+# Extract UniProt Accessions
 names(fst) <- sub("^.*\\\\|(.*)\\\\|.*$","\\\\1",names(fst))
 
+# PTM data
 data(phospho_identifications_rat)
 
-ids_with_sites <- map_PTM_sites(ids, fst, "UniProtAccFull", "Peptide", "*")
+# Get protein PTM locations
+ids_with_sites <- map_PTM_sites(ids = ids, fasta = fst,
+                                prot_id_col = "UniProtAccFull",
+                                peptide_col = "Peptide", mod_char = "*")
 
 }

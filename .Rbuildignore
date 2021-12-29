@@ -8,3 +8,5 @@
 ^\.github$
 ^TODO.md
 ^sandbox
+^doc$
+^Meta$

@@ -3,9 +3,7 @@
 \name{aprior.na}
 \alias{aprior.na}
 \alias{bprior.na}
-\title{These are helper functions for ComBat.NA
-These functions compute the shape and rate parameters of the inverse gamma
-distribution based on the values delta.hat, which are the multiplicative batch effects.}
+\title{Helper Functions for ComBat.NA}
 \usage{
 aprior.na(delta.hat)
 
@@ -15,7 +13,10 @@ bprior.na(delta.hat)
 \item{delta.hat}{multiplicative batch effect}
 }
 \description{
-Credit goes to the original authors of the sva package
+These functions compute the shape and rate parameters of the inverse gamma
+distribution based on the values delta.hat, which are the multiplicative batch effects.
+
+Credit goes to the original authors of the sva package.
 }
 \section{Functions}{
 \itemize{

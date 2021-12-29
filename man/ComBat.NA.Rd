@@ -16,41 +16,57 @@ ComBat.NA(
 )
 }
 \arguments{
-\item{dat}{Genomic measure matrix (dimensions probe x sample) - for example, expression matrix}
+\item{dat}{Genomic measure matrix (dimensions probe x sample) - for example,
+expression matrix}
 
 \item{batch}{{Batch covariate (only one batch allowed)}}
 
-\item{mod}{Model matrix for outcome of interest and other covariates besides batch}
+\item{mod}{Model matrix for outcome of interest and other covariates besides
+batch}
 
-\item{par.prior}{(Optional) TRUE indicates parametric adjustments will be used, FALSE indicates non-parametric adjustments will be used}
+\item{par.prior}{(Optional) TRUE indicates parametric adjustments will be
+used, FALSE indicates non-parametric adjustments will be used}
 
-\item{mean.only}{(Optional) FALSE If TRUE ComBat only corrects the mean of the batch effect (no scale adjustment)}
+\item{mean.only}{(Optional) FALSE If TRUE ComBat only corrects the mean of
+the batch effect (no scale adjustment)}
 
-\item{prior.plots}{(Optional) TRUE give prior plots with black as a kernel estimate of the empirical batch effect density and red as the parametric}
+\item{prior.plots}{(Optional) TRUE give prior plots with black as a kernel
+estimate of the empirical batch effect density and red as the parametric}
 
-\item{ref.batch}{(Optional) NULL If given, will use the selected batch as a reference for batch adjustment.}
+\item{ref.batch}{(Optional) NULL If given, will use the selected batch as a
+reference for batch adjustment.}
 
-\item{cluster}{(Optional) Cluster made using makeCluster. If provided, any empirical estimates are computed using the cores of cluster. Recommended when the number of features is over 4000. Note this multicore is not implemented for parametric priors, as these adjustments are extremely fast by comparison.}
+\item{cluster}{(Optional) Cluster made using makeCluster. If provided, any
+empirical estimates are computed using the cores of cluster. Recommended
+when the number of features is over 4000. Note this multicore is not
+implemented for parametric priors, as these adjustments are extremely
+fast by comparison.}
 }
 \value{
-data A probe x sample genomic measure matrix, adjusted for batch effects.
+A probe x sample genomic measure matrix, adjusted for batch effects.
 }
 \description{
 Modified version of ComBat, the original ComBat is in the sva package.
 Credit goes to the authors of the sva package.
 }
 \details{
-This is a modified version of ComBat, which can handle when all values in a feature + batch
-combination are missing. It does this by ignoring missing values when calculating
-prior distributions for the batch effects, and adjusting the values that ARE there, while doing
-nothing to values that are missing. Particularly useful in data with many batches, as previously
-a feature with only one batch fully missing would have been thrown out before correction.
+This is a modified version of ComBat, which can handle when all values in a
+feature + batch combination are missing. It does this by ignoring missing
+values when calculating prior distributions for the batch effects, and
+adjusting the values that ARE there, while doing nothing to values that are
+missing. Particularly useful in data with many batches, as previously a
+feature with only one batch fully missing would have been thrown out before
+correction.
 
-Can also retain specific variable effects (use mod parameter for this), and estimate the final batch effects
-using parametric or non-parametric adjustments (parametric is default). Below is the original documentation from ComBat.
+Can also retain specific variable effects (use mod parameter for this), and
+estimate the final batch effects using parametric or non-parametric
+adjustments (parametric is default). Below is the original documentation
+from ComBat.
 
-ComBat allows users to adjust for batch effects in datasets where the batch covariate is known, using methodology
-described in Johnson et al. 2007. It uses either parametric or non-parametric empirical Bayes frameworks for adjusting data for
-batch effects.  Users are returned an expression matrix that has been corrected for batch effects. The input
-data are assumed to be cleaned and normalized before batch effect removal.
+ComBat allows users to adjust for batch effects in datasets where the batch
+covariate is known, using methodology described in Johnson et al. 2007. It
+uses either parametric or non-parametric empirical Bayes frameworks for
+adjusting data for batch effects. Users are returned an expression matrix
+that has been corrected for batch effects. The input data are assumed to be
+cleaned and normalized before batch effect removal.
 }
