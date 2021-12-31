@@ -133,7 +133,7 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
   # Arguments for geom_point
   point_args <- list(na.rm = TRUE) %>%
     # Allow user-supplied args to overwrite defaults
-    {c(.[!(names(.) %in% names(point_args))], point_args)}
+    {update_args(old_list = ., new_list = point_args)}
 
   # Base plot
   p <- ggplot(data = df, mapping = aes(x = logFC, y = pvals)) +
@@ -204,7 +204,7 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
       na.rm = TRUE
     ) %>%
       # Allow user-supplied args to overwrite defaults
-      {c(.[!(names(.) %in% names(label_args))], label_args)}
+      {update_args(old_list = ., new_list = label_args)}
 
     # Add labels
     p <- p +

@@ -161,7 +161,7 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
 
   ## Visualization
   # Base plot
-  p <- ggplot(df.u, aes(x = df.u[, 1], y = df.u[, 2], color = colorBy)) +
+  p <- ggplot(data = df.u, mapping = aes(x = df.u[, 1], y = df.u[, 2], color = colorBy)) +
     geom_hline(yintercept = 0, lty = "longdash", color = "darkgrey") +
     geom_vline(xintercept = 0, lty = "longdash", color = "darkgrey") +
     labs(x = axis_labs[1], y = axis_labs[2]) +
@@ -172,7 +172,7 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
   # beneath the layer of points or labels.
   if (show_ellipse & !is.numeric(colorBy)) {
     p <- p +
-      stat_ellipse(aes(fill = colorBy, color = NULL),
+      stat_ellipse(mapping = aes(fill = colorBy, color = NULL),
                    geom = "polygon", type = "norm",
                    level = 0.5, alpha = 0.1, show.legend = TRUE)
   }
@@ -184,7 +184,7 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
   } else {
     labels <- pData(eset)[, label]
     p <- p +
-      geom_text(aes(label = labels), ...)
+      geom_text(mapping = aes(label = labels), ...)
   }
 
   # Set titles for color and fill legend
@@ -224,11 +224,11 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
                        sec.axis = sec_axis(~ . * ratio))
 
     # Arguments for geom_segment
-    arrow_args <- list(aes(x = x, y = y, xend = xend, yend = yend),
+    arrow_args <- list(mapping = aes(x = x, y = y, xend = xend, yend = yend),
                        arrow = arrow(length = unit(0.5, "line")),
                        data = df.v, color = "red3") %>%
       # Allow user-supplied args to overwrite defaults
-      {c(.[!(names(.) %in% names(arrow_args))], arrow_args)}
+      update_args(new_list = arrow_args)
 
     # Arguments for geom_label_repel
     label_args <- list(mapping = aes(x = xend, y = yend, label = labels),
@@ -237,7 +237,8 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
                        min.segment.length = 0,
                        fill = alpha("white", 0.5)) %>%
       # Allow user-supplied args to overwrite defaults
-      {c(.[!(names(.) %in% names(label_args))], label_args)}
+      # {c(.[!(names(.) %in% names(label_args))], label_args)}
+      update_args(new_list = label_args)
 
     # Add segments with arrows and text labels
     p <- p +
