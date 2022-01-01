@@ -26,6 +26,9 @@
 
 update_args <- function(old_list, new_list) {
 
+  # All unique names for ordering
+  all_names <- unique(c(names(old_list), names(new_list)))
+
   # Names only in one list
   old_only <- old_list[setdiff(names(old_list), names(new_list))]
   new_only <- new_list[setdiff(names(new_list), names(old_list))]
@@ -41,11 +44,12 @@ update_args <- function(old_list, new_list) {
     # Combine lists with common elements
     common_args <- map2(.x = old_list_sub, .y = new_list_sub,
                         .f = function(x, y) {
-                          # If x or y is NULL, just return y
-                          if (is.null(y) | is.null(x)) {
+                          # If x or y are not lists (NULL or vectors),
+                          # just return y
+                          if (!is.list(y) | !is.list(x)) {
                             y
                           } else {
-                            # Combine lists. y must be first!
+                            # Combine lists. y must be FIRST!
                             c(y, x)
                           }
                         })
@@ -53,12 +57,12 @@ update_args <- function(old_list, new_list) {
     common_args <- lapply(common_args, function(m) {
       if (is.list(m)) {
         # If m is a list, get the positions of the
-        # first occurrences of each name and subset m
-        y <- names(m)
-        m[match(unique(y), y)]
+        # FIRST occurrences of each name and subset m
+        n <- names(m)
+        m[match(unique(n), n)]
       } else {
-        # If m is a vector, select first element (from new_list_sub)
-        m[1]
+        # If m is a vector, return m
+        m
       }
     })
 
@@ -68,6 +72,6 @@ update_args <- function(old_list, new_list) {
   }
 
   # Updated args
-  return(c(common_args, old_only, new_only))
+  c(common_args, old_only, new_only)[all_names]
 }
 

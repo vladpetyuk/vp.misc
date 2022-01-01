@@ -36,7 +36,8 @@ complex_heatmap(
 )
 }
 \arguments{
-\item{eset}{an \code{eSet} or \code{MSnSet} object.}
+\item{eset}{an object of class \code{\link[Biobase]{eSet}} or
+\code{\link[MSnbase]{MSnSet-class}}.}
 
 \item{clustering_distance}{character; the distance measure used to cluster
 rows and columns. Passed to \code{\link[stats]{dist}}. One of
@@ -105,8 +106,9 @@ annotations.}
 \item{anno_column_colors}{list of custom colors for column annotations
 specified by \code{anno_column}. List names must match one or more names in
 \code{anno_column}. If modifying the colors of a continuous column
-annotation, use \code{\link[circlize]{colorRamp2}} with desired breaks and
-colors. Otherwise, pass a vector of unique colors.}
+annotation, \strong{always use \code{\link[circlize]{colorRamp2}}} with desired
+breaks and colors. Otherwise, pass a vector of unique colors (order
+matters).}
 
 \item{anno_row_colors}{same as \code{anno_column_colors}, but for
 \code{anno_row}.}
@@ -131,9 +133,9 @@ nothing (save to file instead).
 }
 \description{
 A wrapper around functions from
-  \code{\link[ComplexHeatmap]{ComplexHeatmap-package}} that creates
-  expression or correlation heatmaps from \code{eSet} or \code{MSnSet}
-  objects.
+\code{\link[ComplexHeatmap]{ComplexHeatmap-package}} that creates
+expression or correlation heatmaps from \code{eSet} or \code{MSnSet}
+objects.
 }
 \examples{
 # library(MSnSet.utils)
@@ -151,7 +153,19 @@ complex_heatmap(ee, color_range = c(-2, 2))
 # Sample correlation heatmap
 complex_heatmap(ee, heatmap_type = "s")
 
-# Annotate columns by "Type" and "Age"
-complex_heatmap(ee, anno_column = c("Type", "Age"))
+# Annotate columns by "Type" (categorical) and "Age" (continuous)
+# Annotate rows by "isSpike" (logical)
+complex_heatmap(ee, anno_column = c("Type", "Age"),
+                anno_row = "isSpike")
 
+}
+\references{
+Gu, Z., Eils, R., & Schlesner, M. (2016). Complex heatmaps reveal
+patterns and correlations in multidimensional genomic data.
+\emph{Bioinformatics}, 32(18), 2847-2849.
+\url{https://doi.org/10.1093/bioinformatics/btw313}
+
+Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). Circlize
+implements and enhances circular visualization in R. \emph{Bioinformatics},
+30(19), 2811-2812. \url{https://doi.org/10.1093/bioinformatics/btu393}
 }

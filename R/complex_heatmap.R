@@ -7,7 +7,8 @@
 #'   objects.
 #'
 #'
-#' @param eset an \code{eSet} or \code{MSnSet} object.
+#' @param eset an object of class \code{\link[Biobase]{eSet}} or
+#'   \code{\link[MSnbase]{MSnSet-class}}.
 #' @param clustering_distance character; the distance measure used to cluster
 #'   rows and columns. Passed to \code{\link[stats]{dist}}. One of
 #'   (\code{"euclidean"}, \code{"maximum"}, \code{"manhattan"},
@@ -57,8 +58,9 @@
 #' @param anno_column_colors list of custom colors for column annotations
 #'   specified by \code{anno_column}. List names must match one or more names in
 #'   \code{anno_column}. If modifying the colors of a continuous column
-#'   annotation, use \code{\link[circlize]{colorRamp2}} with desired breaks and
-#'   colors. Otherwise, pass a vector of unique colors.
+#'   annotation, **always use \code{\link[circlize]{colorRamp2}}** with desired
+#'   breaks and colors. Otherwise, pass a vector of unique colors (order
+#'   matters).
 #' @param anno_row_colors same as \code{anno_column_colors}, but for
 #'   \code{anno_row}.
 #' @param anno_args list of arguments passed to
@@ -72,7 +74,18 @@
 #'   often.
 #'
 #' @return An object of class \code{\link[ComplexHeatmap]{HeatmapList-class}} or
-#' nothing (save to file instead).
+#'   nothing (save to file instead).
+#'
+#' @references Gu, Z., Eils, R., & Schlesner, M. (2016). Complex heatmaps reveal
+#'   patterns and correlations in multidimensional genomic data.
+#'   *Bioinformatics*, 32(18), 2847-2849.
+#'   \url{https://doi.org/10.1093/bioinformatics/btw313}
+#'
+#'   Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). Circlize
+#'   implements and enhances circular visualization in R. *Bioinformatics*,
+#'   30(19), 2811-2812. \url{https://doi.org/10.1093/bioinformatics/btu393}
+#'
+#' @md
 #'
 #' @import ComplexHeatmap
 #' @importFrom dplyr %>%
@@ -100,8 +113,10 @@
 #' # Sample correlation heatmap
 #' complex_heatmap(ee, heatmap_type = "s")
 #'
-#' # Annotate columns by "Type" and "Age"
-#' complex_heatmap(ee, anno_column = c("Type", "Age"))
+#' # Annotate columns by "Type" (categorical) and "Age" (continuous)
+#' # Annotate rows by "isSpike" (logical)
+#' complex_heatmap(ee, anno_column = c("Type", "Age"),
+#'                 anno_row = "isSpike")
 #'
 
 
@@ -168,7 +183,7 @@ complex_heatmap <- function(
 
   # Check color_range
   if (!is.null(color_range)) {
-    if(!is.numeric(color_range) & length(color_range) == 2) {
+    if(!is.numeric(color_range) | length(color_range) != 2) {
       stop(paste("color_range must be a numeric vector of length 2",
                  "specifying lower and upper bounds for heatmap colors"))
     }
@@ -396,9 +411,9 @@ get_anno_colors <- function(x) {
       {circlize::colorRamp2(breaks = .,
                             colors = rev(scales::viridis_pal()(length(.))))}
   } else if (is.factor(x)) {
-    jet.colors(nlevels(x) + 1)[-1]
+    jet2.colors(nlevels(x))
   } else {
-    jet.colors(length(unique(x)) + 1)[-1]
+    jet2.colors(length(unique(x)))
   }
 
 }
@@ -413,14 +428,13 @@ set_anno_names <- function(x, y) {
   if (!is.function(x)) {
     if (is.factor(y)) {
       names(x) <- levels(y)
-    } else if (is.character(y)) {
+    } else { # character, logical
       y <- unique(y)
       y <- y[!is.na(y)]
       names(x) <- y
     }
-  } else {
-
   }
+
   return(x)
 }
 
@@ -440,8 +454,7 @@ annotate_heatmap <- function(y, anno, anno_names = anno,
   # List of annotation colors
   anno_col <- lapply(as.list(anno_df), get_anno_colors) %>%
     # Replace colors if provided by user
-    {c(.[!(names(.) %in% names(anno_colors))], anno_colors)} %>%
-    .[anno] %>%
+    update_args(anno_colors) %>%
     # Set names on colors
     map2(.x = ., .y = as.list(anno_df), .f = set_anno_names)
 
