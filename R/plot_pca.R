@@ -233,6 +233,7 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
     # Arguments for geom_label_repel
     label_args <- list(mapping = aes(x = xend, y = yend, label = labels),
                        data = df.v,
+                       color = arrow_args[["color"]],
                        max.overlaps = Inf,
                        min.segment.length = 0,
                        fill = alpha("white", 0.5)) %>%
