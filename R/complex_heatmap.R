@@ -76,6 +76,10 @@
 #' @return An object of class \code{\link[ComplexHeatmap]{HeatmapList-class}} or
 #'   nothing (save to file instead).
 #'
+#' @seealso
+#' \url{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap
+#' Complete Reference}
+#'
 #' @references Gu, Z., Eils, R., & Schlesner, M. (2016). Complex heatmaps reveal
 #'   patterns and correlations in multidimensional genomic data.
 #'   *Bioinformatics*, 32(18), 2847-2849.
@@ -94,6 +98,7 @@
 #' @importFrom grDevices bmp jpeg png tiff pdf dev.off
 #' @importFrom purrr map2
 #' @importFrom circlize colorRamp2
+#' @importFrom utils modifyList
 #'
 #' @export complex_heatmap
 #'
@@ -300,7 +305,7 @@ complex_heatmap <- function(
                          title = heatmap_legend_title
                        )
   ) %>%
-    update_args(heatmap_args) # update arguments
+    modifyList(val = heatmap_args, keep.null = TRUE) # update arguments
 
   # Create heatmap
   ht <- do.call(what = Heatmap, args = heatmap_args)
@@ -340,18 +345,18 @@ complex_heatmap <- function(
     # Save heatmap
     do.call(what = save_func, args = save_args)
     # Pass arguments to draw
-    c(update_args(list(object = ht,
-                       merge_legends = TRUE),
-                  draw_args)) %>%
+    c(modifyList(list(object = ht,
+                      merge_legends = TRUE),
+                 val = draw_args, keep.null = TRUE)) %>%
       {do.call(what = draw, args = .)}
     dev.off() # done adding to plot
 
   } else {
     # Draw heatmap in Plots window
     # Pass arguments to draw
-    c(update_args(list(object = ht,
-                       merge_legends = TRUE),
-                  draw_args)) %>%
+    c(modifyList(list(object = ht,
+                      merge_legends = TRUE),
+                 val = draw_args, keep.null = TRUE)) %>%
       {do.call(what = draw, args = .)}
   }
 
@@ -454,7 +459,7 @@ annotate_heatmap <- function(y, anno, anno_names = anno,
   # List of annotation colors
   anno_col <- lapply(as.list(anno_df), get_anno_colors) %>%
     # Replace colors if provided by user
-    update_args(anno_colors) %>%
+    modifyList(val = anno_colors, keep.null = TRUE) %>%
     # Set names on colors
     map2(.x = ., .y = as.list(anno_df), .f = set_anno_names)
 
@@ -470,7 +475,7 @@ annotate_heatmap <- function(y, anno, anno_names = anno,
                       border = TRUE
                     )
   ) %>%
-    update_args(anno_args) # Update arguments
+    modifyList(val = anno_args, keep.null = TRUE) # Update arguments
 
   # Create HeatmapAnnotation object
   return(do.call(what = HeatmapAnnotation, args = anno_args))

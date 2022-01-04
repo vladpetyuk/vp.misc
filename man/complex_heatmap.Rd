@@ -169,3 +169,7 @@ Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). Circlize
 implements and enhances circular visualization in R. \emph{Bioinformatics},
 30(19), 2811-2812. \url{https://doi.org/10.1093/bioinformatics/btu393}
 }
+\seealso{
+\url{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap
+Complete Reference}
+}

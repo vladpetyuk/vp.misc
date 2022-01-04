@@ -1,44 +1,44 @@
 #' PCA Plot
 #'
-#' A convenience function for plotting PCA scatter plot
-#' for samples in ExpressionSet/MSnSet object. The biplot is essentially the
-#' ggplot version of \code{\link[stats]{biplot.prcomp}}.
+#' A convenience function for plotting PCA scatter plot for samples in
+#' ExpressionSet/MSnSet object. The biplot is essentially the ggplot version of
+#' \code{\link[stats]{biplot.prcomp}}.
 #'
 #' @param eset eset (or most likely eset subclass) object.
 #' @param phenotype \code{NULL} or string; one of \code{colnames(pData(eset))}.
-#'     This is used to color the points or labels, if \code{label} is not
-#'     \code{NULL}. Default is \code{NULL}, which colors all points or
-#'     labels black.
-#' @param label \code{NULL} or string; one of \code{colnames(pData(eset))}.
-#'     If a string is provided, labels will be used instead of points.
+#'   This is used to color the points or labels, if \code{label} is not
+#'   \code{NULL}. Default is \code{NULL}, which colors all points or labels
+#'   black.
+#' @param label \code{NULL} or string; one of \code{colnames(pData(eset))}. If a
+#'   string is provided, labels will be used instead of points.
 #' @param z_score logical; whether to convert values to Z-Scores by sample.
-#'     Default is \code{TRUE}.
+#'   Default is \code{TRUE}.
 #' @param standardize logical; if \code{TRUE} (default), the feature loadings
-#'     and scores are scaled in opposite directions by the standard deviations
-#'     of the principal components. This will produce a biplot similar to
-#'     \code{\link[stats]{biplot.prcomp}}. If \code{FALSE}, the result will
-#'     be similar to \code{\link[stats]{biplot.default}}.
+#'   and scores are scaled in opposite directions by the standard deviations of
+#'   the principal components. This will produce a biplot similar to
+#'   \code{\link[stats]{biplot.prcomp}}. If \code{FALSE}, the result will be
+#'   similar to \code{\link[stats]{biplot.default}}.
 #' @param show_ellipse logical; whether to show the confidence ellipses if
-#'     \code{phenotype} is not \code{NULL}.
+#'   \code{phenotype} is not \code{NULL}.
 #' @param components numeric; a vector of length two specifying the principal
-#'     components to plot. Default is \code{c(1, 2)}, which plots PC1 on the
-#'     x-axis and PC2 on the y-axis. Order matters.
+#'   components to plot. Default is \code{c(1, 2)}, which plots PC1 on the
+#'   x-axis and PC2 on the y-axis. Order matters.
 #' @param biplot logical; whether to display the biplot.
 #' @param biplot_labels \code{NULL} or string; the name of a column in
-#'     \code{fData(eset)} used to label the biplot features. If \code{NULL}
-#'     (default), \code{featureNames(eset)} is used.
+#'   \code{fData(eset)} used to label the biplot features. If \code{NULL}
+#'   (default), \code{featureNames(eset)} is used.
 #' @param num_features numeric; the number of most influential features from
-#'     each principal component to label. Default is \code{6}.
-#' @param show_NA logical; whether to include samples with missing
-#'     phenotype information. Default is \code{TRUE}.
+#'   each principal component to label. Default is \code{6}.
+#' @param show_NA logical; whether to include samples with missing phenotype
+#'   information. Default is \code{TRUE}.
 #' @param legend_title string; title of the plot legend. Defaults to
-#'     \code{phenodata}.
+#'   \code{phenodata}.
 #' @param arrow_args a list of arguments passed to
-#'     \code{\link[ggplot2]{geom_segment}} to modify the biplot arrows.
+#'   \code{\link[ggplot2]{geom_segment}} to modify the biplot arrows.
 #' @param label_args a list of arguments passed to
-#'     \code{\link[ggrepel]{geom_label_repel}} to modify the biplot labels.
+#'   \code{\link[ggrepel]{geom_label_repel}} to modify the biplot labels.
 #' @param ... additional arguments passed to \code{\link[ggplot2]{geom_point}}
-#'     or \code{\link[ggplot2]{geom_text}}, such as \code{size} and \code{pch}.
+#'   or \code{\link[ggplot2]{geom_text}}, such as \code{size} and \code{pch}.
 #'
 #' @return A ggplot object
 #'
@@ -47,6 +47,7 @@
 #' @importFrom Biobase exprs pData fData
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom stats complete.cases prcomp
+#' @importFrom utils modifyList
 #'
 #' @export plot_pca
 #'
@@ -228,7 +229,7 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
                        arrow = arrow(length = unit(0.5, "line")),
                        data = df.v, color = "red3") %>%
       # Allow user-supplied args to overwrite defaults
-      update_args(new_list = arrow_args)
+      modifyList(val = arrow_args, keep.null = TRUE)
 
     # Arguments for geom_label_repel
     label_args <- list(mapping = aes(x = xend, y = yend, label = labels),
@@ -238,8 +239,7 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
                        min.segment.length = 0,
                        fill = alpha("white", 0.5)) %>%
       # Allow user-supplied args to overwrite defaults
-      # {c(.[!(names(.) %in% names(label_args))], label_args)}
-      update_args(new_list = label_args)
+      modifyList(val = label_args, keep.null = TRUE)
 
     # Add segments with arrows and text labels
     p <- p +
