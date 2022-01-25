@@ -99,7 +99,7 @@ plot_upset <- function(...,
                        mode = c("distinct", "intersect", "union"),
                        top_n_comb = Inf,
                        scale_set_bars = FALSE,
-                       row_labels = rownames(m),
+                       row_labels = character(0),
                        row_names_gp = gpar(fontsize = 10),
                        annotation_name_gp = gpar(fontsize = 10,
                                                  fontface = "bold"),
@@ -125,6 +125,11 @@ plot_upset <- function(...,
   row_order <- 1:length(ss)
   column_order <- order(-cs)
 
+  # Default row labels
+  if (identical(row_labels, character(0))) {
+    row_labels <- rownames(m)
+  }
+
   # Arguments passed to ComplexHeatmap::Heatmap --------------------------------
 
   # NOTE:
@@ -141,7 +146,7 @@ plot_upset <- function(...,
       row_names_gp = row_names_gp,
       cluster_rows = FALSE, cluster_columns = FALSE,
       row_names_side = "left",
-      row_names_max_width = max_text_width(rownames(x)), # do not trim row names
+      row_names_max_width = max_text_width(row_labels), # do not trim row names
       show_heatmap_legend = FALSE,
       row_order = row_order,
       column_order = column_order,

@@ -9,7 +9,7 @@ plot_upset(
   mode = c("distinct", "intersect", "union"),
   top_n_comb = Inf,
   scale_set_bars = FALSE,
-  row_labels = rownames(m),
+  row_labels = character(0),
   row_names_gp = gpar(fontsize = 10),
   annotation_name_gp = gpar(fontsize = 10, fontface = "bold"),
   heatmap_args = list(),
