@@ -2,7 +2,7 @@
 % Please edit documentation in R/complex_heatmap.R
 \name{complex_heatmap}
 \alias{complex_heatmap}
-\title{Create Annotated Expression or Correlation Heatmaps}
+\title{Annotated Expression or Correlation Heatmaps}
 \usage{
 complex_heatmap(
   eset,
@@ -117,7 +117,7 @@ matters).}
 \code{\link[ComplexHeatmap]{HeatmapAnnotation}}.}
 
 \item{filename}{character; file name used to save the heatmap. Must end in
-(".png", ".bmp", ".jpeg", ".tiff", or ".pdf").}
+(".png", ".bmp", ".jpg", ".tif", or ".pdf").}
 
 \item{height}{numeric; height of heatmap in inches. Default is \code{5}.}
 
@@ -133,9 +133,16 @@ nothing (save to file instead).
 }
 \description{
 A wrapper around functions from
-\code{\link[ComplexHeatmap]{ComplexHeatmap-package}} that creates
-expression or correlation heatmaps from \code{eSet} or \code{MSnSet}
-objects.
+\code{\link[ComplexHeatmap]{ComplexHeatmap-package}}. Creates expression or
+correlation heatmaps from \code{eSet} or \code{MSnSet} objects.
+}
+\note{
+If the \code{hclust} error \verb{NA/NaN/Inf in foreign function call} occurs, it
+means there are cases where two or more features are not present in the
+same samples, so their distances will be \code{NA}, and it is impossible to
+perform hierarchical clustering. If this happens, filter to features
+present in more than 50\% of samples with \code{m[rowMeans(!is.na(m)) > 0.5, ]},
+where \code{m} is the \code{MSnSet}.
 }
 \examples{
 # library(MSnSet.utils)
@@ -162,14 +169,14 @@ complex_heatmap(ee, anno_column = c("Type", "Age"),
 \references{
 Gu, Z., Eils, R., & Schlesner, M. (2016). Complex heatmaps reveal
 patterns and correlations in multidimensional genomic data.
-\emph{Bioinformatics}, 32(18), 2847-2849.
+\emph{Bioinformatics}, \emph{32}(18), 2847-2849.
 \url{https://doi.org/10.1093/bioinformatics/btw313}
 
 Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). Circlize
 implements and enhances circular visualization in R. \emph{Bioinformatics},
-30(19), 2811-2812. \url{https://doi.org/10.1093/bioinformatics/btu393}
+\emph{30}(19), 2811-2812. \url{https://doi.org/10.1093/bioinformatics/btu393}
 }
 \seealso{
-\url{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap
+\href{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap
 Complete Reference}
 }

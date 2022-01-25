@@ -1,10 +1,9 @@
-#' @title Create Annotated Expression or Correlation Heatmaps
+#' @title Annotated Expression or Correlation Heatmaps
 #'
 #'
 #' @description A wrapper around functions from
-#'   \code{\link[ComplexHeatmap]{ComplexHeatmap-package}} that creates
-#'   expression or correlation heatmaps from \code{eSet} or \code{MSnSet}
-#'   objects.
+#'   \code{\link[ComplexHeatmap]{ComplexHeatmap-package}}. Creates expression or
+#'   correlation heatmaps from \code{eSet} or \code{MSnSet} objects.
 #'
 #'
 #' @param eset an object of class \code{\link[Biobase]{eSet}} or
@@ -66,7 +65,7 @@
 #' @param anno_args list of arguments passed to
 #'   \code{\link[ComplexHeatmap]{HeatmapAnnotation}}.
 #' @param filename character; file name used to save the heatmap. Must end in
-#'   (".png", ".bmp", ".jpeg", ".tiff", or ".pdf").
+#'   (".png", ".bmp", ".jpg", ".tif", or ".pdf").
 #' @param height numeric; height of heatmap in inches. Default is \code{5}.
 #' @param width numeric; width of heatmap in inches. Default is \code{5}.
 #' @param draw_args list of arguments passed to
@@ -77,17 +76,24 @@
 #'   nothing (save to file instead).
 #'
 #' @seealso
-#' \url{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap
+#' \href{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap
 #' Complete Reference}
+#'
+#' @note If the `hclust` error `NA/NaN/Inf in foreign function call` occurs, it
+#'   means there are cases where two or more features are not present in the
+#'   same samples, so their distances will be `NA`, and it is impossible to
+#'   perform hierarchical clustering. If this happens, filter to features
+#'   present in more than 50% of samples with `m[rowMeans(!is.na(m)) > 0.5, ]`,
+#'   where `m` is the `MSnSet`.
 #'
 #' @references Gu, Z., Eils, R., & Schlesner, M. (2016). Complex heatmaps reveal
 #'   patterns and correlations in multidimensional genomic data.
-#'   *Bioinformatics*, 32(18), 2847-2849.
+#'   *Bioinformatics*, *32*(18), 2847-2849.
 #'   \url{https://doi.org/10.1093/bioinformatics/btw313}
 #'
 #'   Gu, Z., Gu, L., Eils, R., Schlesner, M., & Brors, B. (2014). Circlize
 #'   implements and enhances circular visualization in R. *Bioinformatics*,
-#'   30(19), 2811-2812. \url{https://doi.org/10.1093/bioinformatics/btu393}
+#'   *30*(19), 2811-2812. \url{https://doi.org/10.1093/bioinformatics/btu393}
 #'
 #' @md
 #'
@@ -313,53 +319,16 @@ complex_heatmap <- function(
 
   # Save or display heatmap ----------------------------------------
   if (!is.null(filename)) {
-    # Type of plot
-    plot_type <- gsub(".*\\.(.*)", "\\1", filename)
-
-    # Output message
-    message(sprintf(
-      "Saving %g x %g in heatmap as %s",
-      round(height, 1), round(width, 1), filename)
-    )
-
-    # File extension
-    file_ext <- gsub(".*\\.(.*)", "\\1", filename)
-
-    # Function to save plot based on file extension
-    save_func <- switch(file_ext,
-                        "png" = png,
-                        "bmp" = bmp,
-                        "jpeg" = jpeg,
-                        "tiff" = tiff,
-                        "pdf" = pdf)
-
-    # Subset arguments to what is valid for save_func
-    save_args <- list(filename = filename,
-                      file = filename,
-                      width = width,
-                      height = height,
-                      res = 200,
-                      units = "in") %>%
-      .[names(.) %in% names(formals(save_func))]
-
-    # Save heatmap
-    do.call(what = save_func, args = save_args)
-    # Pass arguments to draw
-    c(modifyList(list(object = ht,
-                      merge_legends = TRUE),
-                 val = draw_args, keep.null = TRUE)) %>%
-      {do.call(what = draw, args = .)}
-    dev.off() # done adding to plot
-
-  } else {
-    # Draw heatmap in Plots window
-    # Pass arguments to draw
-    c(modifyList(list(object = ht,
-                      merge_legends = TRUE),
-                 val = draw_args, keep.null = TRUE)) %>%
-      {do.call(what = draw, args = .)}
+    # Begin saving
+    save_plot(filename = filename, height = height, width = width)
+    # After plot is created, run dev.off
+    on.exit(expr = dev.off())
   }
-
+  # Create heatmap
+  c(modifyList(list(object = ht,
+                    merge_legends = TRUE),
+               val = draw_args, keep.null = TRUE)) %>%
+    {do.call(what = draw, args = .)}
 }
 
 utils::globalVariables(".")
@@ -461,7 +430,7 @@ annotate_heatmap <- function(y, anno, anno_names = anno,
     # Replace colors if provided by user
     modifyList(val = anno_colors, keep.null = TRUE) %>%
     # Set names on colors
-    map2(.x = ., .y = as.list(anno_df), .f = set_anno_names)
+    map2(.y = as.list(anno_df), .f = set_anno_names)
 
 
   # Arguments passed to HeatmapAnnotation
@@ -481,7 +450,36 @@ annotate_heatmap <- function(y, anno, anno_names = anno,
   return(do.call(what = HeatmapAnnotation, args = anno_args))
 }
 
-utils::globalVariables(".")
 
+# Save non-ggplot objects ----
+save_plot <- function(filename, height, width) {
+  # File extension
+  file_ext <- gsub(".*\\.([a-z])", "\\1", filename)
 
+  # Check file extension
+  file_ext <- match.arg(file_ext,
+                        choices = c("png", "bmp", "jpg", "tif", "pdf"))
+
+  # Function to save plot
+  save_func <- switch(file_ext,
+                      "png" = png,
+                      "bmp" = bmp,
+                      "jpg" = jpeg,
+                      "tif" = tiff,
+                      "pdf" = pdf)
+
+  message(sprintf("Saving %g x %g inch heatmap as %s",
+                  height, width, filename))
+
+  # arguments passed to save_func
+  save_args <- list(filename = filename, file = filename,
+                    width = width, height = height,
+                    res = 300, dpi = 300,
+                    units = "in", compression = "lzw") %>%
+    # Subset to relevant arguments
+    .[names(.) %in% names(formals(save_func))]
+
+  # Begin saving
+  do.call(what = save_func, args = save_args)
+}
 

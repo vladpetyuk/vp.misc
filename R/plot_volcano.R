@@ -2,7 +2,6 @@
 #'
 #' @description A convenience function for creating a volcano plot.
 #'
-#'
 #' @param df \code{data.frame} or object that can be coerced to a
 #'   \code{data.frame}
 #' @param logFC character; the name of the column in \code{df} containing log2
@@ -24,17 +23,17 @@
 #'
 #'
 #' @details \code{sig_threshold} will create a secondary axis if the threshold
-#' is not one of the existing y-axis breaks.
+#'   is not one of the existing y-axis breaks.
 #'
-#' To label specific features (not top \code{num_features}), \code{label} needs
-#' to be the name of a column where all but the features that will be labeled
-#' are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
+#'   To label specific features (not top \code{num_features}), \code{label}
+#'   needs to be the name of a column where all but the features that will be
+#'   labeled are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
 #'
 #'
 #' @return A ggplot object.
 #'
 #' @examples
-#' library(ggplot2) # for labs
+#' library(ggplot2) # additional plot modifications
 #' library(MSnSet.utils)
 #' data("cptac_oca")
 #'
@@ -73,6 +72,7 @@
 #' @importFrom utils modifyList
 #'
 #' @export plot_volcano
+#'
 
 
 plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
@@ -121,8 +121,8 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
   # transform, and round to 1 significant digit. Use curly
   # braces to prevent piping to first argument.
   breaks <- min(df$pvals, na.rm = TRUE) %>%
-    ifelse(. > 1e-3, 1e-3, .) %>%
-    {signif(10 ^ (pretty_breaks()(0 : floor(log10(.) * 2.16)) / 2), 1)}
+    # ifelse(. > 1e-3, 1e-3, .) %>% # set base range
+    {signif(10^(pretty_breaks()(0:floor(log10(.) * 2.16)) / 2), 1)}
 
   # y-axis labels
   labels <- ifelse(breaks > 1e-3,
@@ -174,8 +174,7 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
   }
 
   # Modify y axis
-  p <- p +
-    do.call(what = scale_y_continuous, args = scale_args) +
+  p <- p + do.call(what = scale_y_continuous, args = scale_args) +
     # Dashed line indicating significance cutoff.
     # If NULL, no line is plotted.
     geom_hline(yintercept = sig_threshold,
@@ -206,8 +205,7 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
       modifyList(val = label_args, keep.null = TRUE)
 
     # Add labels
-    p <- p +
-      do.call(what = geom_label_repel, args = label_args)
+    p <- p + do.call(what = geom_label_repel, args = label_args)
   }
 
   return(p)

@@ -50,14 +50,14 @@ A convenience function for creating a volcano plot.
 }
 \details{
 \code{sig_threshold} will create a secondary axis if the threshold
-is not one of the existing y-axis breaks.
+  is not one of the existing y-axis breaks.
 
-To label specific features (not top \code{num_features}), \code{label} needs
-to be the name of a column where all but the features that will be labeled
-are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
+  To label specific features (not top \code{num_features}), \code{label}
+  needs to be the name of a column where all but the features that will be
+  labeled are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
 }
 \examples{
-library(ggplot2) # for labs
+library(ggplot2) # additional plot modifications
 library(MSnSet.utils)
 data("cptac_oca")
 
