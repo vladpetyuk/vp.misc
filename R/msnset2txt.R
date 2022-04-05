@@ -45,13 +45,11 @@ msnset2txt <- function(m, prefix=NULL, sig.dig=3, drop=NULL){
     }else if(drop == "samples"){
         write.table(cbind(out.features, out.exprs),
                     file = paste(prefix, ".txt", sep=""),
-                    quote = FALSE, sep = '\t', row.names = FALSE, na='',
-                    col.names = NA)
+                    quote = FALSE, sep = '\t', row.names = FALSE, na='')
     }else if(drop == "features"){
         write.table(cbind(out.pheno, t(out.exprs)),
                     file = paste(prefix, ".txt", sep=""),
-                    quote = FALSE, sep = '\t', row.names = TRUE, na='',
-                    col.names = NA)
+                    quote = FALSE, sep = '\t', row.names = FALSE, na='')
     }else{
         message("invalid drop argument")
     }
