@@ -2,41 +2,38 @@
 #'
 #' @description A convenience function for creating a volcano plot.
 #'
-#'
 #' @param df \code{data.frame} or object that can be coerced to a
-#'     \code{data.frame}
+#'   \code{data.frame}
 #' @param logFC character; the name of the column in \code{df} containing log2
-#'     fold-changes.
+#'   fold-changes.
 #' @param pvals character; the name of the column in \code{df} containing
-#'     p-values (adjusted or not).
-#' @param sig_threshold \code{NULL} (default) or numeric between 0 and 1;
-#'     the threshold indicating statistical significance. Creates a dashed
-#'     horizontal line at that value. Any points above this line in the graph
-#'     are statistically significant.
+#'   p-values (adjusted or not).
+#' @param sig_threshold \code{NULL} (default) or numeric between 0 and 1; the
+#'   threshold indicating statistical significance. Creates a dashed horizontal
+#'   line at that value. Any points above this line in the graph are
+#'   statistically significant.
 #' @param label \code{NULL} or character; the name of the column in \code{df}
-#'     used to label the top most significant features. See details for more.
+#'   used to label the top most significant features. See details for more.
 #' @param num_features numeric; the number of most significant features to
-#'     label. Default is 8.
+#'   label. Default is 8.
 #' @param point_args a list of arguments passed to
-#'     \code{\link[ggplot2]{geom_point}}.
+#'   \code{\link[ggplot2]{geom_point}}.
 #' @param label_args a list of arguments passed to
-#'     \code{\link[ggrepel]{geom_label_repel}}.
+#'   \code{\link[ggrepel]{geom_label_repel}}.
 #'
 #'
-#' @details
-#' \code{sig_threshold} will create a secondary axis if the threshold is not
-#' one of the existing y-axis breaks.
+#' @details \code{sig_threshold} will create a secondary axis if the threshold
+#'   is not one of the existing y-axis breaks.
 #'
-#' To label specific features (not top \code{num_features}), \code{label}
-#' needs to be the name of a column where all but the features that will be
-#' labeled are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
+#'   To label specific features (not top \code{num_features}), \code{label}
+#'   needs to be the name of a column where all but the features that will be
+#'   labeled are \code{NA}. Also, set \code{num_features} to \code{nrow(df)}.
 #'
 #'
-#' @return
-#' A ggplot object.
+#' @return A ggplot object.
 #'
 #' @examples
-#' library(ggplot2) # for labs
+#' library(ggplot2) # additional plot modifications
 #' library(MSnSet.utils)
 #' data("cptac_oca")
 #'
@@ -69,11 +66,13 @@
 #'
 #' @importFrom dplyr %>% rename sym arrange select mutate slice_min left_join
 #' @importFrom ggplot2 ggplot aes labs theme_bw expansion sec_axis
-#'     scale_y_continuous geom_hline
+#'   scale_y_continuous geom_hline
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom scales pretty_breaks alpha trans_new log_breaks
+#' @importFrom utils modifyList
 #'
 #' @export plot_volcano
+#'
 
 
 plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
@@ -122,8 +121,8 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
   # transform, and round to 1 significant digit. Use curly
   # braces to prevent piping to first argument.
   breaks <- min(df$pvals, na.rm = TRUE) %>%
-    ifelse(. > 1e-3, 1e-3, .) %>%
-    {signif(10 ^ (pretty_breaks()(0 : floor(log10(.) * 2.16)) / 2), 1)}
+    # ifelse(. > 1e-3, 1e-3, .) %>% # set base range
+    {signif(10^(pretty_breaks()(0:floor(log10(.) * 2.16)) / 2), 1)}
 
   # y-axis labels
   labels <- ifelse(breaks > 1e-3,
@@ -133,7 +132,7 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
   # Arguments for geom_point
   point_args <- list(na.rm = TRUE) %>%
     # Allow user-supplied args to overwrite defaults
-    {c(.[!(names(.) %in% names(point_args))], point_args)}
+    modifyList(val = point_args, keep.null = TRUE)
 
   # Base plot
   p <- ggplot(data = df, mapping = aes(x = logFC, y = pvals)) +
@@ -175,8 +174,7 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
   }
 
   # Modify y axis
-  p <- p +
-    do.call(what = scale_y_continuous, args = scale_args) +
+  p <- p + do.call(what = scale_y_continuous, args = scale_args) +
     # Dashed line indicating significance cutoff.
     # If NULL, no line is plotted.
     geom_hline(yintercept = sig_threshold,
@@ -187,7 +185,7 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
 
     # Select top most significant rows to label
     label_df <- df %>%
-      select(pvals, !!sym(label)) %>%
+      # select(pvals, !!sym(label)) %>%
       mutate(feature_labels = !!sym(label)) %>%
       slice_min(order_by = pvals, n = num_features)
 
@@ -204,11 +202,10 @@ plot_volcano <- function(df, logFC, pvals, sig_threshold = NULL,
       na.rm = TRUE
     ) %>%
       # Allow user-supplied args to overwrite defaults
-      {c(.[!(names(.) %in% names(label_args))], label_args)}
+      modifyList(val = label_args, keep.null = TRUE)
 
     # Add labels
-    p <- p +
-      do.call(what = geom_label_repel, args = label_args)
+    p <- p + do.call(what = geom_label_repel, args = label_args)
   }
 
   return(p)

@@ -27,11 +27,11 @@ plot_pca(
 
 \item{phenotype}{\code{NULL} or string; one of \code{colnames(pData(eset))}.
 This is used to color the points or labels, if \code{label} is not
-\code{NULL}. Default is \code{NULL}, which colors all points or
-labels black.}
+\code{NULL}. Default is \code{NULL}, which colors all points or labels
+black.}
 
-\item{label}{\code{NULL} or string; one of \code{colnames(pData(eset))}.
-If a string is provided, labels will be used instead of points.}
+\item{label}{\code{NULL} or string; one of \code{colnames(pData(eset))}. If a
+string is provided, labels will be used instead of points.}
 
 \item{z_score}{logical; whether to convert values to Z-Scores by sample.
 Default is \code{TRUE}.}
@@ -50,16 +50,16 @@ x-axis and PC2 on the y-axis. Order matters.}
 (default), \code{featureNames(eset)} is used.}
 
 \item{standardize}{logical; if \code{TRUE} (default), the feature loadings
-and scores are scaled in opposite directions by the standard deviations
-of the principal components. This will produce a biplot similar to
-\code{\link[stats]{biplot.prcomp}}. If \code{FALSE}, the result will
-be similar to \code{\link[stats]{biplot.default}}.}
+and scores are scaled in opposite directions by the standard deviations of
+the principal components. This will produce a biplot similar to
+\code{\link[stats]{biplot.prcomp}}. If \code{FALSE}, the result will be
+similar to \code{\link[stats]{biplot.default}}.}
 
 \item{num_features}{numeric; the number of most influential features from
 each principal component to label. Default is \code{6}.}
 
-\item{show_NA}{logical; whether to include samples with missing
-phenotype information. Default is \code{TRUE}.}
+\item{show_NA}{logical; whether to include samples with missing phenotype
+information. Default is \code{TRUE}.}
 
 \item{legend_title}{string; title of the plot legend. Defaults to
 \code{phenodata}.}
@@ -77,9 +77,9 @@ or \code{\link[ggplot2]{geom_text}}, such as \code{size} and \code{pch}.}
 A ggplot object
 }
 \description{
-A convenience function for plotting PCA scatter plot
-for samples in ExpressionSet/MSnSet object. The biplot is essentially the
-ggplot version of \code{\link[stats]{biplot.prcomp}}.
+A convenience function for plotting PCA scatter plot for samples in
+ExpressionSet/MSnSet object. The biplot is essentially the ggplot version of
+\code{\link[stats]{biplot.prcomp}}.
 }
 \examples{
 library(MSnSet.utils)
