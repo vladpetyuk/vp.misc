@@ -118,6 +118,8 @@ limma_gen <- function(eset, model.str, coef.str, ...){
     fit.smooth <- eBayes(fit)
     sig <- topTable(fit.smooth, number=nrow(eset),
                     sort.by='none', coef=coef.str)
+    se <- (sqrt(fit.smooth$s2.post) * fit.smooth$stdev.unscaled)[,coef.str]
+    sig$SE <- as.numeric(se)
     return(sig)
 }
 
