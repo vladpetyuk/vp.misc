@@ -159,11 +159,13 @@ lm_for_one <- function(ints, form.alt, form.nul, facs, off) {
         if("(Intercept)" %in% names(coef(mod.alt)))
             effect <- c(0, effect)
         effect <- diff(range(c(effect)))
+        se <- coef(summary(mod.alt))[col.pos, "Std. Error"]
     }else{
         col.pos <- grep(dif.term, names(coef(mod.alt)))
         effect <- coef(mod.alt)[col.pos]
+        se <- coef(summary(mod.alt))[col.pos, "Std. Error"]
     }
-    return(c(effect=effect, F.stat=F.stat, p.value=p.value))
+    return(c(effect=effect, SE = se, F.stat=F.stat, p.value=p.value))
 }
 
 
