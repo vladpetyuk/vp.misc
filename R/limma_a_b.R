@@ -75,21 +75,21 @@
 
 limma_a_b <- function(eset, model.str, coef.str, ...){
 
-    model.formula <- eval(parse(text=model.str), envir=pData(eset))
-    design <- model.matrix( model.formula)
+  model.formula <- eval(parse(text=model.str), envir=pData(eset))
+  design <- model.matrix( model.formula)
 
-    coef.str <- grep(coef.str, colnames(design), value = TRUE)
-    if(length(coef.str) > 1){
-        stop("Multiple matches for coefficient of interest!")
-        stop("Most likely it is factor with > 2 levels.")
-    }
+  coef.str <- grep(coef.str, colnames(design), value = TRUE)
+  if(length(coef.str) > 1){
+    stop("Multiple matches for coefficient of interest!")
+    stop("Most likely it is factor with > 2 levels.")
+  }
 
-    eset <- eset[,as.numeric(rownames(design))]
-    fit <- lmFit(exprs(eset), design, ...)
-    fit.smooth <- eBayes(fit)
-    sig <- topTable(fit.smooth, number=nrow(eset),
-                    sort.by='none', coef=coef.str)
-    return(sig)
+  eset <- eset[,as.numeric(rownames(design))]
+  fit <- lmFit(exprs(eset), design, ...)
+  fit.smooth <- eBayes(fit)
+  sig <- topTable(fit.smooth, number=nrow(eset),
+                  sort.by='none', coef=coef.str)
+  return(sig)
 }
 
 #' @export
@@ -97,29 +97,30 @@ limma_a_b <- function(eset, model.str, coef.str, ...){
 #'                       more than 2 groups, unlike \code{limma_a_b}.
 limma_gen <- function(eset, model.str, coef.str, ...){
 
-    model.formula <- eval(parse(text=model.str), envir=pData(eset))
-    design <- model.matrix( model.formula)
+  model.formula <- eval(parse(text=model.str), envir=pData(eset))
+  design <- model.matrix( model.formula)
 
-    # this malfunctions if coefficient of interest coincided with
-    # suffix of some of the covariates. E.g. Plate and PlateCol.
-    # Testing for Plate is problematic
-    # coef.str <- grep(coef.str, colnames(design), value = TRUE)
+  # this malfunctions if coefficient of interest coincided with
+  # suffix of some of the covariates. E.g. Plate and PlateCol.
+  # Testing for Plate is problematic
+  # coef.str <- grep(coef.str, colnames(design), value = TRUE)
 
-    # a new way
-    # If coef.str is a factor or character, do this
-    if (!(coef.str %in% colnames(design))) {
-        idx <- which(names(attr(design, "contrast")) == coef.str)
-        idx <- attr(design, "assign") == idx
-        coef.str <- colnames(design)[idx]
-    }
+  # a new way
+  # If coef.str is a factor or character, do this
+  if (!(coef.str %in% colnames(design))) {
+    idx <- which(names(attr(design, "contrast")) == coef.str)
+    idx <- attr(design, "assign") == idx
+    coef.str <- colnames(design)[idx]
+  }
 
-    eset <- eset[,as.numeric(rownames(design))]
-    fit <- lmFit(exprs(eset), design, ...)
-    fit.smooth <- eBayes(fit)
-    sig <- topTable(fit.smooth, number=nrow(eset),
-                    sort.by='none', coef=coef.str)
-    se <- (sqrt(fit.smooth$s2.post) * fit.smooth$stdev.unscaled)[,coef.str]
-    sig$SE <- as.numeric(se)
-    return(sig)
+  eset <- eset[,as.numeric(rownames(design))]
+  fit <- lmFit(exprs(eset), design, ...)
+  fit.smooth <- eBayes(fit)
+  sig <- topTable(fit.smooth, number=nrow(eset),
+                  sort.by='none', coef=coef.str)
+  se <- (sqrt(fit.smooth$s2.post) * fit.smooth$stdev.unscaled)[,coef.str]
+  colnames(se) <- paste("se.", colnames(se), sep = "")
+  result <- cbind(se, sig)
+  return(result)
 }
 
