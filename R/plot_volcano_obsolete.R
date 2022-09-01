@@ -16,7 +16,7 @@
 #'
 #' @return plot
 #'
-# # @importFrom FField FFieldPtRep
+#' @importFrom FField FFieldPtRep
 #' @importFrom scales trans_new log_breaks pretty_breaks
 #' @importFrom ggplot2 ggplot geom_point aes scale_y_continuous theme
 #'              theme_bw xlim ylim geom_hline geom_segment geom_text
