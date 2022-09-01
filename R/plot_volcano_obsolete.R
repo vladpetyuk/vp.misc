@@ -16,7 +16,7 @@
 #'
 #' @return plot
 #'
-#' @importFrom FField FFieldPtRep
+# # @importFrom FField FFieldPtRep
 #' @importFrom scales trans_new log_breaks pretty_breaks
 #' @importFrom ggplot2 ggplot geom_point aes scale_y_continuous theme
 #'              theme_bw xlim ylim geom_hline geom_segment geom_text
@@ -82,7 +82,7 @@ plot_volcano_obsolete <- function(logFC,
     # jitter is necessary if the effect size of significances are equal
     xt <- jitter(xt)
     yt <- jitter(yt)
-    coords <- FFieldPtRep(cbind(xt,yt), ...)/100
+    coords <- FField::FFieldPtRep(cbind(xt,yt), ...)/100
     coords$x <- coords$x/scale_xy
     res_names$xff <- scale_from(coords$x, logFC)
     res_names$yff <- 10^(-scale_from(coords$y, -log10(significance)))
