@@ -57,7 +57,9 @@ Imports:
     utils,
     varSelRF,
     WGCNA,
-    xtable
+    xtable,
+    heatmap.plus,
+    FField
 Suggests:
     BiocStyle,
     biomaRt,
@@ -75,6 +77,8 @@ Suggests:
     ReactomePA,
     rmarkdown,
     UniProt.ws
-Remotes: cran/heatmap.plus, cran/FField
+Remotes: 
+    github::cran/heatmap.plus, 
+    github::cran/FField
 VignetteBuilder: knitr
 RoxygenNote: 7.1.2
