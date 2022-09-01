@@ -75,6 +75,6 @@ Suggests:
     ReactomePA,
     rmarkdown,
     UniProt.ws
-Remotes: cran/heatmap.plus
+Remotes: cran/heatmap.plus, cran/FField
 VignetteBuilder: knitr
 RoxygenNote: 7.1.2
