@@ -26,7 +26,6 @@ Imports:
     doParallel,
     DOSE,
     dplyr,
-    FField,
     foreach,
     ggplot2,
     ggrepel, 
