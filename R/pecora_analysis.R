@@ -189,7 +189,7 @@ pecora_plot <- function(m, chosen_feature, treatment_string = NULL,
                               gp = gpar(col = "black", fontsize = 11)))
 
     p <- ggplot(plot_df, aes(x = Condition, y = value, color = peptide_group, alpha = alpha)) + geom_point() +
-      ggtitle(chosen_feature) + annotation_custom(grob) + xlab(treatment_string) +
+      ggtitle(paste0(chosen_feature, ",  Protein: ", chosen_protein)) + annotation_custom(grob) + xlab(treatment_string) +
       ylab("Log Intensity") + guides(alpha = "none") +
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_abline(intercept = allothers_lm$coefficients[[1]],

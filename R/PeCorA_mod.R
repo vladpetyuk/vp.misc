@@ -15,6 +15,7 @@
 #' @return PeCorA results table.
 #'
 #' @importFrom stats lm
+#' @importFrom dplyr n
 #'
 
 

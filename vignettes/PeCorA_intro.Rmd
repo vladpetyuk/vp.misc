@@ -23,9 +23,6 @@ opts_chunk$set(size='tiny')
 
 ```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library(MSnSet.utils)
-library(dplyr)
-library(tidyr)
-
 ## Load an msnset here which includes a "Protein" column in fData.
 data("PeCorA_msnset")
 ```
