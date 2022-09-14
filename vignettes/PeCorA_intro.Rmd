@@ -27,7 +27,7 @@ library(dplyr)
 library(tidyr)
 
 ## Load an msnset here which includes a "Protein" column in fData.
-load("PeCorA_msnset.RData")
+data("PeCorA_msnset")
 ```
 
 
@@ -42,7 +42,7 @@ the original PeCorA.
 m <- pecora_analysis(m, "gpath_quantile", c("APOE", "BIN1"))
 
 ## The result is stored in fData.
-View(fData(m))
+#View(fData(m))
 
 ```
 
@@ -53,7 +53,7 @@ Running PeCorA again will add new results to fData.
 m <- pecora_analysis(m, "gpath", c("APOE", "BIN1"), median_mod = FALSE)
 
 ## The result is stored in fData.
-View(fData(m))
+# View(fData(m))
 
 ## If an old result is found, it is overwritten.
 m <- pecora_analysis(m, "gpath", c("APOE", "BIN1"), median_mod = TRUE)
@@ -69,7 +69,7 @@ to the same protein using the median.
 
 
 ```{r}
-pecora_plot(m, "LVDQALLTMDTYLGQFPDIK", "gpath_quantile", median_mod = T)
+pecora_plot(m, "LGADMEDVCGR", "gpath", median_mod = F)
 
 ```
 
