@@ -16,8 +16,6 @@
 #'
 #' @importFrom stats lm
 #'
-#' @export PeCorA_mod
-#'
 
 
 PeCorA_mod <- function (t, median_mod = FALSE) {

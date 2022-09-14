@@ -38,6 +38,9 @@ lowering the degrees of freedom in the linear model to a more accurate number, a
 to the same protein are not independent observations. By default the value is `FALSE`, which matches
 the original PeCorA.
 
+PeCorA will estimate the significance of interaction between the peptides mapping to a protein
+and the treatment variable supplied. 
+
 ```{r}
 m <- pecora_analysis(m, "gpath_quantile", c("APOE", "BIN1"))
 

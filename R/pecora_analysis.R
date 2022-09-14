@@ -166,7 +166,7 @@ pecora_plot <- function(m, chosen_feature, treatment_string = NULL,
 
     p <- ggplot(plot_df, aes(x = Condition, y = value, fill = peptide_group)) +
       geom_boxplot(outlier.shape = NA) +
-      ggtitle(chosen_feature) + annotation_custom(grob) +
+      ggtitle(paste0(chosen_feature, ",  Protein: ", chosen_protein)) + annotation_custom(grob) +
       xlab(treatment_string) + ylab("Log Intensity") +
       theme(plot.title = element_text(hjust = 0.5))
 
