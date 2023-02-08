@@ -97,16 +97,20 @@ rrollup_a_feature_set <- function(mat, rollBy, rollFun, verbose){
         # Change infinite values to NA
         maxVals[is.infinite(maxVals)] <- NA
 
+        # use unique and non-NA values for outlier detection
+        uniqueMaxVals <- unique(maxVals[!is.na(maxVals)])
+
         if(nrow(mat) > 2){
-            maxVals <- maxVals + rnorm(length(maxVals), 0, 10*.Machine$double.eps)
-            while(grubbs.test(maxVals)$p.value < 0.05 &
-                  sum(!is.na(maxVals)) > 2){
-                i <- which(maxVals == outliers::outlier(maxVals))
-                maxVals[i] <- NA
+            while(grubbs.test(uniqueMaxVals)$p.value < 0.05 &
+                  sum(!is.na(uniqueMaxVals)) > 2){
+                i <- which(uniqueMaxVals == outliers::outlier(uniqueMaxVals))
+                uniqueMaxVals[i] <- NA
             }
         }
+
+        retained_idx <- maxVals %in% uniqueMaxVals
+        mat <- mat[retained_idx, , drop = FALSE]
         # protein abundance estimates
-        mat <- mat[!is.na(maxVals), , drop = FALSE]
         protProfile <- apply(mat, 2, median, na.rm=TRUE)
     } else {
         # The output should be a named vector,
