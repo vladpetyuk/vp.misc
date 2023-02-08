@@ -108,6 +108,9 @@ rrollup_a_feature_set <- function(mat, rollBy, rollFun, verbose){
             }
         }
 
+        # drop NA value
+        uniqueMaxVals <- uniqueMaxVals[!is.na(uniqueMaxVals)]
+
         retained_idx <- maxVals %in% uniqueMaxVals
         mat <- mat[retained_idx, , drop = FALSE]
         # protein abundance estimates
