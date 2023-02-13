@@ -11,8 +11,8 @@ heatmap.3(
   col.ramp = bluered,
   z.transf = c(FALSE, TRUE),
   breaks = seq(-1, +1, length = 100),
-  linkage = c("average", "ward.D", "ward.D2", "single", "complete", "mcquitty",
-    "median", "centroid"),
+  linkage = c("average", "ward.D", "ward.D2", "single", "complete", "mcquitty", "median",
+    "centroid"),
   nLabLim = 30,
   ...
 )

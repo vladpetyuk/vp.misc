@@ -37,20 +37,20 @@ and inverse "RdYlBu".
 }
 \section{Functions}{
 \itemize{
-\item \code{blue.colors}: based on RColorBrewer "Blues"
+\item \code{blue.colors()}: based on RColorBrewer "Blues"
 
-\item \code{dusk.colors}: based on reverse of RColorBrewer "RdYlBu".
+\item \code{dusk.colors()}: based on reverse of RColorBrewer "RdYlBu".
 Looks like a dusk.
 
-\item \code{hot.colors}: based on Matlab's "hot"
+\item \code{hot.colors()}: based on Matlab's "hot"
 
-\item \code{hot2.colors}: similar to Matlab's "hot"
+\item \code{hot2.colors()}: similar to Matlab's "hot"
 
-\item \code{jet.colors}: based on Matlab's "jet"
+\item \code{jet.colors()}: based on Matlab's "jet"
 
-\item \code{jet2.colors}: similar to Matlab's "jet"
+\item \code{jet2.colors()}: similar to Matlab's "jet"
+
 }}
-
 \examples{
 
 ## Linear

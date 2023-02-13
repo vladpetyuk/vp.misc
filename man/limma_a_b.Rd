@@ -51,10 +51,10 @@ testing custom contrasts. It has a separate documentation page.
 }
 \section{Functions}{
 \itemize{
-\item \code{limma_gen}: More generalized approach. The tested variable can have
+\item \code{limma_gen()}: More generalized approach. The tested variable can have
 more than 2 groups, unlike \code{limma_a_b}.
-}}
 
+}}
 \examples{
 library("MSnSet.utils")
 data("cptac_oca")

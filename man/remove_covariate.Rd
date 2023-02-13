@@ -86,16 +86,16 @@ effects from the data.
 }
 \section{Functions}{
 \itemize{
-\item \code{correct_batch_effect}: wrapper around sva::ComBat
+\item \code{correct_batch_effect()}: wrapper around sva::ComBat
 
-\item \code{remove_batch_effect}: A flexible batch correction function
+\item \code{remove_batch_effect()}: A flexible batch correction function
 
-\item \code{correct_batch_effect_empiricalBayesLM}: An empirical Bayesian approach to batch correction
+\item \code{correct_batch_effect_empiricalBayesLM()}: An empirical Bayesian approach to batch correction
 with discrete or continuous covariates
 
-\item \code{correct_batch_effect_NA}: wrapper around ComBat.NA
-}}
+\item \code{correct_batch_effect_NA()}: wrapper around ComBat.NA
 
+}}
 \note{
 The algorithm essentially uses an LM. The reason for re-inventing the
 wheel is presense of missing values in proteomics datasets more then usual.

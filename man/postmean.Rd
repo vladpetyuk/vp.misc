@@ -43,8 +43,8 @@ Credit goes to the original authors of the sva package.
 }
 \section{Functions}{
 \itemize{
-\item \code{it.sol}: 
+\item \code{it.sol()}: 
 
-\item \code{postvar}: 
+\item \code{postvar()}: 
+
 }}
-
