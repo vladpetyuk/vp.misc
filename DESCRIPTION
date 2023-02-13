@@ -81,4 +81,4 @@ Remotes:
     github::cran/heatmap.plus, 
     github::cran/FField
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
