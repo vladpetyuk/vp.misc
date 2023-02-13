@@ -27,7 +27,7 @@
 #' xlab ylab element_text element_blank
 #' element_rect element_text scale_fill_gradient
 #'
-#' @importFrom scales trans_new pretty_breaks
+#' @importFrom scales trans_new pretty_breaks scientific_format
 #'
 #'
 #' @importFrom stringr str_detect str_replace_all str_locate_all str_length
