@@ -34,6 +34,7 @@
 #'             str_sub
 #' @importFrom rlang !! parse_expr
 #' @importFrom purrr map map_chr map2
+#' @importFrom rlang sym
 #'
 #' @export peptide_significance_map
 #'
@@ -51,7 +52,7 @@ peptide_significance_map <- function(x, accession, p_val_from,
                                      ...){
 
   x <- x %>%
-    filter(accession == !!accession) %>%
+    filter(!!rlang::sym(name_from) == !!accession) %>%
     mutate(Length = Last_AA - First_AA + 1) %>%
     arrange(First_AA, -Length)
 
