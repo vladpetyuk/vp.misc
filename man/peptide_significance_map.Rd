@@ -21,7 +21,10 @@ peptide_significance_map(
 
 \item{p_val_from}{character. Name of the column in `fData` with p-values.}
 
-\item{type}{character. Different ways of representing p-values.}
+\item{type}{character. Different ways of representing p-values.
+Types are: "continuous" - continuous color scheme,
+"discrete" - discrete color scheme,
+"y" - p-values shown on y-axis akin Manhattan plot.}
 
 \item{name_from}{character. Column in `fData` that `accession` is taken from.
 Typically it is "accession".}
@@ -36,6 +39,38 @@ Mapping peptides onto the protein sequence with showing statisical significance.
 }
 \examples{
 
-# need to add peptide-level MSnSet
+data("peptide_count_data")
+
+library(msmsTests)
+
+
+alt.f <- "y ~ group + 1"
+null.f <- "y ~ 1"
+div <- colSums(exprs(peptide_count_data)) # normalization factor
+res <- msms.glm.qlll(peptide_count_data, alt.f, null.f, div=div)
+res$p.val.adj <- p.adjust(res$p.value, "BH")
+
+# adding significance metrics
+f_data <- fData(peptide_count_data)
+f_data$P.Value <- res[featureNames(peptide_count_data),"p.value"]
+f_data$adj.P.Val <- res[featureNames(peptide_count_data),"p.val.adj"]
+fData(peptide_count_data) <- f_data
+
+# Path to FASTA file
+fasta <- system.file("extdata/FASTAs",
+                     "H_sapiens_UniProt_SPROT_2021-06-20.fasta.gz",
+                     package = "MSnSet.utils")
+
+peptide_count_data <- map_peptide_position(peptide_count_data,
+                                           fasta,
+                                           accession_col = "protein",
+                                           peptide_col = "Sequence")
+
+peptide_significance_map(fData(peptide_count_data),
+                         "sp|O15240|VGF_HUMAN",
+                         name_from = "protein",
+                         "adj.P.Val",
+                         type = "y")
+
 
 }
