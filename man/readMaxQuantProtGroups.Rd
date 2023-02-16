@@ -11,7 +11,7 @@ readMaxQuantProtGroups(path, quantType, verbose = 1)
 It should be in "{raw files folder}/combined/txt"}
 
 \item{quantType}{character Defines pattern what type of column to
-use for quantificaiton. 
+use for quantificaiton.
 E.g. "LFQ intensity" or "Ratio H/L normalized".}
 
 \item{verbose}{numeric controls the text output}
@@ -44,7 +44,7 @@ iBAQ option must be enabled in MaxQuant analysis because it is used
 
 # label-free data
 m <- readMaxQuantProtGroups(system.file("extdata/MaxQuant",
-                                         package="vp.misc"),
+                                         package="MSnSet.utils"),
                             quantType="LFQ intensity")
 exprs(m) <- log2(exprs(m))
 exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
@@ -52,11 +52,9 @@ image_msnset(m)
 
 # O18/O16 data
 m <- readMaxQuantProtGroups(system.file("extdata/MaxQuant_O18",
-                                         package="vp.misc"),
+                                         package="MSnSet.utils"),
                             quantType="Ratio H/L normalized")
 exprs(m) <- log2(exprs(m))
 exprs(m) <- sweep(exprs(m), 1, rowMeans(exprs(m), na.rm=TRUE), '-')
 image_msnset(m)
-
-
 }

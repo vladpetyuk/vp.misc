@@ -18,16 +18,16 @@ mixed_effects_anova(m, alt_model, test_factor, order_by = c("none", "p-value"))
 \value{
 data.frame
      \describe{
-         \item{\code{feature}}{protein or feature names in general. 
+         \item{\code{feature}}{protein or feature names in general.
          Should be as in sampleNames(m).}
          \item{\code{p.val}}{ANOVA p-value}
          \item{\code{p.adj}}{Benjamini-Hochberg adjusted p-value}
-         \item{\code{q.val}}{q-value. 
+         \item{\code{q.val}}{q-value.
          Parameters for qvalue() are: lambda=0.05, pi0.method="bootstrap"}
      }
 }
 \description{
-A wrapper around lme4::lmer functionality.
+A wrapper around \code{\link[lme4]{lmer}} functionality.
 }
 \examples{
 data(srm_msnset)
@@ -40,8 +40,8 @@ msnset$PrepBatch <- as.factor(msnset$PrepBatch)
 # subject.type - fixed effect
 # match.group - random effect affecting the intercept
 # PlateCol - another random effect influencing intercept
-out <- mixed_effects_anova(msnset, 
-                           alt_model="~ subject.type + (1|match.group) + (1|PrepBatch)", 
+out <- mixed_effects_anova(msnset,
+                           alt_model="~ subject.type + (1|match.group) + (1|PrepBatch)",
                            test_factor="subject.type",
                            order_by="p-value")
 head(out)

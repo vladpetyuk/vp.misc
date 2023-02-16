@@ -9,7 +9,7 @@ msnset2txt(m, prefix = NULL, sig.dig = 3, drop = NULL)
 \arguments{
 \item{m}{MSnSet object}
 
-\item{prefix}{character. All three text file names will 
+\item{prefix}{character. All three text file names will
 start with this prefix. By default, the R object name.}
 
 \item{sig.dig}{number of significant digits in expression data.

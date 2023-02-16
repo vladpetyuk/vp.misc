@@ -13,9 +13,8 @@ readSkyLinePRR(file)
 \code{\link[MSnbase]{MSnSet}} object
 }
 \description{
-Reads SkyLine ouput file "Peptide Ratio Results.csv" as MSnSet
+Reads SkyLine output file "Peptide Ratio Results.csv" as MSnSet
 }
 \examples{
 \dontrun{#to be filled}
-
 }

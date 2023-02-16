@@ -10,8 +10,8 @@ output:
 <!--
 %\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{WGCNA example}
-%\VignetteKeyword{vp.mics}
-%\VignettePackage{vp.misc}
+%\VignetteKeyword{MSnSet.utils}
+%\VignettePackage{MSnSet.utils}
 -->
 
 
@@ -30,9 +30,8 @@ available at [UCLA web-site](https://labs.genetics.ucla.edu/horvath/Coexpression
 ```{r init, message=FALSE, warning=FALSE, results='hide'}
 library(WGCNA)
 options(stringsAsFactors = FALSE)
-enableWGCNAThreads()
 disableWGCNAThreads() # on RStudio for some reason multithreading does not work
-library(vp.misc)
+library(MSnSet.utils)
 ```
 
 ## Data as MSnSet object
@@ -100,7 +99,7 @@ sign obviosly does not matter and genes with +1 correlation as close to
 each other as -1 correlation. In case of (recommended) signed correlation
 the adjacency (or 1 - distance) is calculated as
 `adjacency = (0.5*(1+cor))^power`.
-```{r adjacency, cache=TRUE}
+```{r adjacency}
 adjacency.mat <- adjacency(t(exprs(oca.set)), power = softPower, type="signed")
 ```
 The gene-gene adjacencies converted to topological overlap. This helps to 
@@ -114,7 +113,7 @@ Finally adjacency or its analog, topological overlap, converted to distance.
 dissTOM = 1-TOM
 ```
 Calling base R `hclust` function to perform hierarchical clustering.
-```{r clustering, cache=TRUE}
+```{r clustering}
 geneTree <- hclust(as.dist(dissTOM), method = "average")
 ```
 Plot the resulting clustering tree
@@ -280,7 +279,11 @@ dotplot(xx)
 
 ```{r reactome_summary, message=FALSE, warning=FALSE}
 library(dplyr)
-head(summary(xx) %>% dplyr::select(-geneID)) %>% kable()
+summary(xx) %>% 
+  dplyr::select(-geneID) %>% 
+  group_by(Cluster) %>% 
+  slice_min(order_by = p.adjust, n = 3) %>% 
+  kable()
 ```
 
 

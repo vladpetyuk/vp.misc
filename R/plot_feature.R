@@ -1,11 +1,11 @@
 #' Plotting Individual Protein (Feature)
-#' 
+#'
 #' The simplest way to plot an abundace profile.
-#' 
+#'
 #' @param m MSnSet or ExpressionSet object
 #' @param feature Name of the feature to plot. Should be in featureNames(m).
-#' @param feature_name_col Name of the column in fData(m) that 
-#'                         should contain name of the feature. 
+#' @param feature_name_col Name of the column in fData(m) that
+#'                         should contain name of the feature.
 #'                         The default value is NULL and matches feature
 #'                         against featureNames(m).
 #' @param color_by One of the varLabels(m) that will be used to color points.
@@ -13,33 +13,40 @@
 #' @param order_by One of the varLabels(m) for ordering points.
 #'                 Defaul is `color_by`. If no ordering desired use NULL.
 #' @export plot_feature
-#' 
-#' @examples 
+#'
+#' @importFrom MSnbase pData fData exprs featureNames
+#' @importFrom ggplot2 ggplot aes geom_point theme_bw theme ggtitle aes_string
+#' @importFrom dplyr select mutate order_by %>% arrange_at
+#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr gather
+#'
+#' @examples
 #' data(cptac_oca)
 #' plot_feature(oca.set, "NP_001077422.1")
 #' plot_feature(oca.set, "NP_001077422.1", color_by = "Batch")
 #' plot_feature(oca.set, "NP_001077422.1", color_by = "Batch", order_by = "iTRAQ_ID")
 #' plot_feature(oca.set, feature = "NP_001077422.1", feature_name_col = "RefSeq", color_by = "Batch")
 
-plot_feature <- function(m, feature, feature_name_col=NULL, 
+
+plot_feature <- function(m, feature, feature_name_col=NULL,
                          color_by=NULL, order_by=color_by){
-    
+
     p_data <- pData(m) %>%
         select(-matches("sample name")) %>% # in case sample.name already exists
         rownames_to_column("sample name")
-    
+
     if(is.null(feature_name_col))
         feature_names <- featureNames(m)
     else
         feature_names <- fData(m)[[feature_name_col]]
-    
+
     idx <- feature == feature_names
     if(sum(idx) == 0)
         stop("No such feature found in the object.")
     if(sum(idx) > 1)
-        stop("Multiple features found satisfying the criteria. 
+        stop("Multiple features found satisfying the criteria.
         Handing of multiple features is not yet implemented.")
-    
+
     x <- exprs(m[idx,]) %>%
         as.data.frame() %>%
         gather(`sample name`, abundance) %>%
@@ -57,3 +64,6 @@ plot_feature <- function(m, feature, feature_name_col=NULL,
         p <- p + aes_string(color = color_by)
     p
 }
+
+utils::globalVariables(c("sample name", "abundance", "."))
+

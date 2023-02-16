@@ -1,61 +1,86 @@
-Package: vp.misc
+Package: MSnSet.utils
 Type: Package
-Title: Miscellaneous functions used by Vlad Petyuk for proteomics data analysis
-Version: 0.1
-Date: 2015-03-24
+Title: Miscellaneous Functions for Proteomics Data Analysis
+Version: 0.1.0
+Date: 2021-12-28
+Encoding: UTF-8
 Author: Vladislav Petyuk
 Maintainer: Vladislav Petyuk <petyuk@gmail.com>
 Description: A collection of customized functions used for
     proteomics dataset analysis. The functions are geared towards using
     MSnSet (or ExpressionSet) object as the key data container.
-    The package contains customized heatmaps, colorschemes,
-    convienient nested linear models, machine learning utilities, etc.
-License: Beerware
+    The package contains customized heatmaps, color schemes,
+    convenient nested linear models, machine learning utilities, etc.
+License: Artistic-2.0
 biocViews: Proteomics, MassSpectrometry
 Depends:
     R (>= 2.10),
     MSnbase
 Imports:
-    parallel,
-    Biostrings,
-    Boruta,
-    ROCR,
-    doParallel,
-    BiocParallel,
-    plyr,
-    dplyr,
-    gplots,
-    foreach,
-    glmnet,
-    iterators,
-    randomForest,
-    varSelRF,
     Biobase,
-    Heatplus,
-    ade4,
-    made4,
-    outliers,
+    BiocParallel,
+    Boruta,
+    ComplexHeatmap,
+    circlize,
+    data.table, 
+    doParallel,
+    DOSE,
+    dplyr,
+    foreach,
     ggplot2,
-    xtable,
-    clusterProfiler,
-    stringr,
-    FField,
-    sva,
+    ggrepel, 
+    glmnet,
+    gplots,
+    grid,
+    Heatplus,
+    invgamma,
+    iterators,
+    limma,
     lme4,
-    e1071,
-    UniProt.ws,
-    org.Hs.eg.db,
-    biomaRt,
-    GOstats,
-    ReactomePA,
-    BiocStyle,
+    Matrix, 
+    outliers,
+    parallel,
+    purrr, 
+    qvalue, 
+    randomForest,
+    reshape2, 
+    rlang,
+    ROCR,
+    scales,
+    stats,
+    statmod,
+    stringr,
+    sva,
+    tibble, 
+    tidyr, 
+    umap, 
+    utils,
+    varSelRF,
     WGCNA,
-    gelnet,
-    multcomp,
-    bnlearn,
-    pracma,
-    umap
-VignetteBuilder: knitr
+    xtable,
+    heatmap.plus,
+    FField,
+    MSnID
 Suggests:
-    knitr
-RoxygenNote: 7.1.1
+    BiocStyle,
+    biomaRt,
+    Biostrings,
+    clusterProfiler,
+    e1071,
+    enrichplot,
+    ggforce,
+    ggnewscale,
+    GOstats,
+    knitr,
+    org.Hs.eg.db,
+    qpdf,
+    RColorBrewer, 
+    ReactomePA,
+    rmarkdown,
+    UniProt.ws
+Remotes: 
+    github::cran/heatmap.plus, 
+    github::cran/FField
+    github::PNNL-Comp-Mass-Spec/MSnID
+VignetteBuilder: knitr
+RoxygenNote: 7.2.3

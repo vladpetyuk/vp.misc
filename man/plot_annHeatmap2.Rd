@@ -7,12 +7,21 @@
 plot_annHeatmap2(x, na.color = "lightgrey", widths, heights, ...)
 }
 \arguments{
+\item{x}{an object of class \code{annHeatmap}.}
+
 \item{na.color}{character color of NA values}
+
+\item{widths}{a numerical vector giving the widths of the sub-plots currently
+defined.}
+
+\item{heights}{a numerical vector giving the heights of the sub-plots
+currently defined}
+
+\item{...}{additional arguments passed to \code{\link[graphics]{image}}.}
 }
 \description{
-Tweaks of \code{\link[Heatplus]{plot.annHeatmap}} method for 
-\code{annHeatmap} class.  Additional argument for defining color 
-for missing values.  There is also a hack of 
-\code{\link[Heatplus]{picketPlot}} that enforce axis labels 
+Tweaks of \code{\link[Heatplus]{plot.annHeatmap}} method for
+\code{annHeatmap} class.  Additional argument for defining color
+for missing values.  There is also a hack of \code{\link[Heatplus]{picketPlot}} that enforce axis labels
 to be always perpendicular.
 }

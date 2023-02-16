@@ -1,17 +1,16 @@
 ---
+title: "Over-representation Analysis"
 output: 
   html_document: 
     highlight: default
     theme: spacelab
 ---
 
-
-
 <!--
 %\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{ontology overrepresentation}
-%\VignetteKeyword{vp.mics}
-%\VignettePackage{vp.misc}
+%\VignetteKeyword{MSnSet.utils}
+%\VignettePackage{MSnSet.utils}
 -->
 
 ```{r setup}
@@ -26,13 +25,17 @@ for testing for significance of certain over-representation in one group of
 genes vs another.
 
 # The data 
+
 we'll take a look what is enriched in the sixth cluster compare to the rest
+
 ```{r libs, results='hide', message=FALSE, warning=FALSE}
-library(vp.misc)
 library(clusterProfiler)
 library(GOstats)
 library(ReactomePA)
+library(org.Hs.eg.db)
+library(enrichplot)
 ```
+
 ```{r init2}
 data(gcSample)
 # there are 8 clusters
@@ -49,23 +52,28 @@ head(gcSample[[1]])
 ## `GOstats` package
 ```{r kegg_gostats}
 p <- new("KEGGHyperGParams",
-     geneIds=gcSample[[6]],
-     universeGeneIds=unique(unlist(gcSample)),
-     pvalueCutoff = 1,
-     annotation="org.Hs.eg.db",
-     testDirection="over")
+         geneIds = gcSample[[6]],
+         universeGeneIds = unique(unlist(gcSample)),
+         annotation = "org.Hs.eg.db",
+         pvalueCutoff = 1,
+         testDirection = "over")
 xke1 <- hyperGTest(p)
-res <- summary(xke1)[,c("KEGGID","Term","Pvalue","Count","Size")]
+res <- summary(xke1)[, c("KEGGID", "Term", "Pvalue", "Count", "Size")]
 kable(head(res))
 ```
 
 ## `clusterProfiler` package
 ```{r kegg_clusterprofiler}
-xke2 <- enrichKEGG(gcSample[[6]], universe = unlist((gcSample)),
-                   pvalueCutoff = 1, qvalueCutoff = 1,
+xke2 <- enrichKEGG(gene = gcSample[[6]], 
+                   organism = "hsa",
+                   keyType = "kegg",
+                   pvalueCutoff = 1,
+                   pAdjustMethod = "BH",
+                   universe = unique(unlist((gcSample))),
                    minGSSize = 0,
-                   use_internal_data=TRUE) # then uses KEGG.db as GOstats below
-res <- summary(xke2)[,c("ID","Description","pvalue","GeneRatio","BgRatio")]
+                   qvalueCutoff = 1,
+                   use_internal_data = FALSE)
+res <- xke2@result[, c("ID", "Description", "pvalue", "GeneRatio", "BgRatio")]
 rownames(res) <- NULL
 kable(head(res))
 ```
@@ -74,111 +82,108 @@ kable(head(res))
 ***
 
 
-# GO BP annotation
-Pretty much same thing as above, but with a few tweaks 
+# GO Biological Process (BP) annotation
+
+Pretty much same thing as above, but with a few tweaks.
+
 ## `GOstats` package
+
 ```{r gobp_gostats}
 p <- new("GOHyperGParams",
-     geneIds=gcSample[[6]],
-     universeGeneIds=unique(unlist(gcSample)),
-     pvalueCutoff = 1,
-     annotation="org.Hs.eg.db",
-     ontology="BP",
-     conditional=FALSE, # influential option
-     testDirection="over")
+         ontology = "BP", # Gene Ontology: Biological Process
+         conditional = FALSE, # Should calculation condition on GO structure?
+         geneIds = gcSample[[6]],
+         universeGeneIds = unique(unlist(gcSample)),
+         annotation = "org.Hs.eg.db",
+         pvalueCutoff = 1,
+         testDirection = "over")
 xgobp1 <- hyperGTest(p)
-res <- summary(xgobp1)[,c("GOBPID","Term","Pvalue","Count","Size")]
+res <- summary(xgobp1)[, c("GOBPID", "Term", "Pvalue", "Count", "Size")]
 kable(head(res))
 ```
 
 ## `clusterProfiler` package
+
 ```{r gobp_clusterprofiler}
-xgobp2 <- enrichGO(gcSample[[6]], 
+xgobp2 <- enrichGO(gene = gcSample[[6]], 
                    OrgDb = "org.Hs.eg.db",
+                   ont = "BP",
+                   pvalueCutoff = 1,
                    universe = unique(unlist((gcSample))),
-                   ont = "BP", pvalueCutoff = 1, qvalueCutoff = 1,
-                   minGSSize = 0) 
-xgobp2 <- subset_by_size(xgobp2, maxObsSize = 50)
-res <- summary(xgobp2)[,c("ID","Description","pvalue","GeneRatio","BgRatio")]
+                   qvalueCutoff = 1,
+                   minGSSize = 0)
+# xgobp2 <- subset_by_size(xgobp2, maxObsSize = 50)
+res <- xgobp2@result[, c("ID", "Description", "pvalue", "GeneRatio", "BgRatio")]
 rownames(res) <- NULL
 kable(head(res))
 ```
 
-There is a discrepancy between the results.
-
-clusterProfiler does the test in the following chain:
-
-`enrichGO -> DOSE:::enrich.internal`
-
-GOstats chain:
-
-`hyperGTest -> GOstats:::.hyperGTestInternal -> Category:::.doHyperGTest -> Category:::.doHyperGInternal`
-
-It seems that GOstats does quite a bit of gene and 
-GO term removal prior the test.
-
-
 ***
 
+# GO Cellular Component (CC) annotation
 
-# GO CC annotation
 ## `GOstats` package
+
 ```{r gocc_gostats}
 p <- new("GOHyperGParams",
-     geneIds=gcSample[[6]],
-     universeGeneIds=unique(unlist(gcSample)),
-     pvalueCutoff = 1,
-     annotation="org.Hs.eg.db",
-     ontology="CC",
-     conditional=FALSE, # influential option
-     testDirection="over")
+         ontology = "CC", # Gene Ontology: Cellular Component
+         conditional = FALSE, # Should calculation condition on GO structure?
+         geneIds = gcSample[[6]],
+         universeGeneIds = unique(unlist(gcSample)),
+         annotation = "org.Hs.eg.db",
+         pvalueCutoff = 1,
+         testDirection = "over")
 xgocc1 <- hyperGTest(p)
-res <- summary(xgocc1)[,c("GOCCID","Term","Pvalue","Count","Size")]
+res <- summary(xgocc1)[, c("GOCCID", "Term", "Pvalue", "Count", "Size")]
 kable(head(res))
 ```
 
 ## `clusterProfiler` package
+
 ```{r gocc_clusterprofiler}
-xgocc2 <- enrichGO(gcSample[[6]], 
+xgocc2 <- enrichGO(gene = gcSample[[6]], 
                    OrgDb = "org.Hs.eg.db",
+                   ont = "CC",
+                   pvalueCutoff = 1,
                    universe = unique(unlist((gcSample))),
-                   ont = "CC", pvalueCutoff = 1, qvalueCutoff = 1,
-                   minGSSize = 0) 
-xgocc2 <- subset_by_size(xgocc2, maxObsSize = 50)
-res <- summary(xgocc2)[,c("ID","Description","pvalue","GeneRatio","BgRatio")]
+                   qvalueCutoff = 1,
+                   minGSSize = 0)
+# xgocc2 <- subset_by_size(xgocc2, maxObsSize = 50)
+res <- xgocc2@result[, c("ID", "Description", "pvalue", "GeneRatio", "BgRatio")]
 rownames(res) <- NULL
 kable(head(res))
 ```
 
-
 ***
 
+# GO Molecular Function (MF) annotation
 
-# GO MF annotation
 ## `GOstats` package
+
 ```{r gomf_gostats}
 p <- new("GOHyperGParams",
-     geneIds=gcSample[[6]],
-     universeGeneIds=unique(unlist(gcSample)),
-     pvalueCutoff = 1,
-     annotation="org.Hs.eg.db",
-     ontology="MF",
-     conditional=FALSE, # influential option
-     testDirection="over")
+         ontology = "MF", # Gene Ontology: Molecular Function
+         conditional = FALSE, # Should calculation condition on GO structure?
+         geneIds = gcSample[[6]],
+         universeGeneIds = unique(unlist(gcSample)),
+         annotation = "org.Hs.eg.db",
+         pvalueCutoff = 1,
+         testDirection = "over")
 xgomf1 <- hyperGTest(p)
-res <- summary(xgomf1)[,c("GOMFID","Term","Pvalue","Count","Size")]
+res <- summary(xgomf1)[, c("GOMFID", "Term", "Pvalue", "Count", "Size")]
 kable(head(res))
 ```
 
 ## `clusterProfiler` package
+
 ```{r gomf_clusterprofiler}
 xgomf2 <- enrichGO(gcSample[[6]], 
                    OrgDb = "org.Hs.eg.db",
                    universe = unique(unlist((gcSample))),
                    ont = "MF", pvalueCutoff = 1, qvalueCutoff = 1,
                    minGSSize = 0) 
-xgomf2 <- subset_by_size(xgomf2, maxObsSize = 50)
-res <- summary(xgomf2)[,c("ID","Description","pvalue","GeneRatio","BgRatio")]
+# xgomf2 <- subset_by_size(xgomf2, maxObsSize = 50)
+res <- xgomf2@result[, c("ID", "Description", "pvalue", "GeneRatio", "BgRatio")]
 rownames(res) <- NULL
 kable(head(res))
 ```
@@ -190,49 +195,38 @@ kable(head(res))
 As for _Reactome_ there is only one pre-canned solution - from `ReactomePA`
 
 ## `ReactomePA` package
+
 ```{r reactome_clusterprofiler}
-xreac <- enrichPathway(gcSample[[6]], 
+xreac <- enrichPathway(gene = gcSample[[6]], 
                        organism = "human",
+                       pvalueCutoff = 1,
+                       qvalueCutoff = 1,
                        universe = unique(unlist((gcSample))),
-                       pvalueCutoff = 1, qvalueCutoff = 1, minGSSize = 0) 
-xreac <- subset_by_size(xreac, maxObsSize = 50)
-res <- summary(xreac)[,c("ID","Description","pvalue","GeneRatio","BgRatio")]
+                       minGSSize = 0)
+# xreac <- subset_by_size(xreac, maxObsSize = 50)
+res <- xreac@result[, c("ID", "Description", "pvalue", "GeneRatio", "BgRatio")]
 rownames(res) <- NULL
 kable(head(res))
 ```
 
-There is a warning because some genes map to both human and mouse pathways.
-Later this creates trouble. Here is my [post](https://support.bioconductor.org/p/70921/) about that on
-Bioconductor's mailing list.
-
-<!--
-The problem is that DOSE:::enrich.internal in its line
-qExtID2TermID = EXTID2TERMID(gene, organism, ...)
-returns pathway mapping mouse. Then obviously it can not
-fetch description of mouse pathway from human stuff here
-Description <- TERM2NAME(qTermID, organism, ...)
-debugonce(DOSE::enrich.internal)
-By the way, "organism" argument does not do anything in
-qExtID2TermID = EXTID2TERMID(gene, organism, ...)
--->
-
 ***
 
 # PFAM
+
 ## `GOstats` package
+
 ```{r pfam_gostats}
 p <- new("PFAMHyperGParams",
-     geneIds=gcSample[[6]],
-     universeGeneIds=unique(unlist(gcSample)),
-     pvalueCutoff = 1,
-     annotation="org.Hs.eg.db",
-     testDirection="over")
+         geneIds = gcSample[[6]],
+         universeGeneIds = unique(unlist(gcSample)),
+         annotation = "org.Hs.eg.db",
+         pvalueCutoff = 1,
+         testDirection = "over")
 xpfam <- hyperGTest(p)
-res <- summary(xpfam)
-kable(head(res))
-```
+res <- head(summary(xpfam)) # Top 6
 
-Adding description to PFAM term is something to think about.
+kable(res)
+```
 
 
 ***
@@ -243,35 +237,33 @@ Taking advantage of `enricher` function from `clusterProfiler`
 
 ```{r custom_enricher}
 # randomly assign genes to 20 clusters
+set.seed(1236)
 setnum <- replicate(length(unique(unlist(gcSample))), sample(1:20, 1))
 setnum <- paste("set", setnum, sep = '')
-TERM2GENE <- data.frame(term=setnum, gene=unique(unlist(gcSample)),
+TERM2GENE <- data.frame(term = setnum, gene = unique(unlist(gcSample)),
                         stringsAsFactors = FALSE)
-TERM2NAME <- data.frame(term=setnum, 
-                        name=paste("Description: ", setnum, sep = ''),
+TERM2NAME <- data.frame(term = setnum, 
+                        name = paste("Description: ", setnum, sep = ''),
                         stringsAsFactors = FALSE)
 xfake <- enricher(gene = gcSample[[6]], 
+                  pvalueCutoff = 1,
                   universe = unique(unlist(gcSample)),
-                  pvalueCutoff = 1, qvalueCutoff = 1, minGSSize = 0,
+                  minGSSize = 0,
+                  qvalueCutoff = 1,
                   TERM2GENE = TERM2GENE, 
                   TERM2NAME = TERM2NAME)
-res <- summary(xfake)[,c("ID","Description","pvalue","GeneRatio","BgRatio")]
+res <- xfake@result[, c("ID", "Description", "pvalue", "GeneRatio", "BgRatio")]
 rownames(res) <- NULL
 kable(head(res))
 ```
+
 ```{r show_fake}
-cnetplot(xfake, vertex.label.cex = 0.5)
+cnetplot(xfake, layout = "fr", cex_label_category = 0.8, cex_label_gene = 0.4)
 ```
 
 A different layout
+
 ```{r show_fake2}
-cnetplot(xfake, vertex.label.cex = 0.5, layout="kk")
+cnetplot(xfake, layout = "kk", cex_label_category = 0.8, cex_label_gene = 0.4)
 ```
-
-Check out as well [HTSanalyzeR](http://bioconductor.org/packages/release/bioc/html/HTSanalyzeR.html) and  [geecc](http://bioconductor.org/packages/release/bioc/html/geecc.html) Bioconductor packages.
-
-
-
-
-
 
