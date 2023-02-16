@@ -17,7 +17,7 @@ lr_modeling(
 \arguments{
 \item{msnset}{MSnSet object. Note - can it be generalized to eset?}
 
-\item{features}{character vector features to select from for 
+\item{features}{character vector features to select from for
 building prediction model. The features can be either in
 featureNames(msnset) or in pData(msnset).}
 
@@ -25,22 +25,22 @@ featureNames(msnset) or in pData(msnset).}
 
 \item{pred.cls}{character, class to predict}
 
-\item{K}{specifies the cross-validation type. Default NULL means LOOCV. 
+\item{K}{specifies the cross-validation type. Default NULL means LOOCV.
 Another typical value is 10.}
 
 \item{sel.feat}{logical to select features using LASSO
 or use the entire set?}
 
-\item{par.backend}{type of backend to support parallelizattion. 
+\item{par.backend}{type of backend to support parallelizattion.
 'mc' uses mclapply from parallel,
 'foreach' is based on 'foreach',
 'none' - just a single thread.}
 }
 \value{
-list 
+list
      \describe{
          \item{\code{prob}}{is the probabilities (response) from LOOCV
-         that the sample is "case".  That is how well model trained 
+         that the sample is "case".  That is how well model trained
          on other samples, predicts this particular one.}
          \item{\code{features}}{list of selected features
          for each iteration of LOOCV}
@@ -53,7 +53,7 @@ list
 \description{
 The objective is - given the number of features,
 select the most informative ones and evaluate
-the predictive logistic regression model. 
+the predictive logistic regression model.
 The feature and model selection performed independently
 for each round of LOOCV. Feature selection performed using
 LASSO approach.
@@ -66,9 +66,9 @@ head(msnset$subject.type)
 msnset <- msnset[,msnset$subject.type != "control.1"]
 msnset$subject.type <- as.factor(msnset$subject.type)
 # Note, par.backend="none" is for the example only.
-out <- lr_modeling(msnset, 
-                   features=featureNames(msnset), 
-                   response="subject.type", 
+out <- lr_modeling(msnset,
+                   features=featureNames(msnset),
+                   response="subject.type",
                    pred.cls="case", par.backend="none")
 plotAUC(out)
 # top features consistently recurring in the models during LOOCV

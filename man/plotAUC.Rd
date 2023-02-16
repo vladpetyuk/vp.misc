@@ -7,7 +7,7 @@
 plotAUC(modelingResult)
 }
 \arguments{
-\item{modelingResult}{output from either 
+\item{modelingResult}{output from either
 \code{lr_modeling} or \code{rf_modeling}}
 }
 \description{

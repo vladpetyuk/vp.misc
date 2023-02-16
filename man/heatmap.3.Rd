@@ -11,8 +11,8 @@ heatmap.3(
   col.ramp = bluered,
   z.transf = c(FALSE, TRUE),
   breaks = seq(-1, +1, length = 100),
-  linkage = c("average", "ward.D", "ward.D2", "single", "complete", "mcquitty",
-    "median", "centroid"),
+  linkage = c("average", "ward.D", "ward.D2", "single", "complete", "mcquitty", "median",
+    "centroid"),
   nLabLim = 30,
   ...
 )
@@ -43,9 +43,9 @@ Customized Heatmap. TO FILL WHAT EXACTLY IS CUSTOM ABOUT IT.
 data(srm_msnset)
 set.seed(0)
 clrz <- sample(colors(), 17)
-heatmap.3(cor(exprs(msnset)), 
+heatmap.3(cor(exprs(msnset)),
           dist.fun="pearson",
-          linkage="average", 
+          linkage="average",
           nLabLim=50,
           ColSideColors=c('red3','yellow3','green3')[as.factor(pData(msnset)$subject.type)],
           RowSideColors=clrz[as.factor(pData(msnset)$match.group)])

@@ -9,13 +9,13 @@ dist(x, method = "euclidean", na.avg = FALSE, ...)
 \arguments{
 \item{x}{a numeric matrix}
 
-\item{method}{the distance measure to be used. 
-This must be one of "euclidean", "maximum", "manhattan", 
+\item{method}{the distance measure to be used.
+This must be one of "euclidean", "maximum", "manhattan",
                     "canberra", "binary", "minkowski",
                     "pearson", "kendall", "spearman".
 Any unambiguous substring can be given.}
 
-\item{na.avg}{logical if yes, then NA distance will 
+\item{na.avg}{logical if yes, then NA distance will
 be imputed with average distance
 value. Default is FALSE.}
 
@@ -23,7 +23,7 @@ value. Default is FALSE.}
 }
 \description{
 Based on \code{\link[stats]{dist}}. Additionally
-it can handle correlation-based distances and 
+it can handle correlation-based distances and
 has argument for imputation of NA distances. To
 avoid confusion with \code{stats::dist} all the
 default settings are such that it performs equivalently

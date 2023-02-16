@@ -2,92 +2,78 @@
 % Please edit documentation in R/plot_umap.R
 \name{plot_umap}
 \alias{plot_umap}
-\title{UMAP Plot}
+\title{Create UMAP scatterplots of samples}
 \usage{
 plot_umap(
-  eset,
+  msnset,
   phenotype = NULL,
-  standardize = FALSE,
-  pca = TRUE,
-  n_perm = 10,
-  n_neighbors = round(sqrt(length(sampleNames(eset)))),
+  n_neighbors = NULL,
+  min_dist = 0.1,
   n_epochs = 1000,
-  min_dist = 0.01,
-  legend_title = NULL,
-  legend_title_width = 20,
-  point_size = 4,
+  point_size = 3,
   show_ellipse = TRUE,
   ellipse_type = "norm",
+  ellipse_level = 0.5,
   show_na = TRUE,
   ...
 )
 }
 \arguments{
-\item{eset}{eset (or most likely eset subclass) object}
+\item{msnset}{an MSnSet object.}
 
-\item{phenotype}{character; one of the \code{colnames(pData(eset))}}
+\item{phenotype}{character; one of the \code{colnames(pData(msnset))}.}
 
-\item{standardize}{logical; should the rows of the expression data be
-standardized? (default: \code{FALSE})}
-
-\item{pca}{logical; whether PCA should be performed prior to UMAP
-(default: \code{TRUE}).}
-
-\item{n_perm}{integer; if pca is \code{TRUE}, this is the number of times
-that the expression matrix should be permuted (default: 10).
-This is done to determine the optimal number of principal
-components to use.}
-
-\item{n_neighbors}{integer; number of nearest neighbors to use for UMAP
-(default: \eqn{\sqrt(n samples)}).}
-
-\item{n_epochs}{integer; number of iterations performed during layout
-optimization.}
+\item{n_neighbors}{integer; number of nearest neighbors to use for UMAP.
+If \code{NULL} (default) will use the closest integer to the
+square root of the number of samples. If a vector of multiple
+values are supplied, multiple plots will be generated and arranged
+with \code{\link[ggplot2]{facet_wrap}}.}
 
 \item{min_dist}{numeric; determines how close points appear in the final
-layout (default: 0.01).}
+layout (default: 0.1).}
 
-\item{legend_title}{character; the title for the legend. If NULL, is set to
-the wrapped up phenotype.}
+\item{n_epochs}{integer; number of iterations performed during layout
+optimization (default: 1000).}
 
-\item{legend_title_width}{integer; wrapping up too long legend titles.
-Passed to \code{stringr::str_wrap()} as width argument
-(default: 20).}
+\item{point_size}{numeric; size of the plotted points (default: 3).}
 
-\item{point_size}{numeric; size of the plotted points (default: 4).}
+\item{show_ellipse}{logical; whether to plot ellipses.}
 
-\item{show_ellipse}{logical; whether to plot 50\% confidence ellipses.}
-
-\item{ellipse_type}{character; the type of ellipse. The default "norm"
+\item{ellipse_type}{character; the type of ellipse. "norm" (the default)
 assumes a multivariate normal distribution, and "t" assumes a
 multivariate t-distribution.}
 
-\item{show_na}{logical; should the data points for which phenotype is
-unknown be shown? (default: \code{TRUE})}
+\item{ellipse_level}{numeric; if \code{ellipse_type="euclid"}, the radius
+of the circle to be drawn; otherwise, the confidence level
+(default: 0.5).}
 
-\item{...}{Other arguments that can be passed to the UMAP configuration.
-See \code{\link[umap]{umap.defaults}} for more details.}
+\item{show_na}{logical; whether points with missing phenotype labels
+should be plotted (default: \code{TRUE}).}
+
+\item{...}{Other arguments that can be passed to
+\code{\link[umap]{umap.defaults}} or
+\code{\link[ggplot2]{facet_wrap}}.}
 }
 \value{
 A ggplot object
 }
 \description{
-A convenience function for creating a UMAP scatter plot
-for samples in an ExpressionSet/MSnSet object.
+A convenience function for creating UMAP scatter plots of samples in an
+ExpressionSet/MSnSet object.
 }
 \examples{
+# Load msnset
 data(srm_msnset)
-plot_umap(msnset,
-          phenotype = "subject.type",
-          show_ellipse = F)
-plot_umap(msnset,
-          phenotype = "subject.type",
-          min_dist = 0.5,
-          show_ellipse = T)
-plot_umap(msnset,
-          phenotype = "subject.type",
-          pca = F,
-          show_ellipse = T)
+# Do not color by phenotype
 plot_umap(msnset)
-
+# Plots for several values of n_neighbors
+plot_umap(msnset, n_neighbors = c(6, 8, 10))
+# Points colored by subject.type
+plot_umap(msnset, phenotype = "subject.type",
+          show_ellipse = TRUE)
+# Plots for several values of n_neighbors with
+# points colored by subject.type
+plot_umap(msnset, phenotype = "subject.type",
+          n_neighbors = c(6, 8, 10),
+          min_dist = 0.01, show_ellipse = TRUE)
 }

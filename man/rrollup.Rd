@@ -11,7 +11,7 @@ rrollup(msnset, rollBy, rollFun, verbose = TRUE)
 
 \item{rollBy}{character. A column name in pData(msnset)}
 
-\item{rollFun}{function for roll-up. "-" for log-transformed data, 
+\item{rollFun}{function for roll-up. "-" for log-transformed data,
 "/" for normal scale}
 
 \item{verbose}{logical. Controls real-time output.}

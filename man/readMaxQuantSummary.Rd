@@ -18,10 +18,6 @@ Reads in "summary.txt" output.
 }
 \examples{
 
-fpath <- list.files(path = path,
-  pattern = "summary.txt",
-  full.names = TRUE)
-stopifnot(length(fpath) == 1)
-smmr <- readMaxQuantSummary(fpath)
-  
+path <- system.file("extdata/MaxQuant", package="MSnSet.utils")
+smmr <- readMaxQuantSummary(path)
 }

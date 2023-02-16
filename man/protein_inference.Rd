@@ -7,7 +7,7 @@
 protein_inference(x, Accession = "Accession", PepSeq = "PepSeq")
 }
 \arguments{
-\item{x}{table (data.frame, data.frame or tbl_df) with one column correspoding to peptides 
+\item{x}{table (data.frame, data.frame or tbl_df) with one column correspoding to peptides
 and the other to proteins or in general case accessions}
 
 \item{Accession}{character corresponding to column name with protein accesssions}
@@ -33,7 +33,6 @@ x <- tribble(
     "LLLLK", "P1",
     "AAAAK", "P2",
     "DDDDK", "P2",
-    "AAAAK", "P3") 
-protein_inference(x, Accession = "prot", PepSeq = "pep")    
-
+    "AAAAK", "P3")
+protein_inference(x, Accession = "prot", PepSeq = "pep")
 }

@@ -1,4 +1,5 @@
 ---
+title: "ID Conversion"
 output: 
   html_document: 
     highlight: default
@@ -10,8 +11,8 @@ output:
 <!--
 %\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{ID conversion}
-%\VignetteKeyword{vp.mics}
-%\VignettePackage{vp.misc}
+%\VignetteKeyword{MSnSet.utils}
+%\VignettePackage{MSnSet.utils}
 -->
 
 ```{r setup, message=FALSE, warning=FALSE}
@@ -33,8 +34,8 @@ genes <- c("TH","GFAP","CLU","SNCA","APP","MAPT")
 
 # UniProt.ws package
 There is now a key that directly corresponds to gene symbols. 
-However, GENECARDS ID works well for this purpose.
-```{r uniprot, warning=FALSE, message=FALSE}
+However, GENECARDS ID works well for this purpose. `ENTRY-NAME` is no longer a valid column, so this example does not work.
+```{r uniprot, warning=FALSE, message=FALSE, eval = FALSE}
 library(UniProt.ws)
 up <- UniProt.ws(taxId=9606)
 select(up, keys=genes, columns=c("ENTRY-NAME","UNIPROTKB"), keytype="GENECARDS")
@@ -88,10 +89,10 @@ ensembl <- useMart("ensembl")
 hsa <- useDataset( "hsapiens_gene_ensembl", mart=ensembl)
 # listAttributes(hsa)
 # listFilters(hsa)
-getBM(attributes= c("hgnc_symbol","uniprotswissprot"), 
-              filters=c("hgnc_symbol"), 
-              values=genes, 
-              mart=hsa)
+getBM(attributes= c("hgnc_symbol", "uniprotswissprot"), 
+      filters="hgnc_symbol", 
+      values=genes, 
+      mart=hsa)
 ```
 
 

@@ -5,11 +5,109 @@
 \alias{msnset}
 \title{SRM proteomics data from human CSF}
 \format{
-a \code{MSnSet} instance
+An \code{MSnSet} with 42 features and 42 samples.
+}
+\source{
+Add source.
+}
+\usage{
+data(srm_msnset)
 }
 \description{
-Targeted SRM analysis of 33 proteins in CSF
+Targeted selected reaction monitoring (SRM) analysis of proteins in
+human cerebrospinal fluid.
 }
-\author{
-Vlad Petyuk, 2014-03-24
+\section{phenoData}{
+
+A data frame consisting of 42 rows (samples) and 82 columns:
+\describe{
+  \item{sample.id}{A unique sample identifier. The match group and subject
+  type.}
+  \item{SampleNum}{A unique sample identifier. Same as \code{Prep Alias}.}
+  \item{match.group}{Strings "01", "02", "04", "05", ..., "19".}
+  \item{subject.type}{Either "case", "control.1", or "control.2".}
+  \item{projid}{A unique sample identifier.}
+  \item{age_death}{Age at death.}
+  \item{msex}{Sex of the subject. Male is denoted by 1, female by 0.}
+  \item{race}{The race of the subject. All entries are "White".}
+  \item{spanish}{All entries are "Not Hispanic".}
+  \item{educ}{}
+  \item{pmi}{An estimate of the time since death (postmortem interval).}
+  \item{parksc_lv}{}
+  \item{dxpark}{}
+  \item{cog_reduced}{}
+  \item{dlbdx}{}
+  \item{henl_4gp}{}
+  \item{niareagansc}{}
+  \item{amelidrg_ever}{}
+  \item{lb_dens_lc:lb_dens}{}
+  \item{lb_dens_sn_state}{Non-missing entries are "zero" or "high".}
+  \item{tang_dens_sn}{}
+  \item{tang_dens_sn_state}{Non-missing entries are "zero", "low", or "mid".}
+  \item{amy_mean_sn}{}
+  \item{amy_mean_sn_state}{All non-missing entries are "low".}
+  \item{dlbany}{}
+  \item{dlb_acc}{}
+  \item{dlb_ag}{}
+  \item{dlb_ec}{}
+  \item{dlb_mfc}{}
+  \item{dlb_mtc}{}
+  \item{dlb_sn}{}
+  \item{acaccb12}{}
+  \item{acing12}{}
+  \item{ah12}{}
+  \item{aitb12}{}
+  \item{amfc12}{}
+  \item{amyag}{}
+  \item{amyec}{}
+  \item{asf12}{}
+  \item{tauag}{}
+  \item{tauec}{}
+  \item{tcaccb12}{}
+  \item{tcing12}{}
+  \item{th12}{}
+  \item{titb12}{}
+  \item{tmfc12}{}
+  \item{tsf12}{}
+  \item{amy_mean_sn.predicted}{}
+  \item{amy_mean_sn.imputed}{}
+  \item{amy_mean_state.predicted}{All non-missing entries are "low".}
+  \item{amy_mean_state.imputed}{All entries are "low".}
+  \item{tang_dens_sn.predicted}{}
+  \item{tang_dens_sn.imputed}{}
+  \item{tang_dens_sn_state.predicted}{One of "zero", "low", "mid" or "high".}
+  \item{tang_dens_sn_state.imputed}{One of "zero", "low", "mid" or "high".}
+  \item{lb_dens_sn.predicted}{}
+  \item{lb_dens_sn.imputed}{}
+  \item{lb_dens_sn_state.predicted}{Either "zero" or "high".}
+  \item{lb_dens_sn_state.imputed}{Either "zero" or "high".}
+  \item{inclusion}{All entries are \code{TRUE}.}
+  \item{case}{\code{TRUE} if \code{subject.type} is "case".}
+  \item{control}{\code{TRUE} if \code{subject.type} is "control.1" or
+  "control.2".}
+  \item{match.1}{}
+  \item{match.2}{}
+  \item{slp_resid}{}
+  \item{Prep order}{Integers 1-3.}
+  \item{Prep Alias}{A unique sample identifier. Same as \code{SampleNum}.}
+  \item{PrepBatch}{Batch number within \code{Prep order}. Integers 1-3.}
+  \item{Coomassie (pre-digest)}{}
+  \item{Visible blood contamination}{"contaminated" or blank ("").}
+  \item{SPE Batch}{Integers 1-4.}
+  \item{BCA (post-digest)}{The BCA Protein Assay concentration in mg/mL?
+  Used for total protein quantitation.}
+  \item{Yield (ug)}{}
+  \item{Visible blood contamination after SPE}{"contaminated" or blank ("").}
+  \item{Dilution Volume (Volume Remaing)}{}
+  \item{dataset name}{The dataset name. The format is "Levy_CSF_SRM_XX",
+  where "XX" is the \code{Prep Alias}.}
 }
+}
+
+\examples{
+data("srm_msnset")
+head(pData(msnset))
+head(fData(msnset))
+head(exprs(msnset))
+}
+\keyword{datasets}
