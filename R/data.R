@@ -257,3 +257,12 @@
 #' @docType data
 "ids"
 
+#' Peptide Count MSnSet
+#'
+#' @description An \code{MSnSet} object with 4923 features and 18 samples.
+#'
+#' @usage data("peptide_count_data")
+#'
+#' @docType data
+"peptide_count_data"
+
