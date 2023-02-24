@@ -52,3 +52,8 @@ readMaxQuantPeptideCounts <- function (path="."){
   return(m)
 
 }
+
+
+utils::globalVariables(c("Sequence", "Leading razor protein", "Experiment",
+                         "MS/MS count", "protein"))
+
