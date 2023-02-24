@@ -8,52 +8,90 @@ peptide_significance_map(
   x,
   accession,
   p_val_from,
-  type = c("discrete", "continuous", "y"),
-  name_from = c("accession"),
+  type = c("discrete", "continuous", "manhattan"),
+  accession_col = "accession",
+  title_from = accession_col,
+  min_y = 0,
+  width_y = 0.025,
+  step_y = 0.033,
+  border_color = "white",
+  border_size = NULL,
+  aa_step = 20,
   ...
 )
 }
 \arguments{
-\item{x}{\code{MSnSet} object.}
+\item{x}{\code{data.frame} with required columns Last_AA, First_AA, and ProtLen,
+as well as any columns specified by \code{p_val_from}, \code{accession_col},
+\code{title_from}, and \code{fill_by} (only if \code{type} is \code{"continuous"} or
+\code{"manhattan"}). Recommended to provide the \code{fData} table of an MSnSet
+object.}
 
-\item{accession}{\code{character}. Name of the protein
-(or accession in general terms) to plot peptides for.}
+\item{accession}{character; name of the protein (or accession, in general
+terms) for which to plot peptides.}
 
-\item{p_val_from}{character. Name of the column in `fData` with p-values.}
+\item{p_val_from}{character. Name of the column in \code{x} with p-values.}
 
-\item{type}{character. Different ways of representing p-values.
-Types are: "continuous" - continuous color scheme,
-"discrete" - discrete color scheme,
-"y" - p-values shown on y-axis akin Manhattan plot.}
+\item{type}{character. Different ways of representing p-values. Types are:
+"continuous" - continuous color scheme, "discrete" - discrete color scheme,
+"manhattan" - p-values shown on y-axis (akin to a Manhattan plot).}
 
-\item{name_from}{character. Column in `fData` that `accession` is taken from.
-Typically it is "accession".}
+\item{accession_col}{character. Column in \code{x} that \code{accession} is taken from.
+Typically, it is "accession".}
 
-\item{...}{to be documented}
+\item{title_from}{character. One or more columns in \code{x} used to construct the
+plot title. Defaults to \code{accession_col}.}
+
+\item{min_y}{numeric; shifts peptides vertically.}
+
+\item{width_y}{numeric; vertical width of each peptide rectangle.}
+
+\item{step_y}{numeric; step size to resolve peptide overlaps.}
+
+\item{border_color}{character; color used for the borders of the peptide
+rectangles.}
+
+\item{border_size}{numeric or \code{NULL}; linewidth of the borders around the
+peptide rectangles. If \code{NULL} (default), the linewidth will be calculated
+from the protein length.}
+
+\item{aa_step}{numeric; distance between x axis breaks, starting at \code{aa_step}
+and continuing along the length of the protein.}
+
+\item{...}{other arguments passed to functions determined by \code{type}. See
+details for more information.}
 }
 \value{
-\code{ggplot} object
+\code{ggplot} object.
 }
 \description{
-Mapping peptides onto the protein sequence with showing statisical significance.
+Mapping peptides onto the protein sequence with different ways
+to show statistical significance.
+}
+\details{
+Parameters passed to helper functions determined by the value of
+\code{type}:
+
+\describe{
+\item{fill_by}{character; (\code{type = c("continuous", "manhattan")}) name of
+a column in \code{x} used to fill the peptide rectangles.}
+}
 }
 \examples{
-
 data("peptide_count_data")
 
 library(msmsTests)
 
-
 alt.f <- "y ~ group + 1"
 null.f <- "y ~ 1"
 div <- colSums(exprs(peptide_count_data)) # normalization factor
-res <- msms.glm.qlll(peptide_count_data, alt.f, null.f, div=div)
+res <- msms.glm.qlll(peptide_count_data, alt.f, null.f, div = div)
 res$p.val.adj <- p.adjust(res$p.value, "BH")
 
 # adding significance metrics
 f_data <- fData(peptide_count_data)
-f_data$P.Value <- res[featureNames(peptide_count_data),"p.value"]
-f_data$adj.P.Val <- res[featureNames(peptide_count_data),"p.val.adj"]
+f_data$P.Value <- res[featureNames(peptide_count_data), "p.value"]
+f_data$adj.P.Val <- res[featureNames(peptide_count_data), "p.val.adj"]
 fData(peptide_count_data) <- f_data
 
 # Path to FASTA file
@@ -61,16 +99,14 @@ fasta <- system.file("extdata/FASTAs",
                      "H_sapiens_UniProt_SPROT_2021-06-20.fasta.gz",
                      package = "MSnSet.utils")
 
-peptide_count_data <- map_peptide_position(peptide_count_data,
-                                           fasta,
+peptide_count_data <- map_peptide_position(object = peptide_count_data,
+                                           fasta = fasta,
                                            accession_col = "protein",
                                            peptide_col = "Sequence")
 
-peptide_significance_map(fData(peptide_count_data),
-                         "sp|O15240|VGF_HUMAN",
-                         name_from = "protein",
-                         "adj.P.Val",
-                         type = "y")
-
-
+peptide_significance_map(x = fData(peptide_count_data),
+                         accession = "sp|O15240|VGF_HUMAN",
+                         accession_col = "protein",
+                         p_val_from = "adj.P.Val",
+                         type = "manhattan")
 }
