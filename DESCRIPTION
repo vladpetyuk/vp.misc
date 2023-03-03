@@ -14,11 +14,12 @@ Description: A collection of customized functions used for
 License: Artistic-2.0
 biocViews: Proteomics, MassSpectrometry
 Depends:
-    R (>= 2.10),
+    R (>= 3.5.0),
     MSnbase
 Imports:
     Biobase,
     BiocParallel,
+    Biostrings,
     Boruta,
     ComplexHeatmap,
     circlize,
@@ -38,6 +39,7 @@ Imports:
     limma,
     lme4,
     Matrix, 
+    methods,
     outliers,
     parallel,
     purrr, 
@@ -58,13 +60,11 @@ Imports:
     varSelRF,
     WGCNA,
     xtable,
-    heatmap.plus,
     FField,
     MSnID
 Suggests:
     BiocStyle,
     biomaRt,
-    Biostrings,
     clusterProfiler,
     e1071,
     enrichplot,
@@ -72,6 +72,7 @@ Suggests:
     ggnewscale,
     GOstats,
     knitr,
+    msmsTests,
     org.Hs.eg.db,
     qpdf,
     RColorBrewer, 
@@ -79,8 +80,7 @@ Suggests:
     rmarkdown,
     UniProt.ws
 Remotes: 
-    github::cran/heatmap.plus, 
-    github::cran/FField
-    github::PNNL-Comp-Mass-Spec/MSnID
+    github::cran/FField,
+    github::PNNL-Comp-Mass-Spec/MSnID@pnnl-master
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3

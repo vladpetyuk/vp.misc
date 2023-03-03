@@ -68,7 +68,7 @@ subset_by_size <- function(x, minObsSize=0, maxObsSize=Inf,
                             lambda = 0.05,
                             pi0.method = "bootstrap"),
                      error = function(e) NULL)
-    if (class(qobj) == "qvalue") {
+    if (is(qobj, "qvalue")) {
         qvalues <- qobj$qvalues
     }
     else {

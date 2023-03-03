@@ -54,6 +54,7 @@ ids_with_sites <- map_PTM_sites(ids = ids, fasta = fst,
                                 prot_id_col = "UniProtAccFull",
                                 peptide_col = "Peptide", mod_char = "*")
 
+\dontrun{
 # Adding gene annotation. Note: this is rat data searched against UniProt.
 # 10116 is rat taxonomy ID
 URL <- "http://www.uniprot.org/uniprot/?query=organism:10116&columns=id,genes(PREFERRED)&format=tab"
@@ -73,5 +74,5 @@ ids_with_sites <- keep_longest_isoform_per_gene(
   isoform_id_col = "UniProtAccFull", isoform_len_col = "ProtLength"
 )
 nrow(ids_with_sites) # after
-
+}
 }
