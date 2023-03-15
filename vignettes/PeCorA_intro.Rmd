@@ -1,81 +1,94 @@
 ---
-title: "PeCorA"
-output:
-  html_document:
+title: "PeCorA" 
+output: 
+  html_document: 
     highlight: tango
 ---
 
 <!--
-%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEngine{knitr::rmarkdown} 
 %\VignetteIndexEntry{PeCorA}
-%\VignetteKeyword{MSnSet.utils}
+%\VignetteKeyword{MSnSet.utils} 
 %\VignettePackage{MSnSet.utils}
 -->
 
-<!--
-```{r setup, echo=FALSE, results='hide'}
+```{r setup}
 # set global chunk options
 library("knitr")
 opts_chunk$set(size='tiny')
 ```
--->
-
 
 ```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library(MSnSet.utils)
-## Load an msnset here which includes a "Protein" column in fData.
-data("PeCorA_msnset")
+library(ggplot2)
+
+# Example MSnSet
+data("PeCorA_msnset") # m
+m # display summary
+head(fData(m))
 ```
 
-
-Running pecora_analysis requires an msnset with a `Protein` column in fData. A treatment variable contained in
-pData, and a character of proteins to analyze with PeCorA must also be given. Finally, the value of
-`median_mod` can be set to `TRUE` and PeCorA will aggregate all other peptides using the median, 
-lowering the degrees of freedom in the linear model to a more accurate number, as peptides mapping 
-to the same protein are not independent observations. By default the value is `FALSE`, which matches
-the original PeCorA.
-
-PeCorA will estimate the significance of interaction between the peptides mapping to a protein
-and the treatment variable supplied. 
+PeCorA will estimate the significance of interaction between the peptides
+mapping to a protein and the treatment variable supplied.
 
 ```{r}
-m <- pecora_analysis(m, "gpath_quantile", c("APOE", "BIN1"))
-
-## The result is stored in fData.
-#View(fData(m))
-
+# proteins with peptides to test
+proteins <- c("APOE", "BIN1")
+m <- pecora_analysis(m,
+                     treatment = "gpath_quantile",
+                     proteins = proteins)
+# Show fData for those proteins
+head(fData(m)[fData(m)[["Protein"]] %in% proteins, ])
 ```
-
 
 Running PeCorA again will add new results to fData.
 
 ```{r}
-m <- pecora_analysis(m, "gpath", c("APOE", "BIN1"), median_mod = FALSE)
-
-## The result is stored in fData.
-# View(fData(m))
-
-## If an old result is found, it is overwritten.
-m <- pecora_analysis(m, "gpath", c("APOE", "BIN1"), median_mod = TRUE)
-
+m <- pecora_analysis(m,
+                     treatment = "gpath",
+                     proteins = proteins,
+                     median_mod = FALSE)
+# Display part of results
+head(fData(m)[fData(m)[["Protein"]] %in% proteins, ])
+m <- pecora_analysis(m,
+                     treatment = "gpath",
+                     proteins = proteins,
+                     median_mod = TRUE)
+# Display part of results
+head(fData(m)[fData(m)[["Protein"]] %in% proteins, ])
 ```
 
-Finally, pecora_plot can plot a particular feature (peptide) against all other peptides 
-mapping to the same protein, appending the p_value from PeCorA to the plot. Depending on the type of
-the treatment variable (character/factor vs numerical) a boxplot/scatter plot is made, respectively.
-
-The parameter `median_mod` can be set to `TRUE` to aggregate (sample wise) all other peptides mapping
-to the same protein using the median.
-
+Finally, pecora_plot can plot a particular feature (peptide) against all other
+peptides mapping to the same protein, and will include the adjusted p-value for
+that peptide in the plot subtitle. Depending on the type of the treatment
+variable (categorical vs. numeric) a boxplot or scatterplot is made,
+respectively. The parameter `median_mod` can be set to `TRUE` to aggregate
+(samplewise) all other peptides mapping to the same protein using the median.
 
 ```{r}
-pecora_plot(m, "LGADMEDVCGR", "gpath", median_mod = F)
-
+p1 <- plot_pecora(m, 
+                  feature = "APOE@LGADMEDVCGR", 
+                  treatment = "gpath", 
+                  median_mod = FALSE)
+p1
 ```
 
+```{r}
+p2 <- plot_pecora(m, 
+                  feature = "APOE@LGADMEDVCGR", 
+                  treatment = "gpath_quantile", 
+                  median_mod = FALSE)
+p2
+```
 
+Since this is a `ggplot` object, we can modify it as needed.
 
-
-
+```{r}
+# Change y-axis limits and theme
+p3 <- p2 + 
+  scale_y_continuous(limits = c(-1.05, 1)) +
+  theme_bw()
+p3
+```
 
 
