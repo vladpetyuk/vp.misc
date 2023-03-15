@@ -1,105 +1,137 @@
-#' This is a modified version of the PeCorA function.
-#' For the original paper see here: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8592057/.
+#' @title Modified Peptide Correlation Analysis (PeCorA)
 #'
-#' The modification involves aggregating the intensities of "all other peptides" within
-#' the test described in the PeCorA paper. We aggregate "all other peptides" by sample using the median, this
-#' way each peptide mapping to a particular protein is not treated as an 'independent' observation.
-#' The effect is that p-values are much higher (less significant) than in the original version of PeCorA.
+#' @description This is a modified version of the PeCorA function. For the
+#'   original paper see \url{https://doi.org/10.1021/acs.jproteome.0c00602}.
 #'
-#' This median modification is turned OFF by default, and only affects the p-values reported by PeCorA.
+#'   The modification involves aggregating the intensities of "all other
+#'   peptides" within the test described in the PeCorA paper. We aggregate "all
+#'   other peptides" by sample using the median. This way, each peptide mapping
+#'   to a particular protein is not treated as an 'independent' observation. The
+#'   effect is that p-values are much higher (less significant) than in the
+#'   original version of PeCorA.
 #'
+#'   This median modification is turned off by default, and only affects the
+#'   p-values and adjusted p-values.
 #'
-#' @param t PeCorA input table. See the original PeCorA function for details.
-#' @param median_mod logical for whether to use the median version of PeCorA (median_mod = TRUE), or the original (median_mod = FALSE)
+#' @param x PeCorA input table. See the original PeCorA function for details.
+#' @param median_mod logical; whether to use the median version of PeCorA
+#'   (\code{median_mod = TRUE}). Default is \code{FALSE}, which will use the
+#'   original version.
 #'
-#' @return PeCorA results table.
+#' @details p-values are adjusted across all peptides for a given protein using
+#'   the method of Benjamini and Hochberg.
 #'
-#' @importFrom stats lm
-#' @importFrom dplyr n
+#'   This function was based on the \code{PeCorA} function from the PeCorA R
+#'   package (\href{https://github.com/jessegmeyerlab/PeCorA}).
 #'
+#' @return A \code{data.frame} with columns "Protein", "Peptide", "pvalue", and
+#'   "adj_pval".
+#'
+#' @references Dermit, M., Peters-Clarke, T. M., Shishkova, E., & Meyer, J. G.
+#'   (2021). Peptide Correlation Analysis (PeCorA) Reveals Differential
+#'   Proteoform Regulation. \emph{Journal of proteome research, 20(4)},
+#'   1972–1980. \url{https://doi.org/10.1021/acs.jproteome.0c00602}
+#'
+#' @importFrom dplyr %>% select distinct group_by n filter ungroup pull mutate
+#' @importFrom purrr map
+#' @importFrom tibble enframe
+#' @importFrom tidyr unnest
+#'
+#' @export pecora_mod
 
-
-PeCorA_mod <- function (t, median_mod = FALSE) {
-
-  print("checking which proteins still have at least 2 peptides")
-  pgs <- levels(as.factor(t$Protein))
-  pgs_morethan2 <- c()
-  # Extremely slow
-  # for (x in pgs) {
-  #   if (length(unique(t[t$Protein %in% x, "modpep_z"])) >
-  #       1) {
-  #     pgs_morethan2 <- c(pgs_morethan2, x)
-  #   }
-  # }
-  pgs_morethan2 <- t %>%
-    select(Protein, modpep_z) %>%
-    unique() %>%
+pecora_mod <- function(x,
+                       median_mod = FALSE)
+{
+  proteins <- x %>%
+    distinct(Protein, Peptide) %>%
     group_by(Protein) %>%
-    summarize(n_peptides = n()) %>%
-    filter(n_peptides > 1) %>%
-    pull(Protein)
+    filter(n() > 1) %>% # at least 2 peptides per protein
+    ungroup() %>%
+    pull(Protein) %>%
+    unique()
 
-  allp <- list()
-  j = 1
-  t0 <- Sys.time()
-  print("computing the interaction p-values")
-  pb <- txtProgressBar(min = 0, max = length(pgs_morethan2),
-                       style = 3)
-  for (x in pgs_morethan2) {
-    tmpdf <- t[which(t$Protein == x), ]
-    tmpdf["allothers"] <- rep("allothers", times = nrow(tmpdf))
-    pvalues <- c(rep(0, length(unique(tmpdf$modpep_z))))
-    i = 1
-    for (y in unique(tmpdf$modpep_z)) {
-      subtmpdf <- tmpdf
-      subtmpdf[which(tmpdf$modpep_z == y), "allothers"] <- y
-      if (median_mod){
-        subtmpdf <- subtmpdf %>%
-          group_by(Sample, allothers) %>%
-          mutate(ms1adj = median(ms1adj, na.rm = T)) %>%
-          ungroup() %>%
-          select(Sample, ms1adj, Condition, allothers) %>%
-          unique()
-      }
-      tmplm <- lm(subtmpdf$ms1adj ~ subtmpdf$Condition *
-                    subtmpdf$allothers)
-      tmpanova <- car::Anova(tmplm)
-      pvalues[i] <- tmpanova$`Pr(>F)`[3]
-      i = i + 1
-    }
-    allp[[x]] <- pvalues
-    setTxtProgressBar(pb, j)
-    j = j + 1
-  }
-  print(" ")
-  print(paste("PeCorA finished in ", round(Sys.time() - t0,
-                                           2), " minutes", sep = ""))
-  print(paste("number of proteins tested =", length(allp),
-              sep = " "))
-  print(paste("number of peptides tested =", length(unlist(allp)),
-              sep = " "))
-  print("started making data table")
-  alldf = data.frame()
-  x <- names(allp)[1]
-  for (x in names(allp)) {
-    tmpdf <- t[which(t$Protein == x), ]
-    tmp_peps <- unique(tmpdf$modpep_z)
-    if (length(tmp_peps) > 0) {
-      tmp_pval <- allp[[x]]
-      tmpout = cbind.data.frame(protein = rep(x, length(allp[[x]])),
-                                tmp_peps, tmp_pval = as.numeric(tmp_pval))
-      alldf = rbind(alldf, tmpout)
-    }
-  }
-  print("correcting p-values")
-  alldf$adj_pval <- p.adjust(alldf$tmp_pval, method = "BH")
-  alldf_ordered <- alldf[order(alldf$adj_pval), ]
-  print(paste("number of uncorrelated peptides =", nrow(alldf[alldf$adj_pval <=
-                                                                0.01, ]), sep = " "))
-  print(paste("number of proteins with uncorrelated peptides =",
-              length(unique(alldf[alldf$adj_pval <= 0.01, ]$protein)),
-              sep = " "))
-  colnames(alldf_ordered)[2] <- "peptide"
-  colnames(alldf_ordered)[3] <- "pvalue"
-  alldf_ordered
+  res <- x %>%
+    filter(Protein %in% proteins) %>%
+    split.data.frame(~ Protein) %>%
+    map(.pecora_mod, median_mod = median_mod, .progress = TRUE) %>%
+    enframe(name = "Protein") %>%
+    unnest(value) %>%
+    group_by(Protein) %>%
+    mutate(adj_pval = p.adjust(pvalue, method = "BH")) %>%
+    ungroup()
+
+  # Results summary
+  signif_peptide <- res$adj_pval <= 0.01
+  message(paste("Number of proteins tested:", length(unique(res$Protein))))
+  message(paste("Number of peptides tested:", nrow(res)))
+  message(paste("Number of uncorrelated peptides (1% FDR):",
+                sum(signif_peptide)))
+  message(paste("Number of proteins with uncorrelated peptides (1% FDR):",
+                length(unique(res$Protein[signif_peptide]))))
+
+  return(res)
 }
+
+
+#' @title The brains behind pecora_mod
+#'
+#' @description Tests for the interaction between the sample condition of
+#'   interest and an indicator variable for a given peptide of interest. Loops
+#'   over all unique peptides for a given protein.
+#'
+#' @param x a single-protein \code{data.frame} with columns "Peptide", "Sample",
+#'   and "LogRatio".
+#' @param median_mod logical; whether to use the median version of PeCorA. See
+#'   \code{?pecora_mod} for details.
+#'
+#' @return a \code{data.frame} with columns "Peptide" and "pvalue".
+#'
+#' @importFrom purrr map_dbl
+#' @importFrom dplyr %>% mutate group_by ungroup select distinct slice pull
+#' @importFrom stats setNames lm
+#' @importFrom car Anova
+#' @importFrom tibble enframe
+#' @importFrom tidyr unnest
+#'
+#' @noRd
+
+.pecora_mod <- function(x,
+                        median_mod = FALSE)
+{
+  unique_peptides <- unique(x$Peptide)
+
+  # Single p-value per peptide
+  res <- map_dbl(unique_peptides, function(pep_i) {
+    curr_df <- mutate(x, current_peptide = Peptide == pep_i)
+
+    if (median_mod) {
+      curr_df <- curr_df %>%
+        group_by(Sample, current_peptide) %>%
+        mutate(LogRatio = median(LogRatio, na.rm = TRUE)) %>%
+        ungroup() %>%
+        select(Sample, LogRatio, Condition, current_peptide) %>%
+        distinct()
+    }
+
+    # Slowest part
+    pval <- lm(LogRatio ~ Condition * current_peptide,
+               data = curr_df) %>%
+      car::Anova() %>%
+      slice(3) %>% # interaction term
+      pull(`Pr(>F)`)
+
+    return(pval)
+  }) %>%
+    setNames(nm = unique_peptides) %>%
+    enframe(name = "Peptide",
+            value = "pvalue")
+
+  return(res)
+}
+
+
+utils::globalVariables(
+  c("Protein", "Peptide", "Sample", "current_peptide", "LogRatio",
+    "Condition", "Pr(>F)", "pvalue")
+)
+

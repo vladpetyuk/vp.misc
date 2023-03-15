@@ -2,25 +2,46 @@
 % Please edit documentation in R/pecora_analysis.R
 \name{pecora_analysis}
 \alias{pecora_analysis}
-\title{Performs the PeCorA analysis described in https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8592057/.
-Take a look at the linked paper to get an idea of the procedure.}
+\title{Peptide Correlation Analysis (PeCorA)}
 \usage{
-pecora_analysis(m, treatment_string, proteins, median_mod = FALSE)
+pecora_analysis(m, treatment, proteins, median_mod = FALSE)
 }
 \arguments{
-\item{m}{msnset object containing a pData AND fData table. fData must have a Protein and Peptide column.}
+\item{m}{\code{MSnSet} object with pData and fData tables. fData must have
+columns "Protein" and "Peptide".}
 
-\item{treatment_string}{the name of the column in pData containing treatment information. The data can be numerical of categorical.}
+\item{treatment}{character; the name of the pData column containing treatment
+information. The data can be numeric or categorical.}
 
-\item{proteins}{character vector indicating which proteins to analyze.}
+\item{proteins}{character; one or more proteins in
+\code{fData(m)[["Protein"]]} to analyze.}
 
-\item{median_mod}{logical for whether to use the original PeCorA (median_mod = FALSE), or the median version (median_mod = TRUE). See the help of PeCorA_mod for more details.}
+\item{median_mod}{logical; whether to use the median version of PeCorA. See
+\code{?pecora_mod} for details.}
 }
 \value{
-PeCorA results table for the supplied proteins. Saves plots of the significant peptides to the given folder.
+An \code{MSnSet} where the fData table includes new or updated
+  columns "pecora_pval_{treatment}" and "pecora_adj_pval_{treatment}".
 }
 \description{
-Takes an msnset, a list of proteins, and a treatment variable. msnset is assumed to be normalized, for instance it can be the output of
-pecora_preprocessing, which normalizes as in the original PeCorA paper.
-The PeCorA function is then used for the analysis. Returns a table containing Peptide, Protein, and significance.
+Perform Peptide Correlation Analysis (PeCorA) as described in
+  \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8592057/}.
+}
+\details{
+The MSnSet provided to \code{m} should be normalized as described in
+  the PeCorA publication. See \code{\link[MSnSet.utils]{pecora_preprocess}}
+  for details. This function was based on the \code{PeCorA_analysis} function
+  from the PeCorA R package
+  (\href{https://github.com/jessegmeyerlab/PeCorA}).
+}
+\references{
+Dermit, M., Peters-Clarke, T. M., Shishkova, E., & Meyer, J. G.
+  (2021). Peptide Correlation Analysis (PeCorA) Reveals Differential
+  Proteoform Regulation. \emph{Journal of proteome research, 20(4)},
+  1972–1980. \url{https://doi.org/10.1021/acs.jproteome.0c00602}
+}
+\seealso{
+\code{\link[MSnSet.utils]{pecora_preprocess}},
+  \code{\link[MSnSet.utils]{pecora_mod}},
+  \code{\link[MSnSet.utils]{plot_pecora}}
 }
