@@ -18,7 +18,7 @@ this will automatically be determined if there is only one column that
 starts with "pecora_adj_pval_".}
 
 \item{median_mod}{logical; whether to use the median version of PeCorA. See
-\code{?pecora_mod} for details.}
+\code{\link[MSnSet.utils]{pecora_mod}} for details.}
 }
 \value{
 A \code{ggplot} object.

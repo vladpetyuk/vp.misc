@@ -22,7 +22,7 @@
 #'   the method of Benjamini and Hochberg.
 #'
 #'   This function was based on the \code{PeCorA} function from the PeCorA R
-#'   package (\href{https://github.com/jessegmeyerlab/PeCorA}).
+#'   package (\url{https://github.com/jessegmeyerlab/PeCorA}).
 #'
 #' @return A \code{data.frame} with columns "Protein", "Peptide", "pvalue", and
 #'   "adj_pval".

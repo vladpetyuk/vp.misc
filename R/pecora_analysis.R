@@ -10,13 +10,13 @@
 #' @param proteins character; one or more proteins in
 #'   \code{fData(m)[["Protein"]]} to analyze.
 #' @param median_mod logical; whether to use the median version of PeCorA. See
-#'   \code{?pecora_mod} for details.
+#'   \code{\link[MSnSet.utils]{pecora_mod}} for details.
 #'
 #' @details The MSnSet provided to \code{m} should be normalized as described in
 #'   the PeCorA publication. See \code{\link[MSnSet.utils]{pecora_preprocess}}
 #'   for details. This function was based on the \code{PeCorA_analysis} function
 #'   from the PeCorA R package
-#'   (\href{https://github.com/jessegmeyerlab/PeCorA}).
+#'   (\url{https://github.com/jessegmeyerlab/PeCorA}).
 #'
 #' @return An \code{MSnSet} where the fData table includes new or updated
 #'   columns "pecora_pval_{treatment}" and "pecora_adj_pval_{treatment}".

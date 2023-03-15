@@ -17,7 +17,7 @@ information. The data can be numeric or categorical.}
 \code{fData(m)[["Protein"]]} to analyze.}
 
 \item{median_mod}{logical; whether to use the median version of PeCorA. See
-\code{?pecora_mod} for details.}
+\code{\link[MSnSet.utils]{pecora_mod}} for details.}
 }
 \value{
 An \code{MSnSet} where the fData table includes new or updated
@@ -32,7 +32,7 @@ The MSnSet provided to \code{m} should be normalized as described in
   the PeCorA publication. See \code{\link[MSnSet.utils]{pecora_preprocess}}
   for details. This function was based on the \code{PeCorA_analysis} function
   from the PeCorA R package
-  (\href{https://github.com/jessegmeyerlab/PeCorA}).
+  (\url{https://github.com/jessegmeyerlab/PeCorA}).
 }
 \references{
 Dermit, M., Peters-Clarke, T. M., Shishkova, E., & Meyer, J. G.

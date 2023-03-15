@@ -44,7 +44,7 @@ If both \code{standardize_samples} and \code{center_peptides} are
   safely skipped.
 
   This function was based on the \code{PeCorA_preprocessing} function from
-  the PeCorA R package (\href{https://github.com/jessegmeyerlab/PeCorA}).
+  the PeCorA R package (\url{https://github.com/jessegmeyerlab/PeCorA}).
 }
 \references{
 Dermit, M., Peters-Clarke, T. M., Shishkova, E., & Meyer, J. G.

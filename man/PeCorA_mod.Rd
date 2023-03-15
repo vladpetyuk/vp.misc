@@ -36,7 +36,7 @@ p-values are adjusted across all peptides for a given protein using
   the method of Benjamini and Hochberg.
 
   This function was based on the \code{PeCorA} function from the PeCorA R
-  package (\href{https://github.com/jessegmeyerlab/PeCorA}).
+  package (\url{https://github.com/jessegmeyerlab/PeCorA}).
 }
 \references{
 Dermit, M., Peters-Clarke, T. M., Shishkova, E., & Meyer, J. G.

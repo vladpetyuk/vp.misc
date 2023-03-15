@@ -19,7 +19,7 @@
 #'   safely skipped.
 #'
 #'   This function was based on the \code{PeCorA_preprocessing} function from
-#'   the PeCorA R package (\href{https://github.com/jessegmeyerlab/PeCorA}).
+#'   the PeCorA R package (\url{https://github.com/jessegmeyerlab/PeCorA}).
 #'
 #' @return An \code{MSnSet} object with modified exprs data.
 #'
