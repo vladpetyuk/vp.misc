@@ -1,20 +1,23 @@
 #' @title Plot PeCorA Results
 #'
-#' @param m \code{MSnSet} object; output of
-#'   \code{\link[MSnSet.utils]{pecora_analysis}}.
-#' @param feature character; the feature to plot. One of \code{featureNames(m)}.
+#' @description Create boxplots (categorical \code{treatment}) or a scatterplot
+#'   (numeric \code{treatment}) of PeCorA results for a given peptide.
+#'
+#' @param m \code{MSnSet} object; output of \code{\link[MSnSet.utils]{PeCorA}}.
+#' @param peptide character; the peptide of interest to plot. One of
+#'   \code{fData(m)[[peptide_column]]}.
+#' @param protein character; the protein that contains \code{peptide} as one of
+#'   its peptides. One of \code{fData(m)[[protein_column]]}.
 #' @param treatment character; pattern used to search for columns of the form
 #'   "pecora_adj_pval_{treatment}" in \code{fData(m)}. If \code{NULL} (default),
-#'   this will automatically be determined if there is only one column that
+#'   this will be automatically determined if there is only one column that
 #'   starts with "pecora_adj_pval_".
-#' @inheritParams pecora_analysis
+#' @inheritParams PeCorA
 #'
 #' @details This function was inspired by the boxplots presented in the PeCorA
 #'   publication (\url{https://doi.org/10.1021/acs.jproteome.0c00602}).
 #'
-#' @seealso \code{\link[MSnSet.utils]{pecora_preprocess}},
-#'   \code{\link[MSnSet.utils]{pecora_analysis}},
-#'   \code{\link[MSnSet.utils]{pecora_mod}}
+#' @seealso \code{\link[MSnSet.utils]{PeCorA}}
 #'
 #' @references Dermit, M., Peters-Clarke, T. M., Shishkova, E., & Meyer, J. G.
 #'   (2021). Peptide Correlation Analysis (PeCorA) Reveals Differential
@@ -27,21 +30,27 @@
 #' @importFrom scales hue_pal
 #' @importFrom rlang !! sym
 #' @importFrom dplyr %>% filter pull select mutate rename group_by distinct
+#'   summarise
 #' @importFrom tidyr pivot_longer
 #' @importFrom stats lm update coef
 #'
-#' @export plot_pecora
+#' @export plot_PeCorA
 
-plot_pecora <- function(m,
-                        feature,
+plot_PeCorA <- function(m,
+                        peptide,
+                        protein,
                         treatment = NULL,
-                        median_mod = FALSE)
+                        protein_column = "Protein",
+                        peptide_column = "Peptide",
+                        median_mod = TRUE)
 {
-  f_data <- fData(m) %>%
-    mutate(feature_name = rownames(.))
+  f_data <- fData(m)
 
-  if (!feature %in% rownames(m)) {
-    stop(sprintf("'%s' is not in featureNames(m)", feature))
+  ## Must have "Protein" and "Peptide" columns
+  for (col_i in c(protein_column, peptide_column)) {
+    if (!col_i %in% colnames(f_data)) {
+      stop(sprintf("fData missing '%s' column.", col_i))
+    }
   }
 
   ## If empty treatment string, look for results in f_data.
@@ -60,9 +69,13 @@ plot_pecora <- function(m,
 
   result_col <- paste0("pecora_adj_pval_", treatment)
 
+  f_data <- f_data %>%
+    filter(!!sym(protein_column) == protein) %>%
+    mutate(feature_name = rownames(.))
+
   padj <- try(
     f_data %>%
-      filter(feature_name == feature) %>%
+      filter(!!sym(peptide_column) == peptide) %>%
       pull(result_col) %>%
       signif(3)
   )
@@ -72,49 +85,44 @@ plot_pecora <- function(m,
   }
 
   if (is.na(padj)) {
-    stop(sprintf("%s missing PeCorA p-value when treatment = %s",
-                 feature, treatment))
+    stop(sprintf(
+      paste("Missing PeCorA p-value when treatment = %s,",
+            "peptide = %s, and protein = %s"),
+      treatment, peptide, protein))
   }
 
-  chosen_protein <- f_data[feature, ] %>%
-    pull(Protein) %>%
-    unique()
-
-  features <- filter(f_data, Protein == chosen_protein)
-
   if (length(padj) == 0) {
-    stop(paste(feature, "not found within the results."))
+    stop(paste(feature, "not found within the results.")) ####
   }
 
   metadata <- pData(m) %>%
-    select(sym(treatment)) %>%
+    select(!!sym(treatment)) %>%
     mutate(Sample = rownames(.))
 
   if (is.character(metadata[[treatment]])) {
     metadata[[treatment]] <- as.factor(metadata[[treatment]])
   }
 
-  plot_df <- exprs(m)[features$feature_name, ] %>%
+  plot_df <- exprs(m)[rownames(f_data), ] %>%
     as.data.frame() %>%
     mutate(feature_name = rownames(.)) %>%
     pivot_longer(cols = -feature_name,
                  names_to = "Sample",
                  values_to = "value") %>%
-    merge(features, by = "feature_name") %>%
+    merge(f_data, by = "feature_name") %>%
     merge(metadata, by = "Sample") %>%
-    dplyr::rename(Condition = sym(treatment)) %>%
-    mutate(peptide_group = ifelse(feature_name == feature,
-                                  feature, "All other peptides")) %>%
+    dplyr::rename(Condition = !!sym(treatment)) %>%
+    mutate(peptide_group = ifelse(!!sym(peptide_column) == peptide,
+                                  peptide, "All other peptides")) %>%
     mutate(peptide_group = factor(peptide_group,
                                   levels = c("All other peptides",
-                                             feature))) %>%
+                                             peptide))) %>%
     select(Sample, Condition, value, peptide_group)
 
   if (median_mod) {
     plot_df <- plot_df %>%
-      group_by(Sample, peptide_group) %>%
-      mutate(value = median(value, na.rm = TRUE)) %>%
-      distinct()
+      group_by(Condition, Sample, peptide_group) %>%
+      summarise(value = median(value, na.rm = TRUE))
   }
 
   ## Boxplot if condition is a factor. Otherwise, scatterplots when using
@@ -131,7 +139,7 @@ plot_pecora <- function(m,
     lm_df <- filter(plot_df, peptide_group == "All other peptides")
     allothers_lm <- lm(value ~ Condition, data = lm_df)
 
-    lm_df <- filter(plot_df, peptide_group == feature)
+    lm_df <- filter(plot_df, peptide_group == peptide)
     chosen_lm <- update(allothers_lm, data = lm_df)
 
     p <- ggplot(plot_df, aes(x = Condition, y = value,
@@ -147,7 +155,7 @@ plot_pecora <- function(m,
   }
 
   p <- p +
-    labs(title = feature,
+    labs(title = sprintf("Protein: %s", protein),
          subtitle = paste("BH-adjusted p-value =", padj),
          x = treatment,
          y = "Log Intensity")
@@ -157,6 +165,6 @@ plot_pecora <- function(m,
 
 
 utils::globalVariables(
-  c("Protein", "Peptide", "pvalue", "peptide_group", "Sample", "Condition")
+  c("pvalue", "peptide_group", "Sample", "Condition")
 )
 
