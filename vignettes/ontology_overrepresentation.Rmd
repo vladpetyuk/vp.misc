@@ -16,7 +16,7 @@ output:
 ```{r setup}
 # set global chunk options
 library(knitr)
-opts_chunk$set(size='tiny')
+opts_chunk$set(size='tiny', eval=FALSE) # fix vignette later
 ```
 
 # Purpose

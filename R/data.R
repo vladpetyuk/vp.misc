@@ -266,3 +266,11 @@
 #' @docType data
 "peptide_count_data"
 
+#' PeCorA MSnSet
+#'
+#' @description An \code{MSnSet} object to test the PeCorA functions.
+#'
+#' @usage data("pecora_msnset")
+#'
+#' @docType data
+"pecora_msnset"

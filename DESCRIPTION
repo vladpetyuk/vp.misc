@@ -2,7 +2,7 @@ Package: MSnSet.utils
 Type: Package
 Title: Miscellaneous Functions for Proteomics Data Analysis
 Version: 0.1.0
-Date: 2021-12-28
+Date: 2023-03-14
 Encoding: UTF-8
 Author: Vladislav Petyuk
 Maintainer: Vladislav Petyuk <petyuk@gmail.com>
@@ -21,6 +21,7 @@ Imports:
     BiocParallel,
     Biostrings,
     Boruta,
+    car,
     ComplexHeatmap,
     circlize,
     data.table, 
@@ -55,6 +56,7 @@ Imports:
     sva,
     tibble, 
     tidyr, 
+    tidyselect,
     umap, 
     utils,
     varSelRF,

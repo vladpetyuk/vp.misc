@@ -1,10 +1,8 @@
 #' @title Annotated Expression or Correlation Heatmaps
 #'
-#'
 #' @description A wrapper around functions from
 #'   \code{\link[ComplexHeatmap]{ComplexHeatmap-package}}. Creates expression or
 #'   correlation heatmaps from \code{eSet} or \code{MSnSet} objects.
-#'
 #'
 #' @param eset an object of class \code{\link[Biobase]{eSet}} or
 #'   \code{\link[MSnbase]{MSnSet-class}}.

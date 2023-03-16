@@ -1,0 +1,117 @@
+---
+title: "PeCorA" 
+output: 
+  html_document: 
+    highlight: tango
+---
+
+<!--
+%\VignetteEngine{knitr::rmarkdown} 
+%\VignetteIndexEntry{PeCorA}
+%\VignetteKeyword{MSnSet.utils} 
+%\VignettePackage{MSnSet.utils}
+-->
+
+```{r setup}
+# set global chunk options
+library("knitr")
+opts_chunk$set(size='tiny')
+```
+
+```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
+library(MSnSet.utils)
+library(ggplot2)
+
+# Example MSnSet
+data("pecora_msnset")
+m <- pecora_msnset # shorter object name for vignette
+m # display summary
+head(fData(m))
+```
+
+PeCorA will estimate the significance of interaction between the peptides
+mapping to a protein and the treatment variable supplied.
+
+```{r}
+# proteins with peptides to test
+proteins <- c("APOE", "BIN1")
+
+# Categorical treatment
+m <- PeCorA(m,
+            treatment = "var_y",
+            control_group = "A",
+            proteins = proteins)
+
+# Show fData for those proteins
+head(fData(m)[fData(m)[["Protein"]] %in% proteins, ])
+```
+
+Running PeCorA again will add new results to fData.
+
+```{r}
+# Numeric treatment
+m <- PeCorA(m,
+            treatment = "var_x",
+            proteins = proteins,
+            median_mod = FALSE)
+
+# Display part of results
+head(fData(m)[fData(m)[["Protein"]] %in% proteins, ])
+```
+
+```{r}
+# Update results - use median_mod = TRUE this time
+m <- PeCorA(m,
+            treatment = "var_x",
+            proteins = proteins,
+            median_mod = TRUE)
+
+# Display part of results
+head(fData(m)[fData(m)[["Protein"]] %in% proteins, ])
+```
+
+Finally, `plot_PeCorA` can plot a particular feature (peptide) against all other
+peptides mapping to the same protein, and will include the adjusted p-value for
+that peptide in the plot subtitle. Depending on the type of the treatment
+variable (categorical vs. numeric) a boxplot or scatterplot is made,
+respectively. The parameter `median_mod` can be set to `TRUE` to aggregate
+(samplewise) all other peptides mapping to the same protein using the median.
+
+```{r}
+# Feature (peptide) to plot
+peptide <- "VFEEMNVDLQEELPSLWNSR"
+protein <- "BIN1"
+
+# Numeric treatment - scatterplot
+p1 <- plot_PeCorA(m, 
+                  peptide = peptide, 
+                  protein = protein,
+                  treatment = "var_x", 
+                  median_mod = FALSE)
+p1
+```
+
+```{r}
+# Categorical treatment - boxplots
+p2 <- plot_PeCorA(m, 
+                  peptide = peptide, 
+                  protein = protein,
+                  treatment = "var_y", 
+                  median_mod = FALSE)
+p2
+```
+
+Since this is a `ggplot` object, we can modify it as needed.
+
+```{r}
+# Change y-axis limits and theme
+p3 <- p2 + 
+  scale_y_continuous(limits = c(-6, 8),
+                     expand = expansion(mult = 5e-3)) +
+  theme_bw() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom")
+p3
+```
+
+
