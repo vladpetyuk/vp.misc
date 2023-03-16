@@ -266,11 +266,12 @@
 #' @docType data
 "peptide_count_data"
 
-#' PeCorA MSnSet
+#' Brain MSnSet
 #'
-#' @description An \code{MSnSet} object to test the PeCorA functions.
+#' @description An \code{MSnSet} object containing log\eqn{_2} relative
+#'   abundances of peptides detected in brain tissue.
 #'
-#' @usage data("pecora_msnset")
+#' @usage data("brain_msnset")
 #'
 #' @docType data
-"pecora_msnset"
+"brain_msnset"
