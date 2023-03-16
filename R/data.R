@@ -270,7 +270,7 @@
 #'
 #' @description An \code{MSnSet} object to test the PeCorA functions.
 #'
-#' @usage data("PeCorA_msnset")
+#' @usage data("pecora_msnset")
 #'
 #' @docType data
-"m"
+"pecora_msnset"
