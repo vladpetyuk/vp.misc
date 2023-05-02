@@ -343,15 +343,15 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
     sdat <- as.matrix(s.data)
     idx.na <- apply(!is.na(sdat), 2, as.numeric)
     idx.na.logical <- is.na(sdat)
-    counts <- idx.na %*% design
+    counts <- idx.na %*% batch.design
 
     plex.na.terms.large <- apply(na.terms, 2, as.numeric) %>%
-      t(.) %*% t(design)
+      t(.) %*% t(batch.design)
 
     na.terms.large <- plex.na.terms.large %>%
       apply(., 2, as.logical)
 
-    g.hat <- t(gamma.hat) %*% t(design)
+    g.hat <- t(gamma.hat) %*% t(batch.design)
     g.hat[na.terms.large] <- NaN
 
     d.cle <- delta.hat
@@ -373,7 +373,7 @@ ComBat.NA <- function(dat, batch, mod = NULL, par.prior = TRUE, mean.only = FALS
                    ncol = length(data.pts))
       xx <- (xx - g.hat)^2
       xx[is.na(xx)] <- 0
-      xx <- xx %*% design
+      xx <- xx %*% batch.design
       LH <- 1/(2 * pi * d.hat)^(n/2) * exp(-xx/(2 * d.hat))
       LH[j, ] <- 0
       LH[is.na(LH)] <- 0
