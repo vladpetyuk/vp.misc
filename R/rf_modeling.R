@@ -156,14 +156,8 @@ train_model_rf <- function(x, y, ...){
 
 rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=TRUE,
                             sel.alg=c("varSelRF","Boruta","top"), ...){
-    #
-    if(.Platform$OS.type == "unix")
-        mc.cores <- detectCores()
-    else
-        mc.cores <- 1
     # prepare data
     dSet <- cbind(pData(msnset), t(exprs(msnset)))
-    #
     stopifnot(length(unique(dSet[,response])) == 2)
     stopifnot(pred.cls %in% dSet[,response] )
     if(unique(dSet[,response])[1] == pred.cls){
@@ -184,8 +178,9 @@ rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=
         K <- nrow(dSet)
     num_rep <- ceiling(nrow(dSet)/K)
     cv_idx <- sample(rep(seq_len(K), num_rep)[seq_len(nrow(dSet))])
-
-    res <- mclapply(1:K, function(i){
+    multiprocessing_cluster <- makePSOCKcluster(names=detectCores())
+       
+    res <- parLapply(cl = multiprocessing_cluster, X = 1:K, fun = function(i){
         i <- cv_idx == i
         if(sel.feat){
             features.sel <- FUN(x=dSet[!i,features],
@@ -204,7 +199,7 @@ rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=
         names(predProb) <- rownames(newdata)
         # print(i)
         list(predProb, features.sel)
-    }, mc.cores=mc.cores, mc.set.seed = FALSE)
+    })
     #
     predProb <- unlist(sapply(res, '[[', 1, simplify = FALSE)) # unlist TODO
     predProb <- predProb[rownames(dSet)]
