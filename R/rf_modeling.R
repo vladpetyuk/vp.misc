@@ -184,7 +184,7 @@ rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=
     clusterEvalQ(multiproc_cl, library("Biobase"))
     silence <- clusterExport(multiproc_cl,
                              c("dSet","cv_idx","features",
-                               "response","multiproc_cl",
+                               "response",
                                "train_model_rf"),
                              envir = environment())
     fn <- function(i){
