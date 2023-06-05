@@ -157,6 +157,10 @@ train_model_rf <- function(x, y, ...){
 
 rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=TRUE,
                             sel.alg=c("varSelRF","Boruta","top"), ...){
+
+    # to avoid running processes in case the function crashes
+    on.exit(stopCluster(multiproc_cl))
+
     # prepare data
     dSet <- cbind(pData(msnset), t(exprs(msnset)))
     stopifnot(length(unique(dSet[,response])) == 2)
