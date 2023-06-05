@@ -211,8 +211,8 @@ rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=
        list(predProb, features.sel)
     }
     res <- parLapply(cl = multiproc_cl, X = 1:K, fun = fn)
-    # res <- lapply(X = 1:K, FUN = fn)
-    stopCluster(multiproc_cl)
+    # stopCluster(multiproc_cl) # replaced with on.exit()
+    #
     predProb <- unlist(sapply(res, '[[', 1, simplify = FALSE)) # unlist TODO
     predProb <- predProb[rownames(dSet)]
     names(predProb) <- NULL # for compatibility
