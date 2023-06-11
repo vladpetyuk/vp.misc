@@ -108,7 +108,7 @@ limma_gen <- function(eset, model.str, coef.str, ...){
   # a new way
   # If coef.str is a factor or character, do this
   if (!(coef.str %in% colnames(design))) {
-    idx <- which(names(attr(design, "contrast")) == coef.str)
+    idx <- which(names(attr(design, "contrast")) == gsub("`","",coef.str))
     idx <- attr(design, "assign") == idx
     coef.str <- colnames(design)[idx]
   }
