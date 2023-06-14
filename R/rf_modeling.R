@@ -124,8 +124,9 @@ train_model_rf <- function(x, y, ...){
 #'
 #' @importFrom randomForest randomForest
 #' @importFrom ROCR prediction performance
-#' @importFrom parallel mclapply detectCores
+#' @importFrom parallel mclapply detectCores parLapply clusterEvalQ
 #' @importFrom stats predict
+#' @importFrom Biobase featureNames
 #'
 #' @export rf_modeling
 #'
@@ -156,14 +157,12 @@ train_model_rf <- function(x, y, ...){
 
 rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=TRUE,
                             sel.alg=c("varSelRF","Boruta","top"), ...){
-    #
-    if(.Platform$OS.type == "unix")
-        mc.cores <- detectCores()
-    else
-        mc.cores <- 1
+
+    # to avoid running processes in case the function crashes
+    on.exit(stopCluster(multiproc_cl))
+
     # prepare data
     dSet <- cbind(pData(msnset), t(exprs(msnset)))
-    #
     stopifnot(length(unique(dSet[,response])) == 2)
     stopifnot(pred.cls %in% dSet[,response] )
     if(unique(dSet[,response])[1] == pred.cls){
@@ -184,27 +183,35 @@ rf_modeling <- function( msnset, features, response, pred.cls, K=NULL, sel.feat=
         K <- nrow(dSet)
     num_rep <- ceiling(nrow(dSet)/K)
     cv_idx <- sample(rep(seq_len(K), num_rep)[seq_len(nrow(dSet))])
-
-    res <- mclapply(1:K, function(i){
-        i <- cv_idx == i
-        if(sel.feat){
-            features.sel <- FUN(x=dSet[!i,features],
-                                y=dSet[!i,response])
-        }else{
-            features.sel <- features
-        }
-        # train model
-        x=dSet[!i,features.sel,drop=FALSE]
-        colnames(x) <- make.names(colnames(x))
-        mdl <- train_model_rf(x=x, y=dSet[!i,response])
-        # predict
-        newdata <- dSet[i,features.sel,drop=FALSE]
-        colnames(newdata) <- make.names(colnames(newdata))
-        predProb <- predict(mdl, newdata=newdata, type='prob')[,pred.cls]
-        names(predProb) <- rownames(newdata)
-        # print(i)
-        list(predProb, features.sel)
-    }, mc.cores=mc.cores, mc.set.seed = FALSE)
+    multiproc_cl <- makeCluster(max(1, detectCores() - 1))
+    clusterEvalQ(multiproc_cl, library("MSnID"))
+    clusterEvalQ(multiproc_cl, library("Biobase"))
+    silence <- clusterExport(multiproc_cl,
+                             c("dSet","cv_idx","features",
+                               "response"),
+                             envir = environment())
+    fn <- function(i){
+       i <- cv_idx == i
+       if(sel.feat){
+          features.sel <- FUN(x=dSet[!i,features],
+                              y=dSet[!i,response])
+       }else{
+          features.sel <- features
+       }
+       # train model
+       x=dSet[!i,features.sel,drop=FALSE]
+       colnames(x) <- make.names(colnames(x))
+       mdl <- train_model_rf(x=x, y=dSet[!i,response])
+       # predict
+       newdata <- dSet[i,features.sel,drop=FALSE]
+       colnames(newdata) <- make.names(colnames(newdata))
+       predProb <- predict(mdl, newdata=newdata, type='prob')[,pred.cls]
+       names(predProb) <- rownames(newdata)
+       # print(i)
+       list(predProb, features.sel)
+    }
+    res <- parLapply(cl = multiproc_cl, X = 1:K, fun = fn)
+    # stopCluster(multiproc_cl) # replaced with on.exit()
     #
     predProb <- unlist(sapply(res, '[[', 1, simplify = FALSE)) # unlist TODO
     predProb <- predProb[rownames(dSet)]
