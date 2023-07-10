@@ -10,6 +10,9 @@
 #' @param rollBy character. A column name in pData(msnset)
 #' @param rollFun function for roll-up. "-" for log-transformed data,
 #'                      "/" for normal scale
+#' @param algorithm Either scaling to the most observed peptided ("reference")
+#'                  or simply summing ("sum"). Summing makes sense only in
+#'                  case of original label-free intensities.
 #' @param verbose logical. Controls real-time output.
 #'
 #' @return MSnSet object
@@ -25,18 +28,31 @@
 #' dim(msnset2)
 
 
-rrollup <- function(msnset, rollBy, rollFun, verbose=TRUE){
-    summarisedFeatures <- list()
-    unique_rollBy <- unique(fData(msnset)[[rollBy]])
-    for (i in 1:length(unique_rollBy)) {
-        # Subset msnset to each rollBy group
-        msnset_sub <- msnset[fData(msnset)[[rollBy]] == unique_rollBy[i], ,
-                             drop = FALSE]
-        summarisedFeatures[[i]] <- rrollup_a_feature_set(msnset_sub, rollBy,
-                                                         rollFun, verbose)
+rrollup <- function(msnset, rollBy, rollFun,
+                    algorithm = c("reference", "sum"),
+                    verbose=TRUE){
+
+    algorithm <- match.arg(algorithm)
+
+    if(algorithm == "reference"){
+        summarisedFeatures <- list()
+        unique_rollBy <- unique(fData(msnset)[[rollBy]])
+        for (i in 1:length(unique_rollBy)) {
+            # Subset msnset to each rollBy group
+            msnset_sub <- msnset[fData(msnset)[[rollBy]] == unique_rollBy[i], ,
+                                 drop = FALSE]
+            summarisedFeatures[[i]] <- rrollup_a_feature_set(msnset_sub, rollBy,
+                                                             rollFun, verbose)
+        }
+        exprs.new <- do.call(rbind, summarisedFeatures)
+        rownames(exprs.new) <- unique_rollBy
     }
-    exprs.new <- do.call(rbind, summarisedFeatures)
-    rownames(exprs.new) <- unique_rollBy
+    if(algorithm == "sum"){
+        temp <- data.frame(rollBy = fData(msnset)[[rollBy]], exprs(msnset))
+        temp <- aggregate(. ~ rollBy, temp, sum, na.rm = T)
+        exprs.new <- as.matrix(temp[,-1])
+        rownames(exprs.new) <- temp[,1]
+    }
 
     if(nrow(unique(fData(msnset))) == nrow(exprs.new)){
         fData.new <- unique(fData(msnset))

@@ -4,7 +4,13 @@
 \alias{rrollup}
 \title{Rolling-Up Features Abundance Measurements}
 \usage{
-rrollup(msnset, rollBy, rollFun, verbose = TRUE)
+rrollup(
+  msnset,
+  rollBy,
+  rollFun,
+  algorithm = c("reference", "sum"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{msnset}{msnset (or most likely eset subclass) object}
@@ -13,6 +19,10 @@ rrollup(msnset, rollBy, rollFun, verbose = TRUE)
 
 \item{rollFun}{function for roll-up. "-" for log-transformed data,
 "/" for normal scale}
+
+\item{algorithm}{Either scaling to the most observed peptided ("reference")
+or simply summing ("sum"). Summing makes sense only in
+case of original label-free intensities.}
 
 \item{verbose}{logical. Controls real-time output.}
 }
