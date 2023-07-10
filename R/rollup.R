@@ -49,7 +49,9 @@ rrollup <- function(msnset, rollBy, rollFun,
     }
     if(algorithm == "sum"){
         temp <- data.frame(rollBy = fData(msnset)[[rollBy]], exprs(msnset))
-        temp <- aggregate(. ~ rollBy, temp, sum, na.rm = T)
+        temp[is.na(temp)] <- 0
+        temp <- aggregate(. ~ rollBy, temp, sum)
+        temp[temp == 0] <- NA
         exprs.new <- as.matrix(temp[,-1])
         rownames(exprs.new) <- temp[,1]
     }
