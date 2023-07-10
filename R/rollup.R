@@ -48,7 +48,9 @@ rrollup <- function(msnset, rollBy, rollFun,
         rownames(exprs.new) <- unique_rollBy
     }
     if(algorithm == "sum"){
-        temp <- data.frame(rollBy = fData(msnset)[[rollBy]], exprs(msnset))
+        temp <- data.frame(rollBy = fData(msnset)[[rollBy]],
+                           exprs(msnset),
+                           check.names = FALSE)
         temp[is.na(temp)] <- 0
         temp <- aggregate(. ~ rollBy, temp, sum)
         temp[temp == 0] <- NA
