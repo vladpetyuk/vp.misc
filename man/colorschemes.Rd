@@ -8,6 +8,7 @@
 \alias{hot2.colors}
 \alias{jet.colors}
 \alias{jet2.colors}
+\alias{turbo.colors}
 \title{Favorite Colorschemes}
 \usage{
 blue.colors(n)
@@ -21,6 +22,8 @@ hot2.colors(n)
 jet.colors(n)
 
 jet2.colors(n)
+
+turbo.colors(n, start = 0, end = 1)
 }
 \arguments{
 \item{n}{Number of different colors in the colorscheme}
@@ -50,6 +53,8 @@ Looks like a dusk.
 
 \item \code{jet2.colors()}: similar to Matlab's "jet"
 
+\item \code{turbo.colors()}: Google's(?) turbo color scheme
+
 }}
 \examples{
 
@@ -60,6 +65,7 @@ image(as.matrix(1:100), col=hot.colors(100))
 image(as.matrix(1:100), col=hot2.colors(100))
 image(as.matrix(1:100), col=jet.colors(100))
 image(as.matrix(1:100), col=jet2.colors(100))
+image(as.matrix(1:100), col=turbo.colors(100))
 
 ## Random
 N <- 10
@@ -71,6 +77,7 @@ image(mat, col=hot.colors(N^2))
 image(mat, col=hot2.colors(N^2))
 image(mat, col=jet.colors(N^2))
 image(mat, col=jet2.colors(N^2))
+image(mat, col=turbo.colors(N^2))
 
 ## Airy pattern
 x <- seq(-1,+1,length=100)
@@ -81,4 +88,5 @@ image(z, col=hot.colors(100))
 image(z, col=hot2.colors(100))
 image(z, col=jet.colors(100))
 image(z, col=jet2.colors(100))
+image(z, col=turbo.colors(100))
 }
