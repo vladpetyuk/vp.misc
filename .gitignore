@@ -10,3 +10,4 @@ MSnSet.utils.Rproj
 Misc/
 /doc/
 /Meta/
+.Rcache/
