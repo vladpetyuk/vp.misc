@@ -2,7 +2,7 @@ MSnSet.utils
 ======
 
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PNNL-Comp-Mass-Spec/MSnSet.utils/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Installation
