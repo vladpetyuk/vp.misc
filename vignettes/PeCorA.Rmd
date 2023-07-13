@@ -23,8 +23,8 @@ library(MSnSet.utils)
 library(ggplot2)
 
 # Example MSnSet
-data("pecora_msnset")
-m <- pecora_msnset # shorter object name for vignette
+data("brain_msnset")
+m <- brain_msnset # shorter object name for vignette
 m # display summary
 head(fData(m))
 ```
