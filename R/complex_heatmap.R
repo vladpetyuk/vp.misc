@@ -96,7 +96,7 @@
 #' @md
 #'
 #' @import ComplexHeatmap
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% mutate across where
 #' @importFrom Biobase exprs pData fData
 #' @importFrom stats cor setNames
 #' @importFrom grDevices bmp jpeg png tiff pdf dev.off
@@ -173,12 +173,18 @@ complex_heatmap <- function(
     if (ncol(pData(eset)) == 0) {
       stop("anno_column is provided, but pData(eset) is empty")
     }
+
+    pData(eset) <- mutate(pData(eset),
+                          across(.cols = where(is.character), as.factor))
   }
   # check for fData
   if (!is.null(anno_row)) {
     if (ncol(fData(eset)) == 0) {
       stop("anno_row is provided, but fData(eset) is empty")
     }
+
+    fData(eset) <- mutate(fData(eset),
+                          across(.cols = where(is.character), as.factor))
   }
 
   # Check that args are lists
@@ -209,8 +215,7 @@ complex_heatmap <- function(
     stop(paste("One or more elements of heatmap_args is not",
                "an argument of ComplexHeatmap::Heatmap"))
   }
-  if (!all(names(anno_args) %in%
-           names(formals(HeatmapAnnotation)))) {
+  if (!all(names(anno_args) %in% names(formals(HeatmapAnnotation)))) {
     stop(paste("One or more elements of anno_args is not",
                "an argument of ComplexHeatmap::HeatmapAnnotation"))
   }
