@@ -78,6 +78,12 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
   # Handling coloring by phenotype. Do this first, in case
   # rows are removed when show_NA = FALSE
   if (!is.null(phenotype)) {
+    if (!phenotype %in% colnames(pData(eset))) {
+      stop(
+        sprintf("'%s' is not the name of a column in pData(eset).", phenotype)
+      )
+    }
+
     colorBy <- pData(eset)[, phenotype]
     # If not showing missing values, remove those samples
     if (!show_NA) {
@@ -150,10 +156,7 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
   # Percent of variance explained by each PC
   d <- pca_res$sdev # Standard deviations
   var_expl <- round(100 * d ^ 2 / sum(d ^ 2), digits = 2)[components]
-  axis_labs <- sprintf("PC%d (%g%%)", #"%sPC%d (%g%%)",
-                       # ifelse(obs.scale == 0, "Standardized ", ""),
-                       components,
-                       var_expl)
+  axis_labs <- sprintf("PC%d (%g%%)", components, var_expl)
 
   # If colorBy is not NULL, add that column to df
   if (!is.null(colorBy)) {
@@ -162,7 +165,8 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
 
   ## Visualization
   # Base plot
-  p <- ggplot(data = df.u, mapping = aes(x = df.u[, 1], y = df.u[, 2], color = colorBy)) +
+  p <- ggplot(data = df.u,
+              mapping = aes(x = df.u[, 1], y = df.u[, 2], color = colorBy)) +
     geom_hline(yintercept = 0, lty = "longdash", color = "darkgrey") +
     geom_vline(xintercept = 0, lty = "longdash", color = "darkgrey") +
     labs(x = axis_labs[1], y = axis_labs[2]) +
@@ -183,6 +187,12 @@ plot_pca <- function(eset, phenotype = NULL, label = NULL, z_score = TRUE,
     p <- p +
       geom_point(...)
   } else {
+    if (!label %in% colnames(pData(eset))) {
+      stop(
+        sprintf("'%s' is not the name of a column in pData(eset).", label)
+      )
+    }
+
     labels <- pData(eset)[, label]
     p <- p +
       geom_text(mapping = aes(label = labels), ...)
