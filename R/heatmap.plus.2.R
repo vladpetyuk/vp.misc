@@ -1,64 +1,61 @@
 #' Tweak of "heatmap.plus"
 #'
-#' This function is basically \code{\link[heatmap.plus]{heatmap.plus}}
-#' from \pkg{heatmap.plus} package, but it includes a pair of additional
-#' arguments controlling the proportion of row and column color sidebars.
+#' This function is basically
+#' \href{https://github.com/cran/heatmap.plus/blob/master/R/heatmap.plus.R}{heatmap.plus::heatmap.plus}
+#' from \href{https://github.com/cran/heatmap.plus/blob/master}{heatmap.plus}
+#' package, but it includes a pair of additional arguments controlling the
+#' proportion of row and column color sidebars.
 #'
 #' @param x numeric matrix of the values to be plotted
 #' @param Rowv determines if and how the *row* dendrogram should be computed and
-#'        reordered. Either a dendrogram or a vector of values used to
-#'        reorder the row dendrogram or \code{NA} to suppress any row
-#'        dendrogram (and reordering) or by default, \code{NULL}.
+#'   reordered. Either a dendrogram or a vector of values used to reorder the
+#'   row dendrogram or \code{NA} to suppress any row dendrogram (and reordering)
+#'   or by default, \code{NULL}.
 #' @param Colv determines if and how the *column* dendrogram should be
-#'        reordered. Has the same options as the Rowv argument above and
-#'        additionally when \code{x} is a square matrix, \code{Colv = "Rowv"}
-#'        means that columns should be treated identically to the rows.
+#'   reordered. Has the same options as the Rowv argument above and additionally
+#'   when \code{x} is a square matrix, \code{Colv = "Rowv"} means that columns
+#'   should be treated identically to the rows.
 #' @param distfun function used to compute the distance (dissimilarity) between
-#'        both rows and columns. Defaults to \code{dist}.
+#'   both rows and columns. Defaults to \code{dist}.
 #' @param hclustfun function used to compute the hierarchical clustering when
-#'        \code{Rowv} or \code{Colv} are not dendrograms. Defaults to
-#'        \code{hclust}.
-#' @param reorderfun function(d,w) of dendrogram and weights for reordering
-#'        the row and column dendrograms. The default uses
-#'        \code{reorder.dendrogram}.
+#'   \code{Rowv} or \code{Colv} are not dendrograms. Defaults to \code{hclust}.
+#' @param reorderfun function(d,w) of dendrogram and weights for reordering the
+#'   row and column dendrograms. The default uses \code{reorder.dendrogram}.
 #' @param add.expr expression that will be evaluated after the call to
-#' \code{image}. Can be used to add components to the plot.
+#'   \code{image}. Can be used to add components to the plot.
 #' @param symm logical indicating if \code{x} should be treated symmetrically;
-#'        can only be true when \code{x} is a square matrix.
+#'   can only be true when \code{x} is a square matrix.
 #' @param revC logical indicating if the column order should be reversed for
-#'        plotting, such that e.g., for the symmetric case, the symmetry axis
-#'        is as usual.
-#' @param scale character indicating if the values should be centered and
-#'        scaled in either the row direction or the column direction, or none.
-#'        The default is \code{"row"} if \code{symm} false, and \code{"none"}
-#'        otherwise.
+#'   plotting, such that e.g., for the symmetric case, the symmetry axis is as
+#'   usual.
+#' @param scale character indicating if the values should be centered and scaled
+#'   in either the row direction or the column direction, or none. The default
+#'   is \code{"row"} if \code{symm} false, and \code{"none"} otherwise.
 #' @param na.rm logical indicating whether \code{NA}'s should be removed.
-#' @param margins numeric vector of length 2 containing the margins
-#'        (see \code{par(mar= *)}) for column and row names, respectively.
+#' @param margins numeric vector of length 2 containing the margins (see
+#'   \code{par(mar= *)}) for column and row names, respectively.
 #' @param ColSideColors (optional) character matrix with number of columns
-#'        matching number of columns in \code{x}. Each column is plotted as a
-#'        column similar to heatmap()'s ColSideColors. colnames() will be used
-#'        for labels if present.
-#' @param RowSideColors (optional) character matrix with number of rows
-#'        matching number of rows in \code{x}. Each column is plotted as a row
-#'        similar to heatmap()'s ColSideColors. colnames() will be used for
-#'        labels if present.
-#' @param propColSide numeric controls how much room to allocate for the
-#'        side color bars. E.g. 0.5 is even split between the heatmap and the
-#'        bars. Default is 0.1. That is, 10\% bars, 90\% heatmap.
+#'   matching number of columns in \code{x}. Each column is plotted as a column
+#'   similar to heatmap()'s ColSideColors. colnames() will be used for labels if
+#'   present.
+#' @param RowSideColors (optional) character matrix with number of rows matching
+#'   number of rows in \code{x}. Each column is plotted as a row similar to
+#'   heatmap()'s ColSideColors. colnames() will be used for labels if present.
+#' @param propColSide numeric controls how much room to allocate for the side
+#'   color bars. E.g. 0.5 is even split between the heatmap and the bars.
+#'   Default is 0.1. That is, 10\% bars, 90\% heatmap.
 #' @param propRowSide numeric see above
 #' @param cexRow positive number, used as \code{cex.axis} in for the row axis
-#'        labeling. The default currently only uses number of rows.
+#'   labeling. The default currently only uses number of rows.
 #' @param cexCol see above.
 #' @param labRow character vectors with row labels to use; defaults to
-#'        rownames().
+#'   rownames().
 #' @param labCol see above.
 #' @param main main title; defaults to none.
 #' @param xlab x-axis title; defaults to none.
 #' @param ylab y-axis title; defaults to none.
 #' @param keep.dendro logical indicating if the dendrogram(s) should be kept as
-#'        part of the result (when \code{Rowv} and/or \code{Colv} are not
-#'        \code{NA}).
+#'   part of the result (when \code{Rowv} and/or \code{Colv} are not \code{NA}).
 #' @param verbose logical indicating if information should be printed.
 #' @param ... additional arguments passed to \code{\link[graphics]{image}}.
 #'

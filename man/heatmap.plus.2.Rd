@@ -37,25 +37,23 @@ heatmap.plus.2(
 \item{x}{numeric matrix of the values to be plotted}
 
 \item{Rowv}{determines if and how the *row* dendrogram should be computed and
-reordered. Either a dendrogram or a vector of values used to
-reorder the row dendrogram or \code{NA} to suppress any row
-dendrogram (and reordering) or by default, \code{NULL}.}
+reordered. Either a dendrogram or a vector of values used to reorder the
+row dendrogram or \code{NA} to suppress any row dendrogram (and reordering)
+or by default, \code{NULL}.}
 
 \item{Colv}{determines if and how the *column* dendrogram should be
-reordered. Has the same options as the Rowv argument above and
-additionally when \code{x} is a square matrix, \code{Colv = "Rowv"}
-means that columns should be treated identically to the rows.}
+reordered. Has the same options as the Rowv argument above and additionally
+when \code{x} is a square matrix, \code{Colv = "Rowv"} means that columns
+should be treated identically to the rows.}
 
 \item{distfun}{function used to compute the distance (dissimilarity) between
 both rows and columns. Defaults to \code{dist}.}
 
 \item{hclustfun}{function used to compute the hierarchical clustering when
-\code{Rowv} or \code{Colv} are not dendrograms. Defaults to
-\code{hclust}.}
+\code{Rowv} or \code{Colv} are not dendrograms. Defaults to \code{hclust}.}
 
-\item{reorderfun}{function(d,w) of dendrogram and weights for reordering
-the row and column dendrograms. The default uses
-\code{reorder.dendrogram}.}
+\item{reorderfun}{function(d,w) of dendrogram and weights for reordering the
+row and column dendrograms. The default uses \code{reorder.dendrogram}.}
 
 \item{add.expr}{expression that will be evaluated after the call to
 \code{image}. Can be used to add components to the plot.}
@@ -64,32 +62,30 @@ the row and column dendrograms. The default uses
 can only be true when \code{x} is a square matrix.}
 
 \item{revC}{logical indicating if the column order should be reversed for
-plotting, such that e.g., for the symmetric case, the symmetry axis
-is as usual.}
+plotting, such that e.g., for the symmetric case, the symmetry axis is as
+usual.}
 
-\item{scale}{character indicating if the values should be centered and
-scaled in either the row direction or the column direction, or none.
-The default is \code{"row"} if \code{symm} false, and \code{"none"}
-otherwise.}
+\item{scale}{character indicating if the values should be centered and scaled
+in either the row direction or the column direction, or none. The default
+is \code{"row"} if \code{symm} false, and \code{"none"} otherwise.}
 
 \item{na.rm}{logical indicating whether \code{NA}'s should be removed.}
 
-\item{margins}{numeric vector of length 2 containing the margins
-(see \code{par(mar= *)}) for column and row names, respectively.}
+\item{margins}{numeric vector of length 2 containing the margins (see
+\code{par(mar= *)}) for column and row names, respectively.}
 
 \item{ColSideColors}{(optional) character matrix with number of columns
-matching number of columns in \code{x}. Each column is plotted as a
-column similar to heatmap()'s ColSideColors. colnames() will be used
-for labels if present.}
+matching number of columns in \code{x}. Each column is plotted as a column
+similar to heatmap()'s ColSideColors. colnames() will be used for labels if
+present.}
 
-\item{RowSideColors}{(optional) character matrix with number of rows
-matching number of rows in \code{x}. Each column is plotted as a row
-similar to heatmap()'s ColSideColors. colnames() will be used for
-labels if present.}
+\item{RowSideColors}{(optional) character matrix with number of rows matching
+number of rows in \code{x}. Each column is plotted as a row similar to
+heatmap()'s ColSideColors. colnames() will be used for labels if present.}
 
-\item{propColSide}{numeric controls how much room to allocate for the
-side color bars. E.g. 0.5 is even split between the heatmap and the
-bars. Default is 0.1. That is, 10\% bars, 90\% heatmap.}
+\item{propColSide}{numeric controls how much room to allocate for the side
+color bars. E.g. 0.5 is even split between the heatmap and the bars.
+Default is 0.1. That is, 10\% bars, 90\% heatmap.}
 
 \item{propRowSide}{numeric see above}
 
@@ -110,17 +106,18 @@ rownames().}
 \item{ylab}{y-axis title; defaults to none.}
 
 \item{keep.dendro}{logical indicating if the dendrogram(s) should be kept as
-part of the result (when \code{Rowv} and/or \code{Colv} are not
-\code{NA}).}
+part of the result (when \code{Rowv} and/or \code{Colv} are not \code{NA}).}
 
 \item{verbose}{logical indicating if information should be printed.}
 
 \item{...}{additional arguments passed to \code{\link[graphics]{image}}.}
 }
 \description{
-This function is basically \code{\link[heatmap.plus]{heatmap.plus}}
-from \pkg{heatmap.plus} package, but it includes a pair of additional
-arguments controlling the proportion of row and column color sidebars.
+This function is basically
+\href{https://github.com/cran/heatmap.plus/blob/master/R/heatmap.plus.R}{heatmap.plus::heatmap.plus}
+from \href{https://github.com/cran/heatmap.plus/blob/master}{heatmap.plus}
+package, but it includes a pair of additional arguments controlling the
+proportion of row and column color sidebars.
 }
 \examples{
 z = matrix(rnorm(30),nrow=5,ncol=6);
