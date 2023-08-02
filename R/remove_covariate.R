@@ -331,6 +331,10 @@ correct_batch_effect_NA <- function(m, batch_name, cov_name = NULL,
                                     par.prior=FALSE,
                                     prior.plots=FALSE,
                                     ...){
+  
+    if (!(batch_name %in% colnames(pData(m)))) {
+      stop(paste(batch_name, "is not a column in the pData of the given msnset. Please check the batch variable."))
+    }
     batch <- pData(m)[, batch_name]
     if(!is.null(cov_name)) {
         cov <- pData(m)[, cov_name] %>%
