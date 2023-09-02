@@ -60,6 +60,8 @@ rrollup <- function(msnset, rollBy, rollFun,
 
     if(nrow(unique(fData(msnset))) == nrow(exprs.new)){
         fData.new <- unique(fData(msnset))
+        rownames(fData.new) <- fData.new[, rollBy]
+        fData.new <- fData.new[rownames(exprs.new),]
     }else{
         fData.new <- data.frame(rollBy = rownames(exprs.new),
                                 stringsAsFactors = FALSE)
