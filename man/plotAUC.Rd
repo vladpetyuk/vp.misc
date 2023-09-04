@@ -4,11 +4,16 @@
 \alias{plotAUC}
 \title{Plot AUC}
 \usage{
-plotAUC(modelingResult)
+plotAUC(modelingResult, CI = FALSE, ...)
 }
 \arguments{
 \item{modelingResult}{output from either
 \code{lr_modeling} or \code{rf_modeling}}
+
+\item{CI}{(logical) Plot confidence interval or not. Default is False.}
+
+\item{...}{further arguments passes to the \code{plot} method of the
+\code{\link[pROC]{ci.se}} object of the \code{pROC} package.}
 }
 \description{
 Plot AUC after LOOCV Model Evaluation
