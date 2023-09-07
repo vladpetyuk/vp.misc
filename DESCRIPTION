@@ -49,6 +49,7 @@ Imports:
     reshape2, 
     rlang,
     ROCR,
+    pROC,
     scales,
     stats,
     statmod,
